@@ -1,0 +1,42 @@
+import Link from "next/link";
+import { getBlogs } from "@/lib/api";
+
+export default async function BlogIndexPage() {
+  const { posts } = await getBlogs(1, 24);
+
+  return (
+    <div className="container-pad py-12">
+      <h1 className="font-display text-4xl md:text-5xl">Journal</h1>
+      <p className="mt-3 max-w-2xl text-ink-soft">
+        Guides on Rudraksha, gemstones and intention-led living from Tathaastu.
+      </p>
+
+      {!posts.length ? (
+        <p className="mt-10 text-ink-soft">No posts yet.</p>
+      ) : (
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <Link
+              key={post._id}
+              href={`/blog/${post.slug}`}
+              className="overflow-hidden rounded-3xl border border-[var(--border)] bg-white/45 transition hover:-translate-y-0.5"
+            >
+              {post.coverImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={post.coverImage} alt="" className="aspect-[16/10] w-full object-cover" />
+              ) : (
+                <div className="aspect-[16/10] bg-temple/10" />
+              )}
+              <div className="p-5">
+                <h2 className="font-display text-2xl">{post.title}</h2>
+                {post.excerpt ? (
+                  <p className="mt-2 line-clamp-3 text-sm text-ink-soft">{post.excerpt}</p>
+                ) : null}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,17 +1,19 @@
 {
-  "name": "web",
+  "name": "tathaastu-store",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/run-with-env.mjs dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/run-with-env.mjs start",
     "lint": "eslint"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "next": "16.3.5",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

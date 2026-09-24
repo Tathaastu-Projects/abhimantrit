@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tathaastu Store (Frontend)
 
-## Getting Started
+Public e-commerce storefront for **Tathaastu**. Catalog and checkout talk to the existing Express backend — this app never creates or edits products.
 
-First, run the development server:
+Reference UX (IA only): [gemsmantra.com](https://gemsmantra.com/) — **not** a visual clone.
+
+## Stack
+
+- Next.js App Router + TypeScript + Tailwind CSS v4
+- Zustand cart (persisted to `localStorage`)
+- `NEXT_PUBLIC_API_URL` → backend base URL from `.env` (no hardcoded port fallback)
+- `PORT` → store frontend listen port from `.env`
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env
+# edit PORT + NEXT_PUBLIC_API_URL for your machine
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:<PORT>` from your `.env`. Backend must be reachable at `NEXT_PUBLIC_API_URL`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Env (required — no ports hardcoded in code)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+PORT=3000
+NEXT_PUBLIC_API_URL=http://localhost:9001
+```
 
-## Learn More
+Change either value anytime in `.env`, then restart `npm run dev` / `npm start`.
+`npm run dev` / `npm start` read `PORT` from `.env` (Next alone often ignores it and stays on 3000).
 
-To learn more about Next.js, take a look at the following resources:
+## Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Route | Purpose |
+|-------|---------|
+| `/` | Home — trust, hero, intentions, categories, carousels, FAQ |
+| `/shop`, `/shop/[category]` | PLP with filters, facets, sort, pagination |
+| `/collections/[slug]` | Collection SEO + products + facets |
+| `/intention/[intention]` | Intention-filtered PLP |
+| `/product/[slug]` | PDP + related |
+| `/search?q=` | Search |
+| `/cart`, `/checkout` | Cart + COD checkout |
+| `/order/success` | Post-order confirmation |
+| `/track-order` | Order tracking |
+| `/about`, `/contact`, `/policies/*` | Static / lead forms |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## APIs used
 
-## Deploy on Vercel
+See `brain/store-frontend-api-reference.md` for full contract.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Primary:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/store/meta`, `/menu`
+- `GET /api/store/catalog` (+ `includeFacets=true`)
+- `GET /api/store/catalog/facets`
+- `GET /api/store/collections/:slug`
+- `GET /api/store/products/:slug` (+ `/related`)
+- `GET /api/store/search/suggest`
+- `POST /api/store/orders` (COD)
+- `GET /api/store/orders/:orderNumber?phone=`
+- `POST /api/store/newsletter`, `/leads/consultation`
+
+## Design
+
+Warm stone + temple green + soft brass. Tokens in `src/app/globals.css`. Notes in `DESIGN.md`.
+
+## Phase 2 / Phase C checklist
+
+- [x] CMS banners + blogs (UI wired)
+- [x] Customer auth + order history
+- [x] Wishlist
+- [x] Reviews
+- [x] Coupons
+- [x] Razorpay (mock without keys; live with env keys on backend)
+- [ ] Richer track-order timeline UI
+- [ ] Recommendation quiz
+
+## Docs in `/brain`
+
+- `store-architecture.md`
+- `store-backend-apis.md`
+- `store-frontend-api-reference.md`
+- `store-frontend-brief.md`
+- `store-frontend-agent-prompt.md`
