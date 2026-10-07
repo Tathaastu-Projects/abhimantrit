@@ -25,12 +25,12 @@ Open `http://localhost:<PORT>` from your `.env`. Backend must be reachable at `N
 ### Env (required — no ports hardcoded in code)
 
 ```
-PORT=3000
-NEXT_PUBLIC_API_URL=http://localhost:9001
+PORT=<your_store_port>
+NEXT_PUBLIC_API_URL=http://localhost:<your_backend_port>
 ```
 
-Change either value anytime in `.env`, then restart `npm run dev` / `npm start`.
-`npm run dev` / `npm start` read `PORT` from `.env` (Next alone often ignores it and stays on 3000).
+Set real values in `.env` (see `.env.example`). Change anytime, then restart.
+`npm run dev` / `npm start` load `PORT` from `.env` via `scripts/run-with-env.mjs` and pass it to Next — nothing in app code hardcodes a listen port.
 
 ## Routes
 
