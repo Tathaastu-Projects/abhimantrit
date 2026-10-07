@@ -65,26 +65,43 @@ const INTENTION_META: Record<
   },
 };
 
-const FALLBACK_KEYS = [
-  "Peace",
+/** Display order: 1 Relationship, 2 Wealth, 3 Success, 4 Peace, 5 Health, 6 Protection, 7 Spirituality */
+const INTENTION_ORDER = [
+  "Relationship",
   "Wealth",
+  "Success",
+  "Peace",
   "Health",
   "Protection",
-  "Relationship",
-  "Success",
   "Spirituality",
 ] as const;
 
+const FALLBACK_KEYS = INTENTION_ORDER;
+
+function normalizeIntentionKey(value: string) {
+  if (value === "Love" || value === "love") return "Relationship";
+  return value;
+}
+
+function sortIntentions(list: HomeIntention[]) {
+  const rank = new Map(INTENTION_ORDER.map((key, index) => [key, index]));
+  return [...list].sort((a, b) => {
+    const aKey = normalizeIntentionKey(a.id || a.label);
+    const bKey = normalizeIntentionKey(b.id || b.label);
+    return (rank.get(aKey as (typeof INTENTION_ORDER)[number]) ?? 99) -
+      (rank.get(bKey as (typeof INTENTION_ORDER)[number]) ?? 99);
+  });
+}
+
 /** Figma Shop by Intention — tall pastel cards with icon, title, blurb */
 export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
-  const source =
-    intentions?.length
-      ? intentions.slice(0, 7)
-      : FALLBACK_KEYS.map((id) => ({
-          id,
-          label: INTENTION_META[id].label,
-          href: `/intention/${encodeURIComponent(id)}`,
-        }));
+  const source = intentions?.length
+    ? sortIntentions(intentions).slice(0, 7)
+    : FALLBACK_KEYS.map((id) => ({
+        id,
+        label: INTENTION_META[id].label,
+        href: `/intention/${encodeURIComponent(id)}`,
+      }));
 
   return (
     <section id="intentions" className="container-pad py-14 md:py-16">
@@ -115,18 +132,22 @@ export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
             <Link
               key={intention.id || intention.label}
               href={href}
-              className="group flex min-h-[168px] flex-col items-center rounded-2xl px-3 py-5 text-center transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[196px] md:py-6"
+              className="group flex min-h-[168px] flex-col items-center justify-center rounded-2xl px-3 py-5 text-center transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[196px] md:py-6"
               style={{ backgroundColor: bg }}
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/80 text-lg text-forest shadow-sm md:h-14 md:w-14 md:text-xl">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-3xl text-forest shadow-sm md:h-20 md:w-20 md:text-4xl">
                 {intention.icon && intention.icon.length <= 2
                   ? intention.icon
                   : meta.icon}
               </span>
-              <p className="mt-4 text-sm font-semibold text-ink">{meta.label || intention.label}</p>
+              <p className="mt-4 text-sm font-semibold text-ink md:text-base">
+                {meta.label || intention.label}
+              </p>
+              {/* Description under labels temporarily hidden
               <p className="mt-1 text-[11px] leading-snug text-ink-soft md:text-xs">
                 {meta.description}
               </p>
+              */}
             </Link>
           );
         })}

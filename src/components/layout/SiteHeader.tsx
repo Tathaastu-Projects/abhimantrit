@@ -12,14 +12,15 @@ type Props = {
   menu: StoreMenu | null;
 };
 
-/** Main nav — Bracelets and Malas are separate */
+/** Main nav */
 const MAIN_NAV = [
-  { label: "Rudraksha", href: "/shop/rudraksha" },
-  { label: "Gemstones", href: "/shop/gemstone" },
-  { label: "Bracelets", href: "/shop/bracelet" },
-  { label: "Malas", href: "/shop?q=mala" },
-  { label: "Shop by Intention", href: "/#intentions" },
+  { label: "Bracelet", href: "/shop/bracelet" },
+  { label: "Rudraksha/Mala", href: "/shop/rudraksha" },
+  { label: "Crystal Tree", href: "/shop?q=crystal+tree" },
+  { label: "Pyramids", href: "/shop?q=pyramid" },
+  { label: "Anklets", href: "/shop?q=anklet" },
   { label: "Sale", href: "/shop?onSale=true" },
+  { label: "Gifts (Photoframe)", href: "/shop?q=gift" },
 ];
 
 export function SiteHeader({ menu: _menu }: Props) {
@@ -56,7 +57,7 @@ export function SiteHeader({ menu: _menu }: Props) {
         </div>
 
         {/* Center: larger nav links */}
-        <nav className="hidden items-center justify-center gap-1 lg:flex">
+        <nav className="hidden flex-wrap items-center justify-center gap-1 lg:flex">
           {MAIN_NAV.map((item) => (
             <Link
               key={item.href + item.label}
@@ -101,6 +102,20 @@ export function SiteHeader({ menu: _menu }: Props) {
             ) : null}
           </Link>
         </div>
+      </div>
+
+      <div className="bg-[var(--forest)] px-3 py-2 text-center sm:py-2.5">
+        <p className="text-[11px] font-medium tracking-[0.08em] text-white/90 sm:text-xs md:text-[13px]">
+          By Priyanka Singh{" "}
+          <span className="mx-2 text-[var(--pink)]/70" aria-hidden>
+            ·
+          </span>{" "}
+          X-Ray &amp; Lab Certified{" "}
+          <span className="mx-2 text-[var(--pink)]/70" aria-hidden>
+            ·
+          </span>{" "}
+          Free Insured Worldwide Shipping
+        </p>
       </div>
 
       {showSearch ? (

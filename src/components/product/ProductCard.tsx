@@ -6,19 +6,35 @@ import type { StoreProduct } from "@/types/product";
 import { primaryImage } from "@/lib/format";
 import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
+import { cn } from "@/lib/cn";
 
 function StarRow({ avg, count }: { avg?: number; count?: number }) {
   const rating = Math.max(0, Math.min(5, Number(avg || 0)));
   const filled = count && count > 0 ? Math.round(rating) : 5;
+  const empty = 5 - filled;
+  const showScore = count && count > 0;
+
   return (
-    <p className="stars" aria-label={count ? `${rating} out of 5` : "Product rating"}>
-      {"★".repeat(filled)}
-      {"☆".repeat(5 - filled)}
+    <p className="stars" aria-label={showScore ? `${rating} out of 5` : "Product rating"}>
+      <span>{"★".repeat(filled)}</span>
+      {empty > 0 ? <span className="stars__empty">{"★".repeat(empty)}</span> : null}
+      {showScore ? (
+        <span className="stars__score">
+          {rating.toFixed(1)}
+          {count ? ` · ${count}` : ""}
+        </span>
+      ) : null}
     </p>
   );
 }
 
-export function ProductCard({ product }: { product: StoreProduct }) {
+export function ProductCard({
+  product,
+  tone = "default",
+}: {
+  product: StoreProduct;
+  tone?: "default" | "premium";
+}) {
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
   const img = primaryImage(product.images);
@@ -46,8 +62,26 @@ export function ProductCard({ product }: { product: StoreProduct }) {
     setTimeout(() => setAdded(false), 1200);
   }
 
+  const cta = needsVariant ? (
+    <Link href={`/product/${product.slug}`} className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}>
+      View details
+    </Link>
+  ) : stock <= 0 ? (
+    <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
+      Out of stock
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={quickAdd}
+      className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}
+    >
+      {added ? "Added" : "Add to cart"}
+    </button>
+  );
+
   return (
-    <article className="product-card">
+    <article className={cn("product-card", tone === "premium" && "product-card--premium")}>
       <Link href={`/product/${product.slug}`} className="product-card__media">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -57,7 +91,9 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           onError={() => setImgSrc("/placeholder-product.svg")}
         />
         <div className="product-card__badges">
-          {product.isBestSeller ? <span className="product-card__badge product-card__badge--dark">Best seller</span> : null}
+          {product.isBestSeller ? (
+            <span className="product-card__badge product-card__badge--dark">Best seller</span>
+          ) : null}
           {!product.isBestSeller && product.isFeatured ? (
             <span className="product-card__badge product-card__badge--dark">Featured</span>
           ) : null}
@@ -78,21 +114,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           <StarRow avg={product.ratingAvg} count={product.ratingCount} />
           <PriceBlock mrp={mrp} salePrice={sale} discount={discount} size="sm" />
         </div>
-        <div className="product-card__cta">
-          {needsVariant ? (
-            <Link href={`/product/${product.slug}`} className="btn btn-primary w-full">
-              Add to cart
-            </Link>
-          ) : stock <= 0 ? (
-            <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
-              Out of stock
-            </button>
-          ) : (
-            <button type="button" onClick={quickAdd} className="btn btn-primary w-full">
-              {added ? "Added" : "Add to cart"}
-            </button>
-          )}
-        </div>
+        <div className="product-card__cta">{cta}</div>
       </div>
     </article>
   );
