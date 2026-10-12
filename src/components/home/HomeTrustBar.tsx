@@ -1,43 +1,45 @@
 const TRUST_ITEMS = [
   {
     id: "auth",
-    label: "Authentic & Pure",
-    description: "Sourced with care.",
+    label: "Authentic & Certified",
+    description: "Every Gem is X-Ray & Lab-Certified",
     icon: "shield",
   },
   {
-    id: "pay",
-    label: "Secure Payments",
-    description: "100% safe checkout.",
-    icon: "lock",
+    id: "vedic",
+    label: "Vedic Prana Pratishtha",
+    description: "Performed Through Traditional Vedic Rituals",
+    icon: "flame",
   },
   {
     id: "ship",
-    label: "Fast & Reliable Delivery",
-    description: "Pan India shipping.",
+    label: "Ships in 48 Hours",
+    description: "Energized And Prepared With Care Before Dispatch",
     icon: "truck",
   },
   {
-    id: "trust",
-    label: "Trusted by Thousands",
-    description: "4.9+ average rating.",
-    icon: "star",
+    id: "astro",
+    label: "Astrology-Guided",
+    description: "Personal Gemstone & Rudraksha Guidance",
+    icon: "mandala",
   },
-];
+] as const;
 
-/** Figma trust bar — soft pink wash, icon + title + description */
+/** Figma value strip — pink icon tiles + uppercase labels */
 export function HomeTrustBar() {
   return (
-    <section className="bg-[#fff1f3]">
-      <div className="grid w-full grid-cols-2 gap-6 px-4 py-7 sm:px-6 md:grid-cols-4 md:gap-8 md:px-8 md:py-8 lg:px-10">
+    <section className="bg-[#fff8f9]">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-6 py-8 sm:grid-cols-2 md:grid-cols-4 md:gap-8 md:px-10 md:py-9 lg:px-14">
         {TRUST_ITEMS.map((item) => (
-          <div key={item.id} className="flex items-start gap-3">
-            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pink/15 text-pink">
+          <div key={item.id} className="flex items-start gap-3.5">
+            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[var(--pink)] text-white shadow-sm">
               <TrustIcon name={item.icon} />
             </span>
-            <div>
-              <p className="text-sm font-semibold text-ink">{item.label}</p>
-              <p className="mt-0.5 text-xs text-ink-soft">{item.description}</p>
+            <div className="min-w-0 pt-0.5">
+              <p className="text-[12px] font-bold uppercase tracking-[0.04em] text-ink">
+                {item.label}
+              </p>
+              <p className="mt-1 text-[12px] leading-snug text-ink-soft">{item.description}</p>
             </div>
           </div>
         ))}
@@ -46,7 +48,7 @@ export function HomeTrustBar() {
   );
 }
 
-function TrustIcon({ name }: { name: string }) {
+function TrustIcon({ name }: { name: (typeof TRUST_ITEMS)[number]["icon"] }) {
   const common = {
     width: 18,
     height: 18,
@@ -54,35 +56,40 @@ function TrustIcon({ name }: { name: string }) {
     fill: "none",
     stroke: "currentColor",
     strokeWidth: 1.8,
-  } as const;
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
 
-  if (name === "lock") {
+  if (name === "shield") {
     return (
       <svg {...common}>
-        <rect x="5" y="11" width="14" height="10" rx="2" />
-        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+        <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" />
+        <path d="M9.2 12.1l1.9 1.9 3.8-3.9" />
+      </svg>
+    );
+  }
+  if (name === "flame") {
+    return (
+      <svg {...common}>
+        <path d="M12 21c3.3 0 5.5-2.2 5.5-5.3 0-2.8-1.7-4.4-3.2-5.9-.4-.4-.8.1-.6.6.6 1.4.3 2.3-.6 2.3-1.8 0-2.6-2.4-1.5-4.8.2-.4-.3-.8-.6-.5C8.5 9.2 6.5 12 6.5 15.7 6.5 18.8 8.7 21 12 21z" />
       </svg>
     );
   }
   if (name === "truck") {
     return (
       <svg {...common}>
-        <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7V10z" />
-        <circle cx="7" cy="18" r="1.5" />
-        <circle cx="17" cy="18" r="1.5" />
-      </svg>
-    );
-  }
-  if (name === "star") {
-    return (
-      <svg {...common}>
-        <path d="M12 3l2.4 4.9L20 9l-4 3.9.9 5.4L12 15.8 7.1 18.3 8 12.9 4 9l5.6-1.1L12 3z" />
+        <path d="M3 7h11v10H3z" />
+        <path d="M14 10h4l3 3v4h-7V10z" />
+        <circle cx="7" cy="18" r="1.4" />
+        <circle cx="17" cy="18" r="1.4" />
       </svg>
     );
   }
   return (
     <svg {...common}>
-      <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" />
+      <circle cx="12" cy="12" r="2.2" />
+      <path d="M12 4.5l1.1 2.8 3 .3-2.3 1.9.8 2.9L12 10.9 9.4 12.4l.8-2.9-2.3-1.9 3-.3L12 4.5z" />
+      <path d="M12 4v1.2M12 18.8V20M4 12h1.2M18.8 12H20" />
     </svg>
   );
 }

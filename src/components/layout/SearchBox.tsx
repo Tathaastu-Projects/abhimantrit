@@ -7,7 +7,17 @@ import { searchSuggest } from "@/lib/api";
 import { primaryImage, formatINR } from "@/lib/format";
 import type { StoreProduct } from "@/types/product";
 
-export function SearchBox() {
+type Props = {
+  placeholder?: string;
+  className?: string;
+  inputClassName?: string;
+};
+
+export function SearchBox({
+  placeholder = "Search products…",
+  className,
+  inputClassName,
+}: Props) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<StoreProduct[]>([]);
@@ -36,7 +46,7 @@ export function SearchBox() {
   }, [q]);
 
   return (
-    <div ref={boxRef} className="relative w-full max-w-md">
+    <div ref={boxRef} className={className ? `relative w-full ${className}` : "relative w-full max-w-md"}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -44,13 +54,23 @@ export function SearchBox() {
           setOpen(false);
           router.push(`/search?q=${encodeURIComponent(q.trim())}`);
         }}
+        className="relative"
       >
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.2-3.2" strokeLinecap="round" />
+          </svg>
+        </span>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => hits.length && setOpen(true)}
-          placeholder="Search products…"
-          className="w-full rounded-lg border border-[var(--border)] bg-mist px-3 py-2 text-sm outline-none ring-pink/25 focus:ring-2"
+          placeholder={placeholder}
+          className={
+            inputClassName ||
+            "w-full rounded-lg border border-[var(--border)] bg-mist py-2 pl-9 pr-3 text-sm outline-none ring-pink/25 focus:ring-2"
+          }
           aria-label="Search products"
         />
       </form>

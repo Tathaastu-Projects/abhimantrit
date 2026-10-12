@@ -1,30 +1,10 @@
 import type { StoreBanner, StoreBlogPost } from "@/types/product";
 import Link from "next/link";
+import { HomeHero } from "@/components/home/HomeHero";
 
-/** Home hero — full-width front banner (SVG needs explicit aspect or it collapses) */
+/** Home hero — Figma banner with overlay copy (CMS banners unused for now) */
 export function HomeBanners({ banners: _banners }: { banners?: StoreBanner[] }) {
-  return (
-    <section className="w-full overflow-hidden bg-forest">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/home_banner.svg"
-        alt="Tathaastu — Is your home blocking positive energy?"
-        width={1848}
-        height={669}
-        className="block w-full"
-        style={{ aspectRatio: "1848 / 669", height: "auto" }}
-      />
-
-      {/* Overlay copy/CTAs temporarily hidden — banner asset already includes text & buttons
-      <div className="relative container-pad flex items-center py-14 md:py-16 lg:py-20">
-        <div className="fade-up max-w-xl text-white">
-          <h1>...</h1>
-          <Link href="/contact" className="btn btn-primary">Talk to Vastu expert</Link>
-        </div>
-      </div>
-      */}
-    </section>
-  );
+  return <HomeHero />;
 }
 
 export function BlogTeasers({ posts }: { posts: StoreBlogPost[] }) {

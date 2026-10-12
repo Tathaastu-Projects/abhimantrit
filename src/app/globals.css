@@ -26,7 +26,79 @@
   --foreground: var(--ink);
   --radius: 0.75rem;
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-hero: "Playfair Display", "Fraunces", Georgia, "Times New Roman", serif;
   --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Figma home hero — wide 2-line headline over banner */
+.home-hero__copy {
+  width: min(56vw, 46rem);
+  max-width: calc(100% - 1.5rem);
+}
+
+.home-hero__title {
+  font-family: var(--font-hero), Georgia, serif;
+  color: var(--forest);
+  font-size: clamp(1.45rem, 2.55vw + 0.55rem, 3.35rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.home-hero__title-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.home-hero__title-line--strong {
+  font-weight: 700;
+}
+
+.home-hero__sub {
+  margin-top: 1rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: clamp(0.8125rem, 0.35vw + 0.7rem, 1rem);
+  line-height: 1.5;
+  color: #5f564c;
+  font-weight: 400;
+}
+
+.home-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.75rem;
+  padding: 0.85rem 2.1rem;
+  border-radius: 999px;
+  background: var(--pink);
+  color: #fff;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  box-shadow: 0 10px 24px rgba(231, 70, 96, 0.28);
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.home-hero__cta:hover {
+  background: var(--pink-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(231, 70, 96, 0.34);
+}
+
+@media (max-width: 767px) {
+  .home-hero__copy {
+    width: min(92vw, 28rem);
+  }
+
+  .home-hero__title-line {
+    white-space: normal;
+  }
+
+  .home-hero__title {
+    font-size: clamp(1.65rem, 7vw, 2.15rem);
+  }
 }
 
 @theme inline {
