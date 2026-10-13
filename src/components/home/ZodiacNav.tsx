@@ -28,6 +28,9 @@ export function ZodiacNav() {
     const el = scrollerRef.current;
     if (!el) return;
 
+    // Always start at the left (Aries) — no centered empty gap
+    el.scrollLeft = 0;
+
     function sync() {
       const node = scrollerRef.current;
       if (!node) return;
@@ -58,9 +61,10 @@ export function ZodiacNav() {
         </p>
       </div>
 
+      {/* Left = container-pad; right = flush to edge (cards peek off-screen) */}
       <div
         ref={scrollerRef}
-        className="mt-9 flex gap-3 overflow-x-auto px-[max(1.25rem,calc((100%-72rem)/2+1.25rem))] pb-3 scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] md:gap-4 [&::-webkit-scrollbar]:hidden"
+        className="mt-9 flex gap-3 overflow-x-auto scroll-smooth pb-3 pl-5 pr-0 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-4 md:pl-7 xl:pl-8 [&::-webkit-scrollbar]:hidden"
       >
         {ZODIAC_SIGNS.map((sign, i) => (
           <Link

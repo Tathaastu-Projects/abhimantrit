@@ -23,52 +23,48 @@ const FEATURES = [
   },
 ] as const;
 
-/** About Abhimantrit — after Shop by Category; lotus banner from /public/about */
+/** About Abhimantrit — full banner background + text overlay */
 export function AboutAbhimantrit() {
   return (
     <section id="about" className="relative w-full overflow-hidden bg-[#f7f3ec]">
-      <div className="container-pad relative py-16 md:py-20 lg:py-24">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16 xl:gap-20">
-          {/* Left copy */}
-          <div className="relative z-[1] max-w-xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-              About
-            </p>
-            <h2 className="mt-3 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.6rem]">
-              ABHIMANTRIT
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-soft md:text-[0.95rem] md:leading-[1.75]">
-              Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials,
-              thoughtfully chosen for their astrological and spiritual significance. Each piece is
-              carefully checked for authenticity and quality, then energised through traditional
-              Vedic rituals with care and intention.
-            </p>
-            <h3 className="mt-10 font-display text-xl font-semibold text-forest md:mt-12 md:text-2xl">
-              What Sets Us Apart?
-            </h3>
-          </div>
+      {/* Full-bleed background image */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <Image
+          src="/about/lotus-banner.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-right md:object-center"
+        />
+      </div>
 
-          {/* Right — lotus + brand banner */}
-          <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
-            <div className="relative aspect-[1024/388] w-full overflow-hidden">
-              <Image
-                src="/about/lotus-banner.webp"
-                alt="Abhimantrit — serene lotus branding"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain object-right"
-              />
-            </div>
-          </div>
+      {/* Content on top of image */}
+      <div className="container-pad relative z-[1] py-14 md:py-16 lg:py-20">
+        <div className="max-w-xl lg:max-w-[34rem]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
+            About
+          </p>
+          <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
+            ABHIMANTRIT
+          </h2>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
+            Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials,
+            thoughtfully chosen for their astrological and spiritual significance. Each piece is
+            carefully checked for authenticity and quality, then energised through traditional
+            Vedic rituals with care and intention.
+          </p>
+          <h3 className="mt-9 font-display text-xl font-semibold text-forest md:mt-10 md:text-[1.35rem]">
+            What Sets Us Apart?
+          </h3>
         </div>
 
-        {/* Feature row — generous gaps like Figma */}
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 md:mt-14 lg:mt-16 lg:grid-cols-4 lg:gap-10 xl:gap-12">
+        {/* Feature row */}
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 md:mt-12 lg:mt-14 lg:grid-cols-4 lg:gap-8 xl:gap-10">
           {FEATURES.map((item) => (
             <div key={item.title} className="flex gap-3.5">
               <span
-                className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e74660] text-white"
+                className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e74660] text-white md:h-11 md:w-11"
                 aria-hidden
               >
                 <FeatureIcon name={item.icon} />
@@ -77,7 +73,7 @@ export function AboutAbhimantrit() {
                 <p className="font-display text-[0.95rem] font-semibold text-forest md:text-base">
                   {item.title}
                 </p>
-                <p className="mt-1.5 text-xs leading-relaxed text-ink-soft md:text-[13px] md:leading-relaxed">
+                <p className="mt-1.5 text-xs leading-relaxed text-[#6b6660] md:text-[13px] md:leading-relaxed">
                   {item.description}
                 </p>
               </div>

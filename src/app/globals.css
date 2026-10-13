@@ -552,3 +552,22 @@ a {
     "frame stones trees"
     "frame stones anklets";
 }
+
+/* Loved by customers — opposite marquees */
+@keyframes reviews-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes reviews-marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
