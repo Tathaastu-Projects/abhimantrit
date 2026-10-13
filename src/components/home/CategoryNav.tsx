@@ -3,15 +3,13 @@ import type { HomeCategoryCard } from "@/types/product";
 import { FALLBACK_CATEGORIES } from "@/lib/api";
 import { titleCase } from "@/lib/format";
 
-const FALLBACK: HomeCategoryCard[] = FALLBACK_CATEGORIES.filter((c) => c !== "other").map(
-  (id) => ({
-    id,
-    label: titleCase(id),
-    href: `/shop/${id}`,
-    productCount: 0,
-    image: id === "yantra" || id === "combo" ? "/pooja_essential_banner.svg" : "/home_banner.svg",
-  }),
-);
+const FALLBACK: HomeCategoryCard[] = FALLBACK_CATEGORIES.map((id) => ({
+  id,
+  label: titleCase(id),
+  href: `/shop/${id}`,
+  productCount: 0,
+  image: id === "yantra" || id === "combo" ? "/pooja_essential_banner.svg" : "/home_banner.svg",
+}));
 
 export function CategoryNav({ categories }: { categories?: HomeCategoryCard[] }) {
   const list = categories?.length ? categories : FALLBACK;
