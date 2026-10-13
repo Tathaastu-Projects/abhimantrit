@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { subscribeNewsletter } from "@/lib/api";
 import { BUSINESS, supportEmail, supportPhone } from "@/lib/business";
 
@@ -13,8 +13,12 @@ export function SiteFooter({ support }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
   const [message, setMessage] = useState("");
+  /** Avoid LastPass/1Password injecting nodes before hydrate (mismatched DOM). */
+  const [formReady, setFormReady] = useState(false);
   const contactEmail = supportEmail(support?.email);
   const contactPhone = supportPhone(support?.phone);
+
+  useEffect(() => setFormReady(true), []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -38,19 +42,37 @@ export function SiteFooter({ support }: Props) {
             Sacred objects chosen with care — Rudraksha, gemstones, crystals and yantras for a
             calmer, clearer path. By {BUSINESS.founder}.
           </p>
-          <form onSubmit={onSubmit} className="mt-6 flex max-w-sm gap-2">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email for blessings & drops"
-              className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm outline-none placeholder:text-white/45 focus:border-brass-soft"
-            />
-            <button type="submit" className="btn btn-primary shrink-0">
-              Join
-            </button>
-          </form>
+          {formReady ? (
+            <form
+              onSubmit={onSubmit}
+              className="mt-6 flex max-w-sm gap-2"
+              autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              data-bwignore="true"
+              data-form-type="other"
+            >
+              <input
+                type="email"
+                name="newsletter-email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email for blessings & drops"
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-bwignore="true"
+                data-form-type="other"
+                className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm outline-none placeholder:text-white/45 focus:border-brass-soft"
+              />
+              <button type="submit" className="btn btn-primary shrink-0">
+                Join
+              </button>
+            </form>
+          ) : (
+            <div className="mt-6 h-11 max-w-sm" aria-hidden />
+          )}
           {status !== "idle" ? (
             <p className={`mt-2 text-xs ${status === "ok" ? "text-brass-soft" : "text-red-300"}`}>
               {message}

@@ -90,7 +90,7 @@ function Tile({
         alt={tile.label}
         fill
         priority={priority}
-        sizes="(max-width: 768px) 100vw, 40vw"
+        sizes="(max-width: 768px) 92vw, 33vw"
         className="object-cover transition duration-500 group-hover:scale-[1.03]"
       />
       <span
@@ -103,6 +103,8 @@ function Tile({
     </Link>
   );
 }
+
+const FULL_WIDTH_MOBILE = new Set(["bracelets", "frame", "rudraksha", "tumbles"]);
 
 export function ShopByCategory() {
   return (
@@ -125,14 +127,14 @@ export function ShopByCategory() {
 
       {/* Mobile — simple stacked tiles */}
       <div className="mt-8 grid grid-cols-2 gap-2.5 md:hidden">
-        {TILES.map((tile, i) => (
+        {TILES.map((tile, i) => {
+          const full = FULL_WIDTH_MOBILE.has(tile.id);
+          return (
           <Link
             key={tile.id}
             href={tile.href}
             className={`group relative overflow-hidden bg-[#f3f0ea] ${
-              tile.id === "bracelets" || tile.id === "frame" || tile.id === "rudraksha" || tile.id === "tumbles"
-                ? "col-span-2 min-h-[170px]"
-                : "min-h-[150px]"
+              full ? "col-span-2 min-h-[170px]" : "min-h-[150px]"
             }`}
           >
             <Image
@@ -140,7 +142,7 @@ export function ShopByCategory() {
               alt={tile.label}
               fill
               priority={i < 2}
-              sizes="100vw"
+              sizes={full ? "92vw" : "46vw"}
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
             <span
@@ -151,7 +153,8 @@ export function ShopByCategory() {
               {tile.label}
             </span>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
