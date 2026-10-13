@@ -75,7 +75,7 @@ Warm stone + temple green + soft brass. Tokens in `src/app/globals.css`. Notes i
 - [x] Reviews
 - [x] Coupons
 - [x] Razorpay (mock without keys; live with env keys on backend)
-- [ ] Richer track-order timeline UI
+- [x] Richer track-order timeline UI
 - [ ] Recommendation quiz
 
 ## Docs in `/brain`

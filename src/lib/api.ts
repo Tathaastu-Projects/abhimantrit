@@ -360,6 +360,16 @@ export async function verifyRazorpayPayment(payload: {
   });
 }
 
+export async function cancelUnpaidOrder(storeOrderId: string) {
+  return apiFetch<ApiResult<{ orderNumber: string; status: string }>>(
+    "/api/store/payments/cancel-unpaid",
+    {
+      method: "POST",
+      body: JSON.stringify({ storeOrderId }),
+    },
+  );
+}
+
 export type StoreOrderResult = {
   id: string;
   orderNumber: string;

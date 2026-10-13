@@ -1,6 +1,10 @@
 import { getHomeContent } from "@/lib/api";
 import { HomeBanners } from "@/components/home/CmsBlocks";
 import { SacredEssentials } from "@/components/home/SacredEssentials";
+import { ShopByCategory } from "@/components/home/ShopByCategory";
+import { AboutAbhimantrit } from "@/components/home/AboutAbhimantrit";
+import { ExpertGuidance } from "@/components/home/ExpertGuidance";
+import { CertifiedAuthentic } from "@/components/home/CertifiedAuthentic";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
 import { FounderSection } from "@/components/home/FounderSection";
 import { IntentionNav } from "@/components/home/IntentionNav";
@@ -11,8 +15,8 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 
 /**
  * Home order (Figma top):
- * Hero → Trust features → Founder → Intention → Zodiac →
- * Sacred Essentials → Bestsellers → Consult → FAQ
+ * Hero → Trust → Founder → Intention → Zodiac → Shop by Category →
+ * About → Expert Guidance → Certified & Authentic → Sacred Essentials → Bestsellers → Consult → FAQ
  */
 export default async function HomePage() {
   const home = await getHomeContent();
@@ -30,6 +34,10 @@ export default async function HomePage() {
       <FounderSection />
       <IntentionNav intentions={home.intentions} />
       <ZodiacNav />
+      <ShopByCategory />
+      <AboutAbhimantrit />
+      <ExpertGuidance />
+      <CertifiedAuthentic />
       <SacredEssentials categories={home.categories} />
       <HomeProductSection products={products} limit={8} />
       <ConsultationCta

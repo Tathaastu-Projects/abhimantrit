@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { StoreMenu } from "@/types/product";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
@@ -12,16 +13,77 @@ type Props = {
   menu: StoreMenu | null;
 };
 
+type NavItem = {
+  id: string;
+  label: string;
+  href: string;
+  icon?: "home";
+};
+
 /** Figma main nav */
-const MAIN_NAV = [
-  { label: "Rudraksha", href: "/shop/rudraksha" },
-  { label: "Gemstones", href: "/shop/gemstone" },
-  { label: "Bracelets & Malas", href: "/shop/bracelet" },
-  { label: "Shop by Intention", href: "/#intentions" },
-  { label: "Sale", href: "/shop?onSale=true" },
+const MAIN_NAV: NavItem[] = [
+  { id: "home", label: "Home", href: "/", icon: "home" },
+  { id: "rudraksha", label: "Rudraksha", href: "/shop/rudraksha" },
+  { id: "gemstone", label: "Gemstones", href: "/shop/gemstone" },
+  { id: "bracelet", label: "Bracelets & Malas", href: "/shop/bracelet" },
+  { id: "intention", label: "Shop by Intention", href: "/#intentions" },
+  { id: "sale", label: "Sale", href: "/shop?onSale=true" },
 ];
 
-export function SiteHeader({ menu: _menu }: Props) {
+function useActiveNavId() {
+  const pathname = usePathname() || "/";
+  const searchParams = useSearchParams();
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setHash(typeof window !== "undefined" ? window.location.hash : "");
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
+
+  const onSale = searchParams.get("onSale") === "true" || searchParams.get("sale") === "true";
+
+  if (pathname.startsWith("/shop/rudraksha")) return "rudraksha";
+  if (pathname.startsWith("/shop/gemstone")) return "gemstone";
+  if (pathname.startsWith("/shop/bracelet")) return "bracelet";
+  if (pathname.startsWith("/intention")) return "intention";
+  if (pathname === "/shop" && onSale) return "sale";
+  if (pathname === "/" && (hash === "#intentions" || hash.startsWith("#intentions"))) {
+    return "intention";
+  }
+  if (pathname === "/") return "home";
+  return null;
+}
+
+function navLinkClass(active: boolean, isSale: boolean) {
+  return cn(
+    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-2 text-[13px] font-medium tracking-wide transition xl:px-3 xl:text-sm",
+    active
+      ? "bg-[#F3B754] text-ink shadow-sm shadow-[#F3B754]/40"
+      : isSale
+        ? "font-semibold text-pink hover:bg-pink-soft hover:text-pink-deep"
+        : "text-ink hover:bg-mist hover:text-forest",
+  );
+}
+
+export function SiteHeader({ menu }: Props) {
+  return (
+    <Suspense fallback={<SiteHeaderShell menu={menu} activeId={null} />}>
+      <SiteHeaderInner menu={menu} />
+    </Suspense>
+  );
+}
+
+function SiteHeaderInner({ menu }: Props) {
+  const activeId = useActiveNavId();
+  return <SiteHeaderShell menu={menu} activeId={activeId} />;
+}
+
+function SiteHeaderShell({
+  menu: _menu,
+  activeId,
+}: Props & { activeId: string | null }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const count = useCartStore((s) => s.items.reduce((n, i) => n + i.qty, 0));
@@ -87,19 +149,22 @@ export function SiteHeader({ menu: _menu }: Props) {
             </Link>
           </div>
 
-          <nav className="hidden items-center justify-center gap-0.5 lg:flex xl:gap-1">
-            {MAIN_NAV.map((item) => (
-              <Link
-                key={item.href + item.label}
-                href={item.href}
-                className={cn(
-                  "rounded-md px-2.5 py-2 text-[13px] font-medium tracking-wide text-ink transition hover:text-pink xl:px-3 xl:text-sm",
-                  item.label === "Sale" && "font-semibold text-pink hover:text-pink-deep",
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav className="hidden items-center justify-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
+            {MAIN_NAV.map((item) => {
+              const active = activeId === item.id;
+              const isSale = item.id === "sale";
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={navLinkClass(active, isSale)}
+                >
+                  {item.icon === "home" ? <HomeIcon /> : null}
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center justify-end gap-2 sm:gap-2.5">
@@ -135,19 +200,29 @@ export function SiteHeader({ menu: _menu }: Props) {
         <div className="border-b border-[var(--border)] bg-white px-4 py-4 lg:hidden">
           <SearchBox placeholder="Search for products, rituals, or remedies..." />
           <div className="mt-4 grid gap-1">
-            {MAIN_NAV.map((item) => (
-              <Link
-                key={item.href + item.label}
-                href={item.href}
-                className={cn(
-                  "rounded-xl px-3 py-3 text-base font-semibold text-ink hover:bg-mist",
-                  item.label === "Sale" && "text-pink",
-                )}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {MAIN_NAV.map((item) => {
+              const active = activeId === item.id;
+              const isSale = item.id === "sale";
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-xl px-3 py-3 text-base font-semibold",
+                    active
+                      ? "bg-[#F3B754] text-ink"
+                      : isSale
+                        ? "text-pink hover:bg-pink-soft"
+                        : "text-ink hover:bg-mist",
+                  )}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.icon === "home" ? <HomeIcon /> : null}
+                  {item.label}
+                </Link>
+              );
+            })}
             <Link
               href="/account"
               className="rounded-xl px-3 py-3 text-base font-medium"
@@ -166,6 +241,14 @@ export function SiteHeader({ menu: _menu }: Props) {
         </div>
       ) : null}
     </header>
+  );
+}
+
+function HomeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z" strokeLinejoin="round" />
+    </svg>
   );
 }
 

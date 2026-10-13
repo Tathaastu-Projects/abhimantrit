@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
 import {
+  cancelUnpaidOrder,
   createRazorpayOrder,
   createStoreOrder,
   validateCoupon,
@@ -141,6 +142,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
     const fd = new FormData(e.currentTarget);
+    let createdOrderId: string | null = null;
     try {
       const res = await createStoreOrder({
         customer: {
@@ -167,6 +169,7 @@ export default function CheckoutPage() {
       });
 
       const order = res.data;
+      createdOrderId = order.id;
       if (paymentMethod === "online") {
         await finishOnlinePayment(order.id, order.pricing?.total || total, order.orderNumber);
       }
@@ -174,6 +177,13 @@ export default function CheckoutPage() {
       clear();
       router.push(`/order/success?orderNumber=${encodeURIComponent(order.orderNumber || "")}`);
     } catch (err) {
+      if (paymentMethod === "online" && createdOrderId) {
+        try {
+          await cancelUnpaidOrder(createdOrderId);
+        } catch {
+          /* best-effort stock restore */
+        }
+      }
       setError(err instanceof Error ? err.message : "Checkout failed");
     } finally {
       setLoading(false);

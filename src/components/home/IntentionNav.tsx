@@ -1,78 +1,87 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { HomeIntention } from "@/types/product";
 
-const PASTELS = [
-  "#FFF8E7",
-  "#EAF8F0",
-  "#E8F3FC",
-  "#F3E9FF",
-  "#FFE8F0",
-  "#FFF0E4",
-  "#EEE9FE",
-];
-
+/**
+ * Static intention art: /public/intentions (frontend only).
+ * Figma card size: 237.43 × 277
+ */
 const INTENTION_META: Record<
   string,
-  { label: string; description: string; icon: string; color: string }
+  {
+    label: string;
+    description: string;
+    image: string;
+    gradient: string;
+    titleColor: string;
+  }
 > = {
   Peace: {
     label: "Peace",
-    description: "Calm mind and home.",
-    icon: "ॐ",
-    color: PASTELS[0],
+    description: "Calm mind & balance",
+    image: "/intentions/peace-cut.webp",
+    gradient: "linear-gradient(180deg, #f4eefc 0%, #dcc8f4 55%, #c9aee8 100%)",
+    titleColor: "#5b3d8a",
   },
   Wealth: {
     label: "Wealth",
-    description: "Invite abundance.",
-    icon: "₹",
-    color: PASTELS[1],
+    description: "Abundance & growth",
+    image: "/intentions/wealth-cut.webp",
+    gradient: "linear-gradient(180deg, #f8f1e4 0%, #e8d4b0 55%, #d9bc8a 100%)",
+    titleColor: "#7a5a2e",
   },
   Health: {
     label: "Health",
-    description: "Vitality and balance.",
-    icon: "+",
-    color: PASTELS[2],
+    description: "Vitality & healing",
+    image: "/intentions/health-cut.webp",
+    gradient: "linear-gradient(180deg, #eef8f0 0%, #cfe8d4 55%, #aed9ba 100%)",
+    titleColor: "#2f6b45",
   },
   Protection: {
     label: "Protection",
-    description: "Shield from negativity.",
-    icon: "⛨",
-    color: PASTELS[3],
+    description: "Shield & strength",
+    image: "/intentions/protection-cut.webp",
+    gradient: "linear-gradient(180deg, #eef5fb 0%, #c9dff3 55%, #a8c9e8 100%)",
+    titleColor: "#2f5f8a",
   },
   Relationship: {
     label: "Relationship",
-    description: "Harmony in bonds.",
-    icon: "♡",
-    color: PASTELS[4],
+    description: "Harmony & love",
+    image: "/intentions/relationship-cut.webp",
+    gradient: "linear-gradient(180deg, #fdecef 0%, #f5c9d2 55%, #e8a8b6 100%)",
+    titleColor: "#8a3d52",
   },
   Love: {
     label: "Relationship",
-    description: "Harmony in bonds.",
-    icon: "♡",
-    color: PASTELS[4],
+    description: "Harmony & love",
+    image: "/intentions/relationship-cut.webp",
+    gradient: "linear-gradient(180deg, #fdecef 0%, #f5c9d2 55%, #e8a8b6 100%)",
+    titleColor: "#8a3d52",
   },
   Success: {
     label: "Success",
-    description: "Clarity and growth.",
-    icon: "★",
-    color: PASTELS[5],
+    description: "Clarity & progress",
+    image: "/intentions/success-cut.webp",
+    gradient: "linear-gradient(180deg, #fff7e6 0%, #f5dfb0 55%, #ebc878 100%)",
+    titleColor: "#8a6a1e",
   },
   Spirituality: {
     label: "Spirituality",
-    description: "Deeper connection.",
-    icon: "☽",
-    color: PASTELS[6],
+    description: "Devotion & depth",
+    image: "/intentions/spirituality-cut.webp",
+    gradient: "linear-gradient(180deg, #f5f0e8 0%, #e2d5c2 55%, #cfc0a8 100%)",
+    titleColor: "#6b5740",
   },
 };
 
-/** Display order: 1 Relationship, 2 Wealth, 3 Success, 4 Peace, 5 Health, 6 Protection, 7 Spirituality */
+/** Figma left → right */
 const INTENTION_ORDER = [
-  "Relationship",
-  "Wealth",
-  "Success",
   "Peace",
+  "Wealth",
   "Health",
   "Protection",
+  "Relationship",
+  "Success",
   "Spirituality",
 ] as const;
 
@@ -88,12 +97,14 @@ function sortIntentions(list: HomeIntention[]) {
   return [...list].sort((a, b) => {
     const aKey = normalizeIntentionKey(a.id || a.label);
     const bKey = normalizeIntentionKey(b.id || b.label);
-    return (rank.get(aKey as (typeof INTENTION_ORDER)[number]) ?? 99) -
-      (rank.get(bKey as (typeof INTENTION_ORDER)[number]) ?? 99);
+    return (
+      (rank.get(aKey as (typeof INTENTION_ORDER)[number]) ?? 99) -
+      (rank.get(bKey as (typeof INTENTION_ORDER)[number]) ?? 99)
+    );
   });
 }
 
-/** Figma Shop by Intention — tall pastel cards with icon, title, blurb */
+/** Shop by Intention — Figma: 237×277 cards, white arrow CTA */
 export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
   const source = intentions?.length
     ? sortIntentions(intentions).slice(0, 7)
@@ -104,22 +115,24 @@ export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
       }));
 
   return (
-    <section id="intentions" className="container-pad py-14 md:py-16">
+    <section id="intentions" className="container-pad py-12 md:py-16">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-display text-3xl text-ink md:text-4xl">Shop by Intention</h2>
-        <p className="mt-3 text-sm text-ink-soft md:text-base">
-          Begin with what you seek — we guide you to the right sacred power.
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
+          What are you seeking?
         </p>
+        <h2 className="mt-2 font-display text-[1.85rem] font-semibold text-forest md:text-[2.15rem]">
+          Shop By Intention
+        </h2>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 lg:gap-4">
+      {/* Figma: 7 cards × 237×277, ~18px gap */}
+      <div className="mt-9 flex flex-wrap justify-center gap-3 md:gap-4 lg:gap-[18px]">
         {source.map((intention, i) => {
-          const key = intention.label || intention.id;
+          const key = normalizeIntentionKey(intention.label || intention.id);
           const meta =
             INTENTION_META[key] ||
             INTENTION_META[intention.id] ||
             INTENTION_META.Peace;
-          const bg = intention.color || meta.color || PASTELS[i % PASTELS.length];
           const href =
             intention.href ||
             `/intention/${encodeURIComponent(
@@ -132,26 +145,56 @@ export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
             <Link
               key={intention.id || intention.label}
               href={href}
-              className="group flex min-h-[168px] flex-col items-center justify-center rounded-2xl px-3 py-5 text-center transition hover:-translate-y-0.5 hover:shadow-md md:min-h-[196px] md:py-6"
-              style={{ backgroundColor: bg }}
+              className="group flex h-[240px] w-full max-w-[190px] shrink-0 flex-col items-center rounded-[16px] px-2.5 pb-3.5 pt-4 text-center transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+              style={{ background: meta.gradient }}
             >
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-3xl text-forest shadow-sm md:h-20 md:w-20 md:text-4xl">
-                {intention.icon && intention.icon.length <= 2
-                  ? intention.icon
-                  : meta.icon}
-              </span>
-              <p className="mt-4 text-sm font-semibold text-ink md:text-base">
+              {/* White arch size fixed — only the image scales up inside */}
+              <div className="flex h-[122px] w-[112px] items-center justify-center overflow-hidden rounded-t-[999px] rounded-b-[1.15rem] bg-white/75">
+                <Image
+                  src={meta.image}
+                  alt={meta.label}
+                  width={200}
+                  height={200}
+                  priority={i < 4}
+                  sizes="112px"
+                  className="h-[128%] w-[128%] max-w-none object-contain transition duration-300 group-hover:scale-[1.32]"
+                />
+              </div>
+
+              <p
+                className="mt-2.5 font-display text-[0.98rem] font-semibold leading-tight tracking-[-0.01em]"
+                style={{ color: meta.titleColor }}
+              >
                 {meta.label || intention.label}
               </p>
-              {/* Description under labels temporarily hidden
-              <p className="mt-1 text-[11px] leading-snug text-ink-soft md:text-xs">
+              <p className="mt-0.5 px-1 text-[10px] leading-snug text-[#6b6560]">
                 {meta.description}
               </p>
-              */}
+
+              <span
+                className="mt-auto inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#8a8580] shadow-sm transition group-hover:scale-105"
+                aria-hidden
+              >
+                <ArrowIcon />
+              </span>
             </Link>
           );
         })}
       </div>
     </section>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M5 12h12M13 6l6 6-6 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

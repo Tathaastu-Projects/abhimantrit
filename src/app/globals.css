@@ -539,3 +539,16 @@ a {
   color: #fff;
   box-shadow: 0 6px 18px rgba(15, 61, 46, 0.28);
 }
+
+/* Shop by Category — Figma mosaic ~1920×1308 */
+.category-mosaic {
+  gap: 10px;
+  aspect-ratio: 1920 / 1308;
+  grid-template-columns: 1.05fr 1.15fr 0.9fr;
+  grid-template-rows: 0.72fr 0.72fr 0.95fr 0.72fr;
+  grid-template-areas:
+    "rudraksha bracelets pyramids"
+    "tumbles bracelets pyramids"
+    "frame stones trees"
+    "frame stones anklets";
+}
