@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /**
  * Hero slides. Add another object here and it joins the loop.
@@ -22,50 +22,67 @@ const SLIDE_MS = 3000;
 const MOVE_MS = 700;
 
 /**
- * Full-bleed hero. Height stays 500px. Width follows the screen.
+ * Full-bleed hero. Height is locked at 500px. Width follows the screen.
+ * The picture is stretched to that frame so the whole image stays visible,
+ * edge to edge, with nothing cut off the top or bottom.
  * Headline stays exactly 2 lines on desktop.
  */
 export function HomeHero() {
   const count = SLIDES.length;
   const track = [SLIDES[count - 1], ...SLIDES, SLIDES[0]];
+  const sectionRef = useRef<HTMLElement>(null);
+  const indexRef = useRef(1);
   const [index, setIndex] = useState(1);
   const [animate, setAnimate] = useState(true);
-  const [autoplayKey, setAutoplayKey] = useState(0);
+  const [width, setWidth] = useState(0);
+
+  const commit = (next: number, withMotion: boolean) => {
+    indexRef.current = next;
+    setAnimate(withMotion);
+    setIndex(next);
+  };
+
+  useLayoutEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const apply = () => setWidth(el.clientWidth);
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setInterval(() => {
-      setAnimate(true);
-      setIndex((current) => {
-        if (current === 0 || current === count + 1) return current;
-        return current + 1;
-      });
+      const current = indexRef.current;
+      const base = current === 0 ? count : current === count + 1 ? 1 : current;
+      commit(base + 1, true);
     }, SLIDE_MS);
 
     return () => window.clearInterval(timer);
-  }, [autoplayKey, count]);
+  }, [count]);
 
   useEffect(() => {
     if (index !== 0 && index !== count + 1) return;
     const timer = window.setTimeout(() => {
-      setAnimate(false);
-      setIndex(index === 0 ? count : 1);
+      commit(index === 0 ? count : 1, false);
     }, MOVE_MS);
     return () => window.clearTimeout(timer);
   }, [index, count]);
 
   const go = (direction: -1 | 1) => {
-    setAnimate(true);
-    setIndex((current) => {
-      if (current === 0 || current === count + 1) return current;
-      return current + direction;
-    });
-    setAutoplayKey((key) => key + 1);
+    const current = indexRef.current;
+    const base = current === 0 ? count : current === count + 1 ? 1 : current;
+    commit(base + direction, true);
   };
+
+  const offset = width > 0 ? `translate3d(-${index * width}px, 0, 0)` : `translateX(-${index * 100}%)`;
 
   return (
     <section
+      ref={sectionRef}
       className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
@@ -73,8 +90,9 @@ export function HomeHero() {
       <div
         className="flex h-[500px]"
         style={{
-          transform: `translateX(-${index * 100}%)`,
+          transform: offset,
           transition: animate ? `transform ${MOVE_MS}ms ease-in-out` : "none",
+          width: width > 0 ? width * track.length : undefined,
         }}
       >
         {track.map((slide, i) => {
@@ -83,6 +101,7 @@ export function HomeHero() {
             <div
               key={`${slide.src}-${i}`}
               className="relative h-[500px] w-full min-w-full shrink-0"
+              style={width > 0 ? { width, minWidth: width, flex: `0 0 ${width}px` } : undefined}
               aria-hidden={isClone ? true : undefined}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -90,8 +109,9 @@ export function HomeHero() {
                 src={slide.src}
                 alt={isClone ? "" : slide.alt}
                 width={1920}
-                height={500}
-                className="absolute inset-0 h-[500px] w-full object-cover object-center"
+                height={785}
+                draggable={false}
+                className="absolute inset-0 h-full w-full object-fill"
               />
 
               <div
@@ -103,9 +123,9 @@ export function HomeHero() {
                 aria-hidden
               />
 
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16">
-                  <div className="home-hero__copy">
+              <div className="pointer-events-none absolute inset-0 flex items-center">
+                <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
+                  <div className="home-hero__copy pointer-events-auto">
                     {i === 1 ? (
                       <h1 className="home-hero__title">
                         <span className="home-hero__title-line">{slide.title[0]}</span>
@@ -135,7 +155,7 @@ export function HomeHero() {
 
       <button
         type="button"
-        className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
+        className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
         aria-label="Previous banner"
         onClick={() => go(-1)}
       >
@@ -143,7 +163,7 @@ export function HomeHero() {
       </button>
       <button
         type="button"
-        className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
+        className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
         aria-label="Next banner"
         onClick={() => go(1)}
       >
