@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /**
  * Hero slides. Add another object here and it joins the loop.
  * Image and text move together. Auto-advances every 3 seconds.
+ * The motion is plain HTML/CSS plus /hero-slider.js so it still runs
+ * after a production deploy, even if the page script does not hydrate.
  */
 const SLIDES = [
   {
@@ -18,90 +17,47 @@ const SLIDES = [
   },
 ];
 
-const SLIDE_MS = 3000;
-const MOVE_MS = 700;
-
 /**
  * Full-bleed hero. Height is locked at 500px. Width follows the screen.
- * The picture is stretched to that frame so the whole image stays visible,
- * edge to edge, with nothing cut off the top or bottom.
- * Headline stays exactly 2 lines on desktop.
+ * The picture is stretched so the whole image stays visible, edge to edge.
  */
 export function HomeHero() {
-  const count = SLIDES.length;
-  const track = [SLIDES[count - 1], ...SLIDES, SLIDES[0]];
-  const sectionRef = useRef<HTMLElement>(null);
-  const indexRef = useRef(1);
-  const [index, setIndex] = useState(1);
-  const [animate, setAnimate] = useState(true);
-  const [width, setWidth] = useState(0);
-
-  const commit = (next: number, withMotion: boolean) => {
-    indexRef.current = next;
-    setAnimate(withMotion);
-    setIndex(next);
-  };
-
-  useLayoutEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const apply = () => setWidth(el.clientWidth);
-    apply();
-    const observer = new ResizeObserver(apply);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const timer = window.setInterval(() => {
-      const current = indexRef.current;
-      const base = current === 0 ? count : current === count + 1 ? 1 : current;
-      commit(base + 1, true);
-    }, SLIDE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [count]);
-
-  useEffect(() => {
-    if (index !== 0 && index !== count + 1) return;
-    const timer = window.setTimeout(() => {
-      commit(index === 0 ? count : 1, false);
-    }, MOVE_MS);
-    return () => window.clearTimeout(timer);
-  }, [index, count]);
-
-  const go = (direction: -1 | 1) => {
-    const current = indexRef.current;
-    const base = current === 0 ? count : current === count + 1 ? 1 : current;
-    commit(base + direction, true);
-  };
-
-  const offset = width > 0 ? `translate3d(-${index * width}px, 0, 0)` : `translateX(-${index * 100}%)`;
+  const track = [...SLIDES, SLIDES[0]];
+  const pages = track.length;
 
   return (
     <section
-      ref={sectionRef}
+      id="home-hero"
+      data-count={SLIDES.length}
       className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
     >
+      <style>{`
+        @keyframes home-hero-step {
+          0%, 78% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-${100 / pages}%, 0, 0); }
+        }
+        #home-hero [data-hero-track] {
+          animation: home-hero-step 3.8s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          #home-hero [data-hero-track] { animation: none; }
+        }
+      `}</style>
+
       <div
+        data-hero-track
         className="flex h-[500px]"
-        style={{
-          transform: offset,
-          transition: animate ? `transform ${MOVE_MS}ms ease-in-out` : "none",
-          width: width > 0 ? width * track.length : undefined,
-        }}
+        style={{ width: `${pages * 100}%` }}
       >
         {track.map((slide, i) => {
-          const isClone = i === 0 || i === count + 1;
+          const isClone = i === SLIDES.length;
           return (
             <div
               key={`${slide.src}-${i}`}
-              className="relative h-[500px] w-full min-w-full shrink-0"
-              style={width > 0 ? { width, minWidth: width, flex: `0 0 ${width}px` } : undefined}
+              className="relative h-[500px] shrink-0"
+              style={{ width: `${100 / pages}%` }}
               aria-hidden={isClone ? true : undefined}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -126,7 +82,7 @@ export function HomeHero() {
               <div className="pointer-events-none absolute inset-0 flex items-center">
                 <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
                   <div className="home-hero__copy pointer-events-auto">
-                    {i === 1 ? (
+                    {i === 0 ? (
                       <h1 className="home-hero__title">
                         <span className="home-hero__title-line">{slide.title[0]}</span>
                         <span className="home-hero__title-line home-hero__title-line--strong">
@@ -155,20 +111,22 @@ export function HomeHero() {
 
       <button
         type="button"
+        data-hero-dir="-1"
         className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
         aria-label="Previous banner"
-        onClick={() => go(-1)}
       >
         <ArrowIcon direction="left" />
       </button>
       <button
         type="button"
+        data-hero-dir="1"
         className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
         aria-label="Next banner"
-        onClick={() => go(1)}
       >
         <ArrowIcon direction="right" />
       </button>
+
+      <script src="/hero-slider.js" defer />
     </section>
   );
 }
