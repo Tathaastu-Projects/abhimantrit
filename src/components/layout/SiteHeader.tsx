@@ -95,19 +95,20 @@ function SiteHeaderShell({
     <header className="sticky top-0 z-50 bg-white">
       {/* Figma top utility bar — light, above nav */}
       <div className="hidden border-b border-[var(--border)] bg-[#f5f5f3] px-4 py-1.5 sm:block md:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 text-[11px] text-ink-soft md:text-xs">
-          <p className="tracking-wide">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 text-[11px] text-ink-soft md:text-xs">
+          <span aria-hidden />
+          <p className="text-center tracking-wide text-forest">
             By Priyanka Singh
-            <span className="mx-2 text-ink/25" aria-hidden>
+            <span className="mx-2 text-forest/40" aria-hidden>
               |
             </span>
             X-Ray &amp; Lab Certified
-            <span className="mx-2 text-ink/25" aria-hidden>
+            <span className="mx-2 text-forest/40" aria-hidden>
               |
             </span>
             Free Insured Worldwide Shipping
           </p>
-          <div className="flex shrink-0 items-center gap-3 tracking-wide">
+          <div className="flex shrink-0 items-center justify-end gap-3 whitespace-nowrap tracking-wide">
             <Link href="/account" className="hover:text-pink">
               Account
             </Link>
@@ -139,12 +140,12 @@ function SiteHeaderShell({
             >
               <MenuIcon />
             </button>
-            <Link href="/" className="shrink-0" aria-label="Tathaastu home">
+            <Link href="/" className="shrink-0" aria-label="Abhimantrit home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/tathaastu_logo.png"
-                alt="Tathaastu"
-                className="h-11 w-auto object-contain object-left sm:h-12 md:h-14"
+                alt="Abhimantrit by Tathaastu"
+                className="h-9 w-auto object-contain object-left sm:h-10 md:h-12"
               />
             </Link>
           </div>

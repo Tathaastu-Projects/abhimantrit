@@ -1,15 +1,86 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 const STATS = [
-  { value: "15+", label: "Years of Astrology Practice" },
-  { value: "10,00,000+", label: "People Guided" },
-  { value: "50,000+", label: "Consultations Done" },
+  { target: 15, label: "Years of Astrology Practice" },
+  { target: 1_000_000, label: "People Guided" },
+  { target: 50_000, label: "Consultations Done" },
 ];
+
+function formatCount(value: number) {
+  return `${value.toLocaleString("en-IN")}+`;
+}
+
+function CountStat({
+  target,
+  label,
+  active,
+}: {
+  target: number;
+  label: string;
+  active: boolean;
+}) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!active) {
+      setValue(0);
+      return;
+    }
+    const duration = 1600;
+    const start = performance.now();
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - progress) ** 3;
+      setValue(Math.round(target * eased));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [active, target]);
+
+  return (
+    <div>
+      <p className="font-display text-[1.65rem] leading-none text-pink md:text-[1.85rem]">
+        {formatCount(value)}
+      </p>
+      <p className="mt-2 text-xs leading-snug text-ink-soft md:text-[13px]">{label}</p>
+    </div>
+  );
+}
 
 /** Figma — full-width banner + left copy overlay */
 export function FounderSection() {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const node = statsRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
+          setActive(true);
+          return;
+        }
+        if (!entry.isIntersecting) setActive(false);
+      },
+      { threshold: [0, 0.4] },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full overflow-hidden bg-[#faf6f0]">
+    <section className="relative mt-16 w-full overflow-hidden bg-[#faf6f0] md:mt-24">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/banners/home_banner_2.svg"
@@ -44,16 +115,9 @@ export function FounderSection() {
               checked for authenticity, and Abhimantrit through Vedic rituals.
             </p>
 
-            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-4 md:mt-9">
+            <div ref={statsRef} className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-4 md:mt-9">
               {STATS.map((stat) => (
-                <div key={stat.label}>
-                  <p className="font-display text-[1.65rem] leading-none text-pink md:text-[1.85rem]">
-                    {stat.value}
-                  </p>
-                  <p className="mt-2 text-xs leading-snug text-ink-soft md:text-[13px]">
-                    {stat.label}
-                  </p>
-                </div>
+                <CountStat key={stat.label} target={stat.target} label={stat.label} active={active} />
               ))}
             </div>
 

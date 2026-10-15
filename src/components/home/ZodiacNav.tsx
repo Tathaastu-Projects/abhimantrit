@@ -48,7 +48,7 @@ export function ZodiacNav() {
   }, []);
 
   return (
-    <section id="zodiac" className="py-14 md:py-16">
+    <section id="zodiac" className="pt-2 pb-3 md:pt-2 md:pb-4">
       <div className="container-pad mx-auto max-w-3xl text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
           Guided by the stars
@@ -64,7 +64,7 @@ export function ZodiacNav() {
       {/* Left = container-pad; right = flush to edge (cards peek off-screen) */}
       <div
         ref={scrollerRef}
-        className="mt-9 flex gap-3 overflow-x-auto scroll-smooth pb-3 pl-5 pr-0 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-4 md:pl-7 xl:pl-8 [&::-webkit-scrollbar]:hidden"
+        className="mt-6 flex gap-3 overflow-x-auto scroll-smooth pb-3 pl-5 pr-0 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-4 md:pl-7 xl:pl-8 [&::-webkit-scrollbar]:hidden"
       >
         {ZODIAC_SIGNS.map((sign, i) => (
           <Link

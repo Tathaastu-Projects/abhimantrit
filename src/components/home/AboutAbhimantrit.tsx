@@ -26,41 +26,42 @@ const FEATURES = [
 /** About Abhimantrit — full banner background + text overlay */
 export function AboutAbhimantrit() {
   return (
-    <section id="about" className="relative w-full overflow-hidden bg-[#f7f3ec]">
-      {/* Full-bleed background image */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
+    <section id="about" className="w-full overflow-hidden bg-[#f7f1e8]">
+      <div className="relative w-full">
         <Image
-          src="/about/lotus-banner.webp"
-          alt=""
-          fill
+          src="/about/abhimantrit-banner.png"
+          alt="Abhimantrit lotus"
+          width={1920}
+          height={600}
           priority
-          sizes="100vw"
-          className="object-cover object-right md:object-center"
+          unoptimized
+          className="h-auto w-full"
         />
+        <div className="container-pad relative py-8 md:absolute md:inset-0 md:flex md:items-center md:py-0">
+          <div className="max-w-md lg:max-w-lg">
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
+              About
+            </p>
+            <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
+              ABHIMANTRIT
+            </h2>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
+              Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials,
+              thoughtfully chosen for their astrological and spiritual significance. Each piece is
+              carefully checked for authenticity and quality, then energised through traditional
+              Vedic rituals with care and intention.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Content on top of image */}
-      <div className="container-pad relative z-[1] py-14 md:py-16 lg:py-20">
-        <div className="max-w-xl lg:max-w-[34rem]">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-            About
-          </p>
-          <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
-            ABHIMANTRIT
-          </h2>
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
-            Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials,
-            thoughtfully chosen for their astrological and spiritual significance. Each piece is
-            carefully checked for authenticity and quality, then energised through traditional
-            Vedic rituals with care and intention.
-          </p>
-          <h3 className="mt-9 font-display text-xl font-semibold text-forest md:mt-10 md:text-[1.35rem]">
-            What Sets Us Apart?
-          </h3>
-        </div>
+      <div className="container-pad relative pb-14 md:pb-16 lg:pb-20">
+        <h3 className="font-display text-xl font-semibold text-forest md:text-[1.35rem]">
+          What Sets Us Apart?
+        </h3>
 
         {/* Feature row */}
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 md:mt-12 lg:mt-14 lg:grid-cols-4 lg:gap-8 xl:gap-10">
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 md:mt-10 lg:grid-cols-4 lg:gap-8 xl:gap-10">
           {FEATURES.map((item) => (
             <div key={item.title} className="flex gap-3.5">
               <span

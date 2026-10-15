@@ -115,7 +115,7 @@ export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
       }));
 
   return (
-    <section id="intentions" className="container-pad py-12 md:py-16">
+    <section id="intentions" className="container-pad pt-4 pb-2 md:pt-5 md:pb-3">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
           What are you seeking?
@@ -148,15 +148,14 @@ export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
               className="group flex h-[240px] w-full max-w-[190px] shrink-0 flex-col items-center rounded-[16px] px-2.5 pb-3.5 pt-4 text-center transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               style={{ background: meta.gradient }}
             >
-              {/* White arch size fixed — only the image scales up inside */}
-              <div className="flex h-[122px] w-[112px] items-center justify-center overflow-hidden rounded-t-[999px] rounded-b-[1.15rem] bg-white/75">
+              <div className="flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full bg-white/75">
                 <Image
                   src={meta.image}
                   alt={meta.label}
                   width={200}
                   height={200}
                   priority={i < 4}
-                  sizes="112px"
+                  sizes="92px"
                   className="h-[128%] w-[128%] max-w-none object-contain transition duration-300 group-hover:scale-[1.32]"
                 />
               </div>

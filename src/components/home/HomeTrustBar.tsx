@@ -29,7 +29,7 @@ const TRUST_ITEMS = [
 export function HomeTrustBar() {
   return (
     <section className="bg-[#fff8f9]">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-6 py-8 sm:grid-cols-2 md:grid-cols-4 md:gap-8 md:px-10 md:py-9 lg:px-14">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-6 pt-8 pb-3 sm:grid-cols-2 md:grid-cols-4 md:gap-8 md:px-10 md:pt-9 md:pb-4 lg:px-14">
         {TRUST_ITEMS.map((item) => (
           <div key={item.id} className="flex items-start gap-3.5">
             <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[var(--pink)] text-white shadow-sm">

@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 const DEFAULT_FAQS = [
   {
     q: "How do I know which gemstone is right for me?",
@@ -44,8 +40,6 @@ export function FaqAccordion({
     faqs && faqs.length >= 7
       ? faqs.map((f) => ({ q: f.question, a: f.answer }))
       : DEFAULT_FAQS;
-  const [open, setOpen] = useState(0);
-
   return (
     <section id="faq" className="w-full bg-white py-14 md:py-16">
       <div className="container-pad mx-auto max-w-3xl">
@@ -55,19 +49,14 @@ export function FaqAccordion({
 
         <div className="mt-8 space-y-3 md:mt-10 md:space-y-3.5">
           {items.map((item, idx) => {
-            const isOpen = open === idx;
             const num = String(idx + 1).padStart(2, "0");
             return (
-              <div
+              <details
                 key={item.q}
-                className="rounded-[1.35rem] border border-[#f0c4cc] bg-white px-4 py-4 transition md:px-5 md:py-4.5"
+                name="home-faq"
+                className="group rounded-[1.35rem] border border-[#f0c4cc] bg-white px-4 py-4 md:px-5 md:py-4.5"
               >
-                <button
-                  type="button"
-                  className="flex w-full items-start gap-3 text-left md:gap-4"
-                  onClick={() => setOpen(isOpen ? -1 : idx)}
-                  aria-expanded={isOpen}
-                >
+                <summary className="flex cursor-pointer list-none items-start gap-3 text-left marker:content-none md:gap-4 [&::-webkit-details-marker]:hidden">
                   <span
                     className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0c4cc] text-xs font-semibold text-pink md:h-10 md:w-10 md:text-sm"
                     aria-hidden
@@ -83,16 +72,15 @@ export function FaqAccordion({
                     className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0c4cc] text-lg leading-none text-pink md:h-10 md:w-10"
                     aria-hidden
                   >
-                    {isOpen ? "−" : "+"}
+                    <span className="group-open:hidden">+</span>
+                    <span className="hidden group-open:inline">−</span>
                   </span>
-                </button>
+                </summary>
 
-                {isOpen ? (
-                  <p className="mt-3 pl-12 pr-12 text-sm leading-relaxed text-ink-soft md:mt-3.5 md:pl-[3.5rem] md:pr-14 md:text-[0.95rem] md:leading-[1.7]">
-                    {item.a}
-                  </p>
-                ) : null}
-              </div>
+                <p className="mt-3 pl-12 pr-12 text-sm leading-relaxed text-ink-soft md:mt-3.5 md:pl-[3.5rem] md:pr-14 md:text-[0.95rem] md:leading-[1.7]">
+                  {item.a}
+                </p>
+              </details>
             );
           })}
         </div>

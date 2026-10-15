@@ -91,7 +91,7 @@ function Tile({
         fill
         priority={priority}
         sizes="(max-width: 768px) 92vw, 33vw"
-        className="object-cover transition duration-500 group-hover:scale-[1.03]"
+        className="object-cover object-center"
       />
       <span
         className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest md:bottom-4 md:left-4 md:text-base lg:text-[1.05rem] ${
@@ -108,7 +108,7 @@ const FULL_WIDTH_MOBILE = new Set(["bracelets", "frame", "rudraksha", "tumbles"]
 
 export function ShopByCategory() {
   return (
-    <section id="shop-by-category" className="container-pad py-12 md:py-16">
+    <section id="shop-by-category" className="container-pad pt-2 pb-12 md:pt-2 md:pb-16">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
           Explore the collection
@@ -143,7 +143,7 @@ export function ShopByCategory() {
               fill
               priority={i < 2}
               sizes={full ? "92vw" : "46vw"}
-              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+              className="object-cover object-center"
             />
             <span
               className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest ${

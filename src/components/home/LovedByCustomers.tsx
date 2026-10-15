@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-
 type Review = {
   quote: string;
   name: string;
@@ -139,8 +135,8 @@ export function LovedByCustomers() {
       </div>
 
       <div className="mt-10 space-y-4 md:mt-12 md:space-y-5">
-        <MarqueeRow reviews={ROW_TOP} direction="left" speed={0.55} />
-        <MarqueeRow reviews={ROW_BOTTOM} direction="right" speed={0.55} />
+        <MarqueeRow reviews={ROW_TOP} direction="left" />
+        <MarqueeRow reviews={ROW_BOTTOM} direction="right" />
       </div>
 
       <div className="mt-8 flex items-center justify-center gap-1.5 md:mt-10" aria-hidden>
@@ -159,141 +155,15 @@ export function LovedByCustomers() {
 function MarqueeRow({
   reviews,
   direction,
-  speed,
 }: {
   reviews: Review[];
   direction: "left" | "right";
-  speed: number;
 }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const hoveredRef = useRef(false);
-  const dragRef = useRef<{ active: boolean; startX: number; startScroll: number }>({
-    active: false,
-    startX: 0,
-    startScroll: 0,
-  });
-  const loop = [...reviews, ...reviews, ...reviews];
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    let ready = false;
-    let raf = 0;
-
-    const initIfReady = () => {
-      const third = el.scrollWidth / 3;
-      if (third < 50) return false;
-      // Start in the middle copy so both directions can wrap forever
-      el.scrollLeft = third;
-      ready = true;
-      return true;
-    };
-
-    initIfReady();
-    const ro = new ResizeObserver(() => {
-      if (!ready) initIfReady();
-    });
-    ro.observe(el);
-
-    const tick = () => {
-      const node = trackRef.current;
-      if (node) {
-        if (!ready) initIfReady();
-        if (ready && !pausedRef.current && !dragRef.current.active) {
-          const third = node.scrollWidth / 3;
-          if (third >= 50) {
-            if (direction === "left") {
-              node.scrollLeft += speed;
-              if (node.scrollLeft >= third * 2) {
-                node.scrollLeft -= third;
-              }
-            } else {
-              // Scroll content to the right
-              node.scrollLeft -= speed;
-              if (node.scrollLeft <= 1) {
-                node.scrollLeft += third;
-              }
-            }
-          }
-        }
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [direction, speed]);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    function onWheel(e: WheelEvent) {
-      if (!hoveredRef.current) return;
-      const node = trackRef.current;
-      if (!node) return;
-      const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (!dx) return;
-      e.preventDefault();
-      node.scrollLeft += dx;
-    }
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
-
-  function onPointerDown(e: React.PointerEvent) {
-    const el = trackRef.current;
-    if (!el) return;
-    pausedRef.current = true;
-    dragRef.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
-    el.setPointerCapture(e.pointerId);
-    el.style.cursor = "grabbing";
-  }
-
-  function onPointerMove(e: React.PointerEvent) {
-    const el = trackRef.current;
-    if (!el || !dragRef.current.active) return;
-    el.scrollLeft = dragRef.current.startScroll - (e.clientX - dragRef.current.startX);
-  }
-
-  function onPointerUp(e: React.PointerEvent) {
-    const el = trackRef.current;
-    dragRef.current.active = false;
-    pausedRef.current = hoveredRef.current;
-    if (el) {
-      el.releasePointerCapture(e.pointerId);
-      el.style.cursor = "grab";
-    }
-  }
+  const loop = [...reviews, ...reviews];
 
   return (
-    <div
-      ref={wrapRef}
-      className="relative w-full"
-      onMouseEnter={() => {
-        hoveredRef.current = true;
-        pausedRef.current = true;
-      }}
-      onMouseLeave={() => {
-        hoveredRef.current = false;
-        if (!dragRef.current.active) pausedRef.current = false;
-      }}
-    >
-      <div
-        ref={trackRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        className="flex cursor-grab gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1 active:cursor-grabbing [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
+    <div className="reviews-marquee-wrap relative w-full">
+      <div className={direction === "left" ? "reviews-marquee" : "reviews-marquee reviews-marquee--right"}>
         {loop.map((review, i) => (
           <ReviewCard key={`${review.name}-${i}`} review={review} />
         ))}

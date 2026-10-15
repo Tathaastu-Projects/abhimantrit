@@ -543,7 +543,7 @@ a {
 /* Shop by Category — Figma mosaic ~1920×1308 */
 .category-mosaic {
   gap: 10px;
-  aspect-ratio: 1920 / 1308;
+  aspect-ratio: 1920 / 1000;
   grid-template-columns: 1.05fr 1.15fr 0.9fr;
   grid-template-rows: 0.72fr 0.72fr 0.95fr 0.72fr;
   grid-template-areas:
@@ -569,5 +569,53 @@ a {
   }
   to {
     transform: translateX(0);
+  }
+}
+
+.reviews-marquee-wrap {
+  overflow: hidden;
+}
+
+.reviews-marquee {
+  display: flex;
+  width: max-content;
+  gap: 1rem;
+  animation: reviews-marquee-left 55s linear infinite;
+}
+
+.reviews-marquee--right {
+  animation-name: reviews-marquee-right;
+}
+
+.reviews-marquee-wrap:hover .reviews-marquee {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-marquee {
+    animation: none;
+  }
+}
+
+/* Home hero ticker — continuous loop, same motion as the reviews row */
+.hero-ticker {
+  overflow: hidden;
+  background: #111111;
+  color: #fff;
+}
+
+.hero-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: reviews-marquee-left 55s linear infinite;
+}
+
+.hero-ticker:hover .hero-ticker__track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ticker__track {
+    animation: none;
   }
 }

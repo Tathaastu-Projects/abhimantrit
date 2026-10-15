@@ -32,31 +32,19 @@ export function CertifiedAuthentic() {
         </p>
       </div>
 
-      {/* Banner — image has logo disc on right; copy overlays left */}
+      {/* Banner — full artwork on the right, copy on the open left */}
       <div className="relative w-full overflow-hidden">
-        <div className="relative aspect-[1024/290] min-h-[220px] w-full md:min-h-[280px] lg:min-h-[320px]">
-          <Image
-            src="/trust/certified-banner.webp"
-            alt="Abhimantrit certified and authentic — natural crystals and Rudraksha"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-right"
-          />
+        <Image
+          src="/trust/certified-banner.png"
+          alt="Abhimantrit certified and authentic — natural crystals and Rudraksha"
+          width={1920}
+          height={600}
+          unoptimized
+          className="h-auto w-full"
+        />
 
-          {/* Soft wash so left text stays readable */}
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 w-full sm:w-[70%] md:w-[58%] lg:w-[50%]"
-            style={{
-              background:
-                "linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 45%, rgba(255,255,255,0.25) 75%, rgba(255,255,255,0) 100%)",
-            }}
-            aria-hidden
-          />
-
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full px-5 py-8 sm:px-8 md:px-10 lg:px-14 xl:px-16">
-              <ul className="max-w-md space-y-5 md:max-w-lg md:space-y-6">
+        <div className="w-full px-5 py-8 sm:px-8 md:absolute md:inset-0 md:flex md:items-center md:py-0 md:px-10 lg:px-14 xl:px-16">
+          <ul className="max-w-md space-y-5 md:max-w-lg md:space-y-6">
                 {POINTS.map((item) => (
                   <li key={item.title} className="flex gap-3.5">
                     <span
@@ -75,9 +63,7 @@ export function CertifiedAuthentic() {
                     </div>
                   </li>
                 ))}
-              </ul>
-            </div>
-          </div>
+          </ul>
         </div>
       </div>
     </section>

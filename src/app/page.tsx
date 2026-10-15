@@ -7,8 +7,8 @@ import { ExpertGuidance } from "@/components/home/ExpertGuidance";
 import { CertifiedAuthentic } from "@/components/home/CertifiedAuthentic";
 import { LovedByCustomers } from "@/components/home/LovedByCustomers";
 import { ReadFromBlog } from "@/components/home/ReadFromBlog";
+import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
-import { FounderSection } from "@/components/home/FounderSection";
 import { IntentionNav } from "@/components/home/IntentionNav";
 import { ZodiacNav } from "@/components/home/ZodiacNav";
 // import { HomeProductSection } from "@/components/home/HomeProductSection";
@@ -17,7 +17,7 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 
 /**
  * Home order (Figma top):
- * Hero → Trust → Founder → Intention → Zodiac → Shop by Category →
+ * Hero → Ticker → Trust → Intention → Zodiac → Shop by Category →
  * About → Expert Guidance → Loved by Customers → Certified & Authentic →
  * Read From Our Blog → (Sacred Essentials / Bestsellers / Consult hidden) → FAQ
  */
@@ -33,8 +33,8 @@ export default async function HomePage() {
   return (
     <>
       <HomeBanners banners={home.banners || []} />
+      <HeroTicker />
       <HomeTrustBar />
-      <FounderSection />
       <IntentionNav intentions={home.intentions} />
       <ZodiacNav />
       <ShopByCategory />
