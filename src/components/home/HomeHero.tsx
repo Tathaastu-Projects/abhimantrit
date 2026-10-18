@@ -1,42 +1,42 @@
 import Link from "next/link";
 
 /**
- * Hero slides. Add another object here and it joins the loop.
- * Image and text move together. Auto-advances every 3 seconds.
- * The motion is plain HTML/CSS plus /hero-slider.js so it still runs
- * after a production deploy, even if the page script does not hydrate.
+ * Hero slides come from the admin panel. Image and text move together.
+ * Auto-advances every 3 seconds. The motion is plain HTML/CSS plus
+ * /hero-slider.js so it still runs after a production deploy.
  */
-const SLIDES = [
-  {
-    src: "/banners/home_banner_1.svg",
-    alt: "Sacred Rudraksha, Shiva Lingam and ritual offerings",
-    title: ["Keep the Blessings of Shiva Close", "With Every Rudraksha."],
-    subtitle: "Original • Authentic • Energised Through Vedic Rituals",
-    cta: "Explore Rudraksha",
-    href: "/shop/rudraksha",
-  },
-];
+export type HeroSlide = {
+  src: string;
+  alt: string;
+  title: [string, string];
+  subtitle: string;
+  cta: string;
+  href: string;
+};
 
 /**
  * Full-bleed hero. Height is locked at 500px. Width follows the screen.
  * The picture is stretched so the whole image stays visible, edge to edge.
  */
-export function HomeHero() {
-  const track = [...SLIDES, SLIDES[0]];
+export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
+  if (!slides?.length) return null;
+  const source = slides;
+  const track = [source[source.length - 1], ...source, source[0]];
   const pages = track.length;
 
   return (
     <section
       id="home-hero"
-      data-count={SLIDES.length}
+      data-count={source.length}
       className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
+      suppressHydrationWarning
     >
       <style>{`
         @keyframes home-hero-step {
-          0%, 78% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-${100 / pages}%, 0, 0); }
+          0%, 78% { transform: translate3d(-${100 / pages}%, 0, 0); }
+          100% { transform: translate3d(-${200 / pages}%, 0, 0); }
         }
         #home-hero [data-hero-track] {
           animation: home-hero-step 3.8s linear infinite;
@@ -49,10 +49,11 @@ export function HomeHero() {
       <div
         data-hero-track
         className="flex h-[500px]"
-        style={{ width: `${pages * 100}%` }}
+        style={{ width: `${pages * 100}%`, transform: `translate3d(-${100 / pages}%, 0, 0)` }}
+        suppressHydrationWarning
       >
         {track.map((slide, i) => {
-          const isClone = i === SLIDES.length;
+          const isClone = i === 0 || i === track.length - 1;
           return (
             <div
               key={`${slide.src}-${i}`}
@@ -82,7 +83,7 @@ export function HomeHero() {
               <div className="pointer-events-none absolute inset-0 flex items-center">
                 <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
                   <div className="home-hero__copy pointer-events-auto">
-                    {i === 0 ? (
+                    {i === 1 ? (
                       <h1 className="home-hero__title">
                         <span className="home-hero__title-line">{slide.title[0]}</span>
                         <span className="home-hero__title-line home-hero__title-line--strong">
@@ -98,7 +99,12 @@ export function HomeHero() {
                       </p>
                     )}
                     <p className="home-hero__sub">{slide.subtitle}</p>
-                    <Link href={slide.href} className="home-hero__cta" tabIndex={isClone ? -1 : undefined}>
+                    <Link
+                      href={slide.href}
+                      className="home-hero__cta"
+                      data-hero-pause
+                      tabIndex={isClone ? -1 : undefined}
+                    >
                       {slide.cta}
                     </Link>
                   </div>
@@ -126,7 +132,7 @@ export function HomeHero() {
         <ArrowIcon direction="right" />
       </button>
 
-      <script src="/hero-slider.js" defer />
+      <script src="/hero-slider.js?v=3" defer />
     </section>
   );
 }

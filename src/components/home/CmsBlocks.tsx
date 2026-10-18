@@ -1,10 +1,35 @@
 import type { StoreBanner, StoreBlogPost } from "@/types/product";
 import Link from "next/link";
-import { HomeHero } from "@/components/home/HomeHero";
+import { HomeHero, type HeroSlide } from "@/components/home/HomeHero";
+import { resolveBannerUrl } from "@/lib/format";
 
-/** Home hero — Figma banner with overlay copy (CMS banners unused for now) */
-export function HomeBanners({ banners: _banners }: { banners?: StoreBanner[] }) {
-  return <HomeHero />;
+function toSlide(banner: StoreBanner): HeroSlide | null {
+  if (!banner.imageUrl) return null;
+  const line1 = banner.title?.trim() || "";
+  const line2 = banner.titleLine2?.trim() || "";
+  return {
+    src: resolveBannerUrl(banner.imageUrl),
+    alt: line1 || "Abhimantrit banner",
+    title: [line1, line2],
+    subtitle: banner.subtitle || "",
+    cta: banner.ctaLabel || "Explore",
+    href: banner.ctaHref || "/shop",
+  };
+}
+
+/** Homepage loop. Only banners saved from the admin panel are shown. */
+export function HomeBanners({
+  banners,
+}: {
+  banners?: StoreBanner[];
+  managed?: boolean;
+}) {
+  const slides = (banners || [])
+    .filter((banner) => banner.key === "home-slider")
+    .map(toSlide)
+    .filter((slide): slide is HeroSlide => Boolean(slide?.src && slide.title[0]));
+  if (!slides.length) return null;
+  return <HomeHero slides={slides} />;
 }
 
 export function BlogTeasers({ posts }: { posts: StoreBlogPost[] }) {

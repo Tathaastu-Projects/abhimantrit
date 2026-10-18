@@ -33,6 +33,8 @@ type ApiResult<T> = {
 type AuthOpts = {
   token?: string | null;
   guestId?: string | null;
+  /** Skip the short server cache so homepage edits show on the next load. */
+  fresh?: boolean;
 };
 
 function toQuery(params?: Record<string, string | number | boolean | undefined | null>) {
@@ -60,7 +62,7 @@ async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): P
   const res = await fetch(`${base}${path}`, {
     ...init,
     headers,
-    ...(isServer && method === "GET"
+    ...(isServer && method === "GET" && !auth?.fresh
       ? { next: { revalidate: 30 } }
       : { cache: "no-store" }),
   });
@@ -107,6 +109,7 @@ export async function getStoreMenu(): Promise<StoreMenu | null> {
 
 const EMPTY_HOME: HomeContent = {
   banners: [],
+  homeSliderManaged: false,
   latestBlogs: [],
   carousels: { featured: [], bestsellers: [], newArrivals: [] },
   faqs: [],
@@ -116,6 +119,8 @@ export async function getHomeContent(): Promise<HomeContent> {
   try {
     const res = await apiFetch<ApiResult<HomeContent> & Partial<HomeContent>>(
       "/api/store/content/home",
+      undefined,
+      { fresh: true },
     );
     const data = res.data || (res as unknown as HomeContent);
     if (!data || typeof data !== "object") return EMPTY_HOME;
@@ -123,6 +128,9 @@ export async function getHomeContent(): Promise<HomeContent> {
       ...EMPTY_HOME,
       ...data,
       banners: data.banners || [],
+      homeSliderManaged: Boolean(data.homeSliderManaged),
+      categoryTiles: data.categoryTiles || [],
+      aboutSection: data.aboutSection,
       latestBlogs: data.latestBlogs || [],
       carousels: {
         featured: data.carousels?.featured || [],

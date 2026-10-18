@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 
 type Props = {
   menu: StoreMenu | null;
+  logoSrc?: string;
 };
 
 type NavItem = {
@@ -67,22 +68,23 @@ function navLinkClass(active: boolean, isSale: boolean) {
   );
 }
 
-export function SiteHeader({ menu }: Props) {
+export function SiteHeader({ menu, logoSrc }: Props) {
   return (
-    <Suspense fallback={<SiteHeaderShell menu={menu} activeId={null} />}>
-      <SiteHeaderInner menu={menu} />
+    <Suspense fallback={<SiteHeaderShell menu={menu} logoSrc={logoSrc} activeId={null} />}>
+      <SiteHeaderInner menu={menu} logoSrc={logoSrc} />
     </Suspense>
   );
 }
 
-function SiteHeaderInner({ menu }: Props) {
+function SiteHeaderInner({ menu, logoSrc }: Props) {
   const activeId = useActiveNavId();
-  return <SiteHeaderShell menu={menu} activeId={activeId} />;
+  return <SiteHeaderShell menu={menu} logoSrc={logoSrc} activeId={activeId} />;
 }
 
 function SiteHeaderShell({
   menu: _menu,
   activeId,
+  logoSrc = "/tathaastu_logo.png",
 }: Props & { activeId: string | null }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -143,7 +145,7 @@ function SiteHeaderShell({
             <Link href="/" className="shrink-0" aria-label="Abhimantrit home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/tathaastu_logo.png"
+                src={logoSrc}
                 alt="Abhimantrit by Tathaastu"
                 className="h-9 w-auto object-contain object-left sm:h-10 md:h-12"
               />

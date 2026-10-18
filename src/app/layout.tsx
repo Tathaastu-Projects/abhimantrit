@@ -3,6 +3,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { getStoreMenu, getStoreMeta } from "@/lib/api";
+import { resolveBannerUrl } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +32,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
-        <SiteHeader menu={menu} />
+        <SiteHeader menu={menu} logoSrc={resolveBannerUrl(meta?.logoUrl) || "/tathaastu_logo.png"} />
         <main className="flex-1">{children}</main>
         <SiteFooter support={meta?.support} />
       </body>

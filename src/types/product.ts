@@ -73,6 +73,7 @@ export type StoreProduct = {
   isBestSeller: boolean;
   isNewArrival: boolean;
   intentions: Intention[];
+  hoverDetails?: { label: string }[];
   attributes?: ProductAttributes;
   seo?: { metaTitle?: string; metaDescription?: string };
   tags?: string[];
@@ -181,9 +182,11 @@ export type StoreReview = {
 export type StoreBanner = {
   _id: string;
   title: string;
+  titleLine2?: string;
   subtitle?: string;
   key?: string;
   imageUrl?: string;
+  category?: string;
   ctaLabel?: string;
   ctaHref?: string;
   sortOrder?: number;
@@ -262,6 +265,7 @@ export type StoreMeta = {
   currency: string;
   trustBadges: { id: string; label: string; description?: string }[];
   support?: { email?: string; phone?: string };
+  logoUrl?: string;
   sortOptions?: { value: string; label: string }[];
 };
 
@@ -309,8 +313,44 @@ export type HomeConsultCta = {
   ctaHref?: string;
 };
 
+export type CategoryTile = {
+  id: string;
+  label: string;
+  href: string;
+  image: string;
+  area: string;
+  underline?: boolean;
+  width?: number;
+  height?: number;
+};
+
 export type HomeContent = {
   banners: StoreBanner[];
+  homeSliderManaged?: boolean;
+  categoryTiles?: CategoryTile[];
+  featuredFinds?: {
+    eyebrow?: string;
+    title?: string;
+    videoUrl?: string;
+    imageUrl?: string;
+    imageLabel?: string;
+    points?: string[];
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+  aboutSection?: {
+    image?: string;
+    intro?: string;
+    width?: number;
+    height?: number;
+    features?: {
+      id: string;
+      title: string;
+      description: string;
+      icon?: "badge" | "ritual" | "check" | "star";
+      image?: string;
+    }[];
+  };
   trustBadges?: { id: string; label: string; description?: string }[];
   intentions?: HomeIntention[];
   categories?: HomeCategoryCard[];

@@ -8,9 +8,10 @@
     if (!track) return;
 
     var count = Number(root.getAttribute("data-count") || "1");
-    var pages = count + 1;
-    var index = 0;
+    var pages = count + 2;
+    var index = 1;
     var timer = 0;
+    var paused = 0;
     var moveMs = 700;
 
     function render(next, animate) {
@@ -22,12 +23,16 @@
 
     function go(direction) {
       var next = index + direction;
-      if (next < 0) next = count;
-      if (next > count) next = 0;
+      if (next < 0) next = 0;
+      if (next > count + 1) next = count + 1;
       render(next, true);
-      if (next === count) {
+      if (next === 0) {
         window.setTimeout(function () {
-          if (index === count) render(0, false);
+          if (index === 0) render(count, false);
+        }, moveMs);
+      } else if (next === count + 1) {
+        window.setTimeout(function () {
+          if (index === count + 1) render(1, false);
         }, moveMs);
       }
       arm();
@@ -35,9 +40,29 @@
 
     function arm() {
       window.clearInterval(timer);
+      if (paused) return;
       timer = window.setInterval(function () {
         go(1);
       }, 3000);
+    }
+
+    function pause() {
+      paused = 1;
+      window.clearInterval(timer);
+    }
+
+    function resume() {
+      if (!paused) return;
+      paused = 0;
+      arm();
+    }
+
+    var holds = root.querySelectorAll("[data-hero-pause]");
+    for (var h = 0; h < holds.length; h++) {
+      holds[h].addEventListener("mouseenter", pause);
+      holds[h].addEventListener("mouseleave", resume);
+      holds[h].addEventListener("focus", pause);
+      holds[h].addEventListener("blur", resume);
     }
 
     var buttons = root.querySelectorAll("[data-hero-dir]");
@@ -47,7 +72,7 @@
       });
     }
 
-    render(0, false);
+    render(1, false);
     arm();
   }
 

@@ -1,92 +1,180 @@
-import Image from "next/image";
+"use client";
 
-const FEATURES = [
+import { useEffect, useState } from "react";
+import { getApiBaseUrl } from "@/lib/env";
+import { resolveBannerUrl } from "@/lib/format";
+
+const DEFAULT_IMAGE = "/about/abhimantrit-banner.png";
+const DEFAULT_INTRO =
+  "Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials, thoughtfully chosen for their astrological and spiritual significance. Each piece is carefully checked for authenticity and quality, then energised through traditional Vedic rituals with care and intention.";
+
+export type AboutFeature = {
+  id: string;
+  title: string;
+  description: string;
+  icon: "badge" | "ritual" | "check" | "star";
+  image?: string;
+};
+
+export type AboutSection = {
+  image?: string;
+  intro?: string;
+  features?: AboutFeature[];
+};
+
+const FEATURES: AboutFeature[] = [
   {
+    id: "lab",
     title: "Lab Certified",
     description: "Quality you can trust, backed by recognised laboratory certification.",
     icon: "badge",
   },
   {
+    id: "ritual",
     title: "Abhimantrit",
     description: "Each piece is energised through traditional Vedic rituals with care and intention.",
     icon: "ritual",
   },
   {
+    id: "quality",
     title: "Authenticity & Quality",
     description: "Carefully checked to ensure authenticity, purity, and quality in every piece.",
     icon: "check",
   },
   {
+    id: "guided",
     title: "Astrologically Guided",
     description: "Selected with astrological guidance for a more personal experience.",
     icon: "star",
   },
-] as const;
+];
 
-/** About Abhimantrit — full banner background + text overlay */
-export function AboutAbhimantrit() {
+/** About Abhimantrit — text and list on the left, image on the right. Hover a point to swap the image. */
+export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
+  const [live, setLive] = useState<AboutSection | null | undefined>(about);
+  const source = live || about;
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${getApiBaseUrl()}/api/store/content/home`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((body) => {
+        const section = body?.data?.aboutSection as AboutSection | undefined;
+        if (!cancelled && section) setLive(section);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const features = FEATURES.map((item) => {
+    const custom = source?.features?.find((feature) => feature.id === item.id);
+    return {
+      ...item,
+      title: custom?.title || item.title,
+      description: custom?.description || item.description,
+      image: custom?.image || "",
+    };
+  });
+  const baseImage = source?.image || DEFAULT_IMAGE;
+  const intro = source?.intro || DEFAULT_INTRO;
+  const [activeId, setActiveId] = useState(features[0]?.id || "lab");
+  const active = features.find((item) => item.id === activeId) || features[0];
+  const shown = active?.image || baseImage;
+  const showingPoint = Boolean(active?.image);
+
   return (
     <section id="about" className="w-full overflow-hidden bg-[#f7f1e8]">
-      <div className="relative w-full">
-        <Image
-          src="/about/abhimantrit-banner.png"
-          alt="Abhimantrit lotus"
-          width={1920}
-          height={600}
-          priority
-          unoptimized
-          className="h-auto w-full"
-        />
-        <div className="container-pad relative py-8 md:absolute md:inset-0 md:flex md:items-center md:py-0">
-          <div className="max-w-md lg:max-w-lg">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-              About
+      <div className="grid items-stretch md:grid-cols-2">
+        <div className="order-2 px-5 py-8 md:order-1 md:px-7 md:py-12 xl:px-8 xl:py-14">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
+            About
+          </p>
+          <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
+            ABHIMANTRIT
+          </h2>
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
+              {intro}
             </p>
-            <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
-              ABHIMANTRIT
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
-              Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials,
-              thoughtfully chosen for their astrological and spiritual significance. Each piece is
-              carefully checked for authenticity and quality, then energised through traditional
-              Vedic rituals with care and intention.
-            </p>
-          </div>
+
+          <ul className="mt-6 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]">
+            {features.map((item) => {
+              const selected = item.id === activeId;
+              return (
+                <li
+                  key={item.id}
+                  className={`flex cursor-pointer items-center gap-4 py-4 transition-all duration-300 md:gap-5 md:py-5 ${
+                    selected ? "opacity-100 blur-none" : "opacity-70 blur-[0.4px]"
+                  }`}
+                  tabIndex={0}
+                  onMouseEnter={() => setActiveId(item.id)}
+                  onFocus={() => setActiveId(item.id)}
+                >
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${
+                      selected ? "bg-[#e74660]" : "bg-[#e74660]/70"
+                    }`}
+                    aria-hidden
+                  >
+                    <FeatureIcon name={item.icon} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className={`font-display text-[0.95rem] md:text-base ${
+                        selected ? "font-semibold text-forest" : "font-medium text-[#5c5752]"
+                      }`}
+                    >
+                      {item.title}
+                    </p>
+                    <p
+                      className={`overflow-hidden text-xs leading-relaxed text-[#3f3c39] transition-all duration-300 md:text-[13px] ${
+                        selected ? "mt-1 max-h-24 opacity-100" : "mt-0 max-h-0 opacity-0"
+                      }`}
+                    >
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className={`shrink-0 ${selected ? "text-[#3f3c39]" : "text-[#c4bfb8]"}`} aria-hidden>
+                    <ChevronIcon />
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-      </div>
 
-      <div className="container-pad relative pb-14 md:pb-16 lg:pb-20">
-        <h3 className="font-display text-xl font-semibold text-forest md:text-[1.35rem]">
-          What Sets Us Apart?
-        </h3>
-
-        {/* Feature row */}
-        <div className="mt-8 grid gap-8 sm:grid-cols-2 md:mt-10 lg:grid-cols-4 lg:gap-8 xl:gap-10">
-          {FEATURES.map((item) => (
-            <div key={item.title} className="flex gap-3.5">
-              <span
-                className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e74660] text-white md:h-11 md:w-11"
-                aria-hidden
-              >
-                <FeatureIcon name={item.icon} />
-              </span>
-              <div className="min-w-0 pt-0.5">
-                <p className="font-display text-[0.95rem] font-semibold text-forest md:text-base">
-                  {item.title}
-                </p>
-                <p className="mt-1.5 text-xs leading-relaxed text-[#6b6660] md:text-[13px] md:leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="relative order-1 min-h-[220px] bg-[#f7f1e8] md:order-2 md:min-h-full">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={shown}
+            src={resolveBannerUrl(shown)}
+            alt=""
+            className={`absolute inset-0 h-full w-full ${
+              showingPoint ? "object-contain" : "object-cover object-right"
+            }`}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-function FeatureIcon({ name }: { name: (typeof FEATURES)[number]["icon"] }) {
+function ChevronIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M9 6l6 6-6 6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function FeatureIcon({ name }: { name: AboutFeature["icon"] }) {
   if (name === "badge") {
     return (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>

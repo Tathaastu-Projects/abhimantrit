@@ -14,6 +14,16 @@ export function discountPercent(mrp: number, salePrice: number): number {
   return Math.round(((mrp - salePrice) / mrp) * 100);
 }
 
+/** Homepage slides live on the store, except images uploaded from admin (`/uploads`). */
+export function resolveBannerUrl(url?: string | null): string {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
+    return url;
+  }
+  if (url.startsWith("/uploads/")) return resolveImageUrl(url);
+  return url.startsWith("/") ? url : `/${url}`;
+}
+
 export function resolveImageUrl(url?: string | null): string {
   if (!url) return "/placeholder-product.svg";
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {

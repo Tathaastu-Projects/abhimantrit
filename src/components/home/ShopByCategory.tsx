@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import type { CategoryTile } from "@/types/product";
+import { resolveBannerUrl } from "@/lib/format";
 
 /**
  * Static collage: /public/categories/*.webp (frontend only).
@@ -70,28 +71,20 @@ const TILES = [
     area: "anklets",
     underline: false,
   },
-] as const;
+];
 
-function Tile({
-  tile,
-  priority,
-}: {
-  tile: (typeof TILES)[number];
-  priority?: boolean;
-}) {
+function Tile({ tile }: { tile: CategoryTile }) {
   return (
     <Link
       href={tile.href}
       className="group relative block min-h-0 overflow-hidden bg-[#f3f0ea]"
       style={{ gridArea: tile.area }}
     >
-      <Image
-        src={tile.image}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={resolveBannerUrl(tile.image)}
         alt={tile.label}
-        fill
-        priority={priority}
-        sizes="(max-width: 768px) 92vw, 33vw"
-        className="object-cover object-center"
+        className="absolute inset-0 h-full w-full object-fill"
       />
       <span
         className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest md:bottom-4 md:left-4 md:text-base lg:text-[1.05rem] ${
@@ -106,7 +99,8 @@ function Tile({
 
 const FULL_WIDTH_MOBILE = new Set(["bracelets", "frame", "rudraksha", "tumbles"]);
 
-export function ShopByCategory() {
+export function ShopByCategory({ tiles }: { tiles?: CategoryTile[] }) {
+  const items = tiles?.length ? tiles : TILES;
   return (
     <section id="shop-by-category" className="container-pad pt-2 pb-12 md:pt-2 md:pb-16">
       <div className="mx-auto max-w-2xl text-center">
@@ -120,14 +114,14 @@ export function ShopByCategory() {
 
       {/* Desktop / tablet — Figma 1920×1308 mosaic */}
       <div className="category-mosaic mt-9 hidden w-full overflow-hidden md:grid">
-        {TILES.map((tile, i) => (
-          <Tile key={tile.id} tile={tile} priority={i < 3} />
+        {items.map((tile) => (
+          <Tile key={tile.id} tile={tile} />
         ))}
       </div>
 
       {/* Mobile — simple stacked tiles */}
       <div className="mt-8 grid grid-cols-2 gap-2.5 md:hidden">
-        {TILES.map((tile, i) => {
+        {items.map((tile) => {
           const full = FULL_WIDTH_MOBILE.has(tile.id);
           return (
           <Link
@@ -137,13 +131,11 @@ export function ShopByCategory() {
               full ? "col-span-2 min-h-[170px]" : "min-h-[150px]"
             }`}
           >
-            <Image
-              src={tile.image}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resolveBannerUrl(tile.image)}
               alt={tile.label}
-              fill
-              priority={i < 2}
-              sizes={full ? "92vw" : "46vw"}
-              className="object-cover object-center"
+              className="absolute inset-0 h-full w-full object-fill"
             />
             <span
               className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest ${

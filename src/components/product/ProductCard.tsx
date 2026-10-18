@@ -8,6 +8,16 @@ import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/cn";
 
+function DetailIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 8.5v4.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="12" cy="15.8" r="0.8" fill="currentColor" />
+    </svg>
+  );
+}
+
 function StarRow({ avg, count }: { avg?: number; count?: number }) {
   const rating = Math.max(0, Math.min(5, Number(avg || 0)));
   const filled = count && count > 0 ? Math.round(rating) : 5;
@@ -80,16 +90,21 @@ export function ProductCard({
     </button>
   );
 
+  const details = (product.hoverDetails || []).map((item) => item.label).filter(Boolean).slice(0, 6);
+  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
+
   return (
     <article className={cn("product-card", tone === "premium" && "product-card--premium")}>
-      <Link href={`/product/${product.slug}`} className="product-card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imgSrc}
-          alt={img.alt || product.title}
-          className="product-card__img"
-          onError={() => setImgSrc("/placeholder-product.svg")}
-        />
+      <div className="product-card__media">
+        <Link href={`/product/${product.slug}`} className="absolute inset-0 z-[1]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imgSrc}
+            alt={img.alt || product.title}
+            className="product-card__img"
+            onError={() => setImgSrc("/placeholder-product.svg")}
+          />
+        </Link>
         <div className="product-card__badges">
           {product.isBestSeller ? (
             <span className="product-card__badge product-card__badge--dark">Best seller</span>
@@ -104,7 +119,34 @@ export function ProductCard({
             <span className="product-card__badge product-card__badge--sale">-{discount}%</span>
           ) : null}
         </div>
-      </Link>
+        {details.length ? (
+          <aside className="product-card__details" aria-hidden>
+            {details.map((label) => (
+              <p key={label} className="product-card__detail">
+                <span className="product-card__detail-icon" aria-hidden>
+                  <DetailIcon />
+                </span>
+                {label}
+              </p>
+            ))}
+          </aside>
+        ) : null}
+        {needsVariant ? (
+          <Link href={`/product/${product.slug}`} className="product-card__bag" style={{ color: "#ffffff" }}>
+            Add to bag
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className="product-card__bag"
+            style={{ color: "#ffffff" }}
+            onClick={quickAdd}
+            disabled={stock <= 0}
+          >
+            {bagLabel}
+          </button>
+        )}
+      </div>
 
       <div className="product-card__body">
         <Link href={`/product/${product.slug}`} className="product-card__title">

@@ -3,26 +3,30 @@ import { HomeBanners } from "@/components/home/CmsBlocks";
 // import { SacredEssentials } from "@/components/home/SacredEssentials";
 import { ShopByCategory } from "@/components/home/ShopByCategory";
 import { AboutAbhimantrit } from "@/components/home/AboutAbhimantrit";
-import { ExpertGuidance } from "@/components/home/ExpertGuidance";
-import { CertifiedAuthentic } from "@/components/home/CertifiedAuthentic";
+import { FeaturedFinds } from "@/components/home/FeaturedFinds";
 import { LovedByCustomers } from "@/components/home/LovedByCustomers";
 import { ReadFromBlog } from "@/components/home/ReadFromBlog";
 import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
 import { IntentionNav } from "@/components/home/IntentionNav";
-import { ZodiacNav } from "@/components/home/ZodiacNav";
+// import { ZodiacNav } from "@/components/home/ZodiacNav";
+import { RashiBracelets } from "@/components/home/RashiBracelets";
+import { getCatalog } from "@/lib/api";
 // import { HomeProductSection } from "@/components/home/HomeProductSection";
 // import { ConsultationCta } from "@/components/home/ConsultationCta";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
 
 /**
  * Home order (Figma top):
- * Hero → Ticker → Trust → Intention → Zodiac → Shop by Category →
- * About → Expert Guidance → Loved by Customers → Certified & Authentic →
- * Read From Our Blog → (Sacred Essentials / Bestsellers / Consult hidden) → FAQ
+ * Hero → Ticker → Trust → Intention → Shop by Category →
+ * About → Loved by Customers →
+ * Read From Our Blog → (Sacred Essentials / Bestsellers / Consult / Certified hidden) → FAQ
  */
 export default async function HomePage() {
-  const home = await getHomeContent();
+  const [home, rashi] = await Promise.all([
+    getHomeContent(),
+    getCatalog({ q: "राशि", limit: 24 }),
+  ]);
   // const products =
   //   home.carousels?.bestsellers?.length
   //     ? home.carousels.bestsellers
@@ -32,16 +36,16 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeBanners banners={home.banners || []} />
+      <HomeBanners banners={home.banners || []} managed={home.homeSliderManaged} />
       <HeroTicker />
       <HomeTrustBar />
       <IntentionNav intentions={home.intentions} />
-      <ZodiacNav />
-      <ShopByCategory />
-      <AboutAbhimantrit />
-      <ExpertGuidance />
+      {/* <ZodiacNav /> */}
+      <RashiBracelets products={rashi.data || []} />
+      <ShopByCategory tiles={home.categoryTiles} />
+      <AboutAbhimantrit about={home.aboutSection} />
+      <FeaturedFinds featured={home.featuredFinds} />
       <LovedByCustomers />
-      <CertifiedAuthentic />
       <ReadFromBlog posts={home.latestBlogs} />
       {/* <SacredEssentials categories={home.categories} /> */}
       {/* <HomeProductSection products={products} limit={8} /> */}
@@ -53,7 +57,7 @@ export default async function HomePage() {
           ctaHref: home.consultCta?.ctaHref,
         }}
       /> */}
-      <FaqAccordion />
+      <FaqAccordion faqs={home.faqs} />
     </>
   );
 }

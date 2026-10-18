@@ -35,54 +35,39 @@ export function FaqAccordion({
 }: {
   faqs?: { question: string; answer: string }[];
 }) {
-  // Prefer curated Abhimantrit FAQs; fall back to CMS only if explicitly longer set needed later
   const items =
-    faqs && faqs.length >= 7
+    faqs && faqs.length
       ? faqs.map((f) => ({ q: f.question, a: f.answer }))
       : DEFAULT_FAQS;
   return (
-    <section id="faq" className="w-full bg-white py-14 md:py-16">
-      <div className="container-pad mx-auto max-w-3xl">
-        <h2 className="text-center font-display text-[1.85rem] font-semibold text-ink md:text-[2.15rem]">
-          Frequently Asked Questions
+    <section id="faq" className="w-full bg-white py-14 md:py-20">
+      <div className="mx-auto w-full max-w-3xl px-6 sm:px-12 md:px-16 lg:px-20">
+        <h2 className="text-center font-display text-3xl font-medium tracking-wide text-ink md:text-4xl">
+          FAQs
         </h2>
 
-        <div className="mt-8 space-y-3 md:mt-10 md:space-y-3.5">
-          {items.map((item, idx) => {
-            const num = String(idx + 1).padStart(2, "0");
-            return (
-              <details
-                key={item.q}
-                name="home-faq"
-                className="group rounded-[1.35rem] border border-[#f0c4cc] bg-white px-4 py-4 md:px-5 md:py-4.5"
-              >
-                <summary className="flex cursor-pointer list-none items-start gap-3 text-left marker:content-none md:gap-4 [&::-webkit-details-marker]:hidden">
-                  <span
-                    className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0c4cc] text-xs font-semibold text-pink md:h-10 md:w-10 md:text-sm"
-                    aria-hidden
-                  >
-                    {num}
-                  </span>
+        <div className="mt-8 space-y-3 md:mt-10">
+          {items.map((item, idx) => (
+            <details
+              key={item.q}
+              name="home-faq"
+              className="group bg-[#f2f2f2] px-4 py-3.5 sm:px-5 md:px-6 md:py-4"
+            >
+              <summary className="flex cursor-pointer list-none items-center gap-4 text-left marker:content-none [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1 text-sm leading-snug text-[#3a3a3a] md:text-[15px]">
+                  Q{idx + 1}: {item.q}
+                </span>
+                <span className="shrink-0 text-xl leading-none text-[#333]" aria-hidden>
+                  <span className="group-open:hidden">+</span>
+                  <span className="hidden group-open:inline">−</span>
+                </span>
+              </summary>
 
-                  <span className="min-w-0 flex-1 pt-1.5 text-[0.95rem] font-medium leading-snug text-ink md:pt-2 md:text-base">
-                    {item.q}
-                  </span>
-
-                  <span
-                    className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0c4cc] text-lg leading-none text-pink md:h-10 md:w-10"
-                    aria-hidden
-                  >
-                    <span className="group-open:hidden">+</span>
-                    <span className="hidden group-open:inline">−</span>
-                  </span>
-                </summary>
-
-                <p className="mt-3 pl-12 pr-12 text-sm leading-relaxed text-ink-soft md:mt-3.5 md:pl-[3.5rem] md:pr-14 md:text-[0.95rem] md:leading-[1.7]">
-                  {item.a}
-                </p>
-              </details>
-            );
-          })}
+              <p className="mt-3 pr-8 text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.7]">
+                {item.a}
+              </p>
+            </details>
+          ))}
         </div>
       </div>
     </section>
