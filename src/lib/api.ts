@@ -483,3 +483,5 @@ export const FALLBACK_TRUST = [
   { id: "cod", label: "Cash on Delivery" },
   { id: "secure", label: "Secure Payments" },
 ];
+
+//update the api to use the new api

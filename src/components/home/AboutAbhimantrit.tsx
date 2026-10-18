@@ -12,7 +12,7 @@ export type AboutFeature = {
   id: string;
   title: string;
   description: string;
-  icon: "badge" | "ritual" | "check" | "star";
+  icon?: "badge" | "ritual" | "check" | "star";
   image?: string;
 };
 
