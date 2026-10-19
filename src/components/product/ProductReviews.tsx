@@ -63,7 +63,7 @@ export function ProductReviews({
       <div className="w-full px-4 py-14 sm:px-6 md:px-8 md:py-16 lg:px-10">
         <div className="flex flex-col gap-6 border-b border-[var(--border)] pb-10 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-pink">Community</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-forest">Community</p>
             <h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">Reviews</h2>
             <p className="mt-2 max-w-lg text-sm text-ink-soft md:text-base">
               {count > 0
@@ -99,7 +99,7 @@ export function ProductReviews({
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-soft text-sm font-bold text-pink">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f3efe6] text-sm font-bold text-forest">
                           {(r.name || "T").slice(0, 1).toUpperCase()}
                         </span>
                         <div>

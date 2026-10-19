@@ -77,7 +77,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
         <div className="mt-6 flex justify-center">
           <Link
             href={ctaHref}
-            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#111111] px-10 py-3.5 text-sm font-semibold uppercase tracking-[0.16em] !text-white shadow-sm"
+            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-forest px-10 py-3.5 text-sm font-semibold uppercase tracking-[0.16em] !text-white"
             style={{ color: "#ffffff" }}
           >
             {ctaLabel}

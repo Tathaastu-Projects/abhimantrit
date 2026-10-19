@@ -133,7 +133,7 @@ export function ProductDetail({
                 </span>
               ) : null}
               {product.isFeatured ? (
-                <span className="rounded-full bg-pink-soft px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-pink">
+                <span className="rounded-full bg-[#f3efe6] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-gold">
                   Featured
                 </span>
               ) : null}

@@ -63,7 +63,7 @@ function navLinkClass(active: boolean, isSale: boolean) {
     active
       ? "bg-[#F3B754] text-ink shadow-sm shadow-[#F3B754]/40"
       : isSale
-        ? "font-semibold text-pink hover:bg-pink-soft hover:text-pink-deep"
+        ? "font-semibold text-forest hover:bg-mist"
         : "text-ink hover:bg-mist hover:text-forest",
   );
 }
@@ -111,19 +111,19 @@ function SiteHeaderShell({
             Free Insured Worldwide Shipping
           </p>
           <div className="flex shrink-0 items-center justify-end gap-3 whitespace-nowrap tracking-wide">
-            <Link href="/account" className="hover:text-pink">
+            <Link href="/account" className="hover:text-forest">
               Account
             </Link>
             <span className="text-ink/25" aria-hidden>
               |
             </span>
-            <Link href="/#faq" className="hover:text-pink">
+            <Link href="/#faq" className="hover:text-forest">
               Help
             </Link>
             <span className="text-ink/25" aria-hidden>
               |
             </span>
-            <Link href="/contact" className="hover:text-pink">
+            <Link href="/contact" className="hover:text-forest">
               Contact Us
             </Link>
           </div>
@@ -179,7 +179,7 @@ function SiteHeaderShell({
               <SearchBox
                 placeholder="Search for products, rituals, or remedies..."
                 className="max-w-none"
-                inputClassName="w-full rounded-full border border-[var(--border)] bg-[#f7f7f5] py-2 pl-9 pr-3 text-xs outline-none placeholder:text-ink-soft/80 focus:border-pink/40 focus:ring-2 focus:ring-pink/15"
+                inputClassName="w-full rounded-full border border-[var(--border)] bg-[#f7f3ec] py-2 pl-9 pr-3 text-xs outline-none placeholder:text-ink-soft/80 focus:border-forest/40 focus:ring-2 focus:ring-forest/10"
               />
             </div>
             <Link href="/account" className="header-icon-btn hidden sm:inline-flex" aria-label="Account">
@@ -195,7 +195,7 @@ function SiteHeaderShell({
             </Link>
             <Link href="/cart" className="header-icon-btn relative" aria-label="Cart">
               <CartIcon />
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-pink px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-forest px-1 text-[10px] font-bold text-white">
                 {mounted ? count : 0}
               </span>
             </Link>
@@ -220,7 +220,7 @@ function SiteHeaderShell({
                     active
                       ? "bg-[#F3B754] text-ink"
                       : isSale
-                        ? "text-pink hover:bg-pink-soft"
+                        ? "text-forest hover:bg-mist"
                         : "text-ink hover:bg-mist",
                   )}
                   onClick={() => setOpen(false)}

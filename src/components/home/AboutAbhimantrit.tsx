@@ -145,7 +145,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                 >
                   <span
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${
-                      selected ? "bg-[#e74660]" : "bg-[#e74660]/70"
+                      selected ? "bg-forest" : "bg-forest/70"
                     }`}
                     aria-hidden
                   >

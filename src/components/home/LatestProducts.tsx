@@ -66,13 +66,13 @@ function ProductTile({ product }: { product: StoreProduct }) {
       <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
         <span className="text-base font-semibold text-[#111]">{formatINR(sale)}</span>
         {mrp > sale ? <span className="text-sm text-[#9a9a9a] line-through">{formatINR(mrp)}</span> : null}
-        {off > 0 ? <span className="text-sm font-bold text-[#111]">{off}% OFF</span> : null}
+        {off > 0 ? <span className="text-sm font-bold text-gold">{off}% OFF</span> : null}
       </p>
       <button
         type="button"
         onClick={add}
         disabled={stock <= 0}
-        className="card-hover__cta mt-3 w-full rounded-lg bg-black py-2.5 text-sm font-semibold text-white transition hover:bg-[#222] disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
+        className="card-hover__cta mt-3 w-full rounded-full bg-forest py-2.5 text-sm font-semibold text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
       >
         {stock <= 0 ? "Out of stock" : added ? "Added" : "Add to Cart"}
       </button>
@@ -101,7 +101,7 @@ export function LatestProducts({ products }: { products: StoreProduct[] }) {
       <div className="mt-8 flex justify-center">
         <Link
           href="/shop?sort=newest"
-          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-black px-8 text-sm font-semibold transition hover:bg-[#222]"
+          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-forest px-8 text-sm font-semibold transition hover:bg-forest-deep"
           style={{ color: "#ffffff" }}
         >
           View all

@@ -31,7 +31,7 @@ export function PriceBlock({ mrp, salePrice, discount, size = "md", className }:
         </span>
       ) : null}
       {off > 0 ? (
-        <span className="text-xs font-bold text-pink">-{off}%</span>
+        <span className="text-xs font-bold text-gold">-{off}%</span>
       ) : null}
     </div>
   );

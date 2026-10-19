@@ -133,7 +133,7 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
               <div className="mt-auto flex items-center justify-between gap-3 pt-5">
                 <p className="text-xs text-ink-soft">{post.date}</p>
                 <span
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink text-white transition group-hover:bg-pink-deep"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-forest text-white transition group-hover:bg-forest-deep"
                   aria-hidden
                 >
                   <ArrowIcon />
@@ -147,7 +147,7 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
       <div className="mt-10 flex justify-center">
         <Link
           href="/blog"
-          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-pink px-8 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(231,70,96,0.25)] transition hover:bg-pink-deep"
+          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-forest px-8 text-sm font-semibold text-white transition hover:bg-forest-deep"
         >
           View all
         </Link>
