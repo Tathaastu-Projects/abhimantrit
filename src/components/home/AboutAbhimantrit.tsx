@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getApiBaseUrl } from "@/lib/env";
 import { resolveBannerUrl } from "@/lib/format";
 
-const DEFAULT_IMAGE = "/about/abhimantrit-banner.png";
 const DEFAULT_INTRO =
   "Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials, thoughtfully chosen for their astrological and spiritual significance. Each piece is carefully checked for authenticity and quality, then energised through traditional Vedic rituals with care and intention.";
 
@@ -14,13 +13,39 @@ export type AboutFeature = {
   description: string;
   icon?: "badge" | "ritual" | "check" | "star";
   image?: string;
+  videoUrl?: string;
+  playbackUrl?: string;
 };
 
 export type AboutSection = {
   image?: string;
   intro?: string;
+  videoUrl?: string;
+  playbackUrl?: string;
   features?: AboutFeature[];
 };
+
+function driveFileId(url: string) {
+  const file = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (file) return file[1];
+  if (!/drive\.google\.com|googleusercontent\.com/.test(url)) return "";
+  const id = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  return id ? id[1] : "";
+}
+
+function mediaImage(url?: string) {
+  if (!url) return "";
+  const id = driveFileId(url);
+  if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+  return resolveBannerUrl(url);
+}
+
+function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string }) {
+  if (item?.playbackUrl) return resolveBannerUrl(item.playbackUrl);
+  const video = item?.videoUrl || "";
+  if (!video || driveFileId(video)) return "";
+  return resolveBannerUrl(video);
+}
 
 const FEATURES: AboutFeature[] = [
   {
@@ -75,40 +100,47 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
       title: custom?.title || item.title,
       description: custom?.description || item.description,
       image: custom?.image || "",
+      videoUrl: custom?.videoUrl || "",
+      playbackUrl: custom?.playbackUrl || "",
     };
   });
-  const baseImage = source?.image || DEFAULT_IMAGE;
+  const savedImage = source?.image || "";
+  const baseImage = savedImage.includes("/about/abhimantrit-banner") ? "" : savedImage;
   const intro = source?.intro || DEFAULT_INTRO;
-  const [activeId, setActiveId] = useState(features[0]?.id || "lab");
-  const active = features.find((item) => item.id === activeId) || features[0];
-  const shown = active?.image || baseImage;
-  const showingPoint = Boolean(active?.image);
+  const [activeId, setActiveId] = useState("");
 
   return (
-    <section id="about" className="w-full overflow-hidden bg-[#f7f1e8]">
+    <section id="about" className="about-swap w-full overflow-hidden bg-[#f7f1e8]">
       <div className="grid items-stretch md:grid-cols-2">
-        <div className="order-2 px-5 py-8 md:order-1 md:px-7 md:py-12 xl:px-8 xl:py-14">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-            About
-          </p>
-          <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
-            ABHIMANTRIT
-          </h2>
+        <div className="relative z-10 order-2 px-5 py-8 md:order-1 md:px-7 md:py-12 xl:px-8 xl:py-14">
+          <div onMouseEnter={() => setActiveId("")}>
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
+              About
+            </p>
+            <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
+              ABHIMANTRIT
+            </h2>
             <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
               {intro}
             </p>
+          </div>
 
-          <ul className="mt-6 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]">
+          <ul
+            className="mt-6 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]"
+            onMouseLeave={() => setActiveId("")}
+          >
             {features.map((item) => {
               const selected = item.id === activeId;
               return (
                 <li
                   key={item.id}
-                  className={`flex cursor-pointer items-center gap-4 py-4 transition-all duration-300 md:gap-5 md:py-5 ${
-                    selected ? "opacity-100 blur-none" : "opacity-70 blur-[0.4px]"
+                  data-about={item.id}
+                  className={`about-point flex cursor-pointer items-center gap-4 py-4 transition-all duration-300 md:gap-5 md:py-5 ${
+                    selected ? "is-active opacity-100 blur-none" : "opacity-70 blur-[0.4px]"
                   }`}
                   tabIndex={0}
                   onMouseEnter={() => setActiveId(item.id)}
+                  onPointerEnter={() => setActiveId(item.id)}
                   onFocus={() => setActiveId(item.id)}
                 >
                   <span
@@ -144,19 +176,75 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
           </ul>
         </div>
 
-        <div className="relative order-1 min-h-[220px] bg-[#f7f1e8] md:order-2 md:min-h-full">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            key={shown}
-            src={resolveBannerUrl(shown)}
-            alt=""
-            className={`absolute inset-0 h-full w-full ${
-              showingPoint ? "object-contain" : "object-cover object-right"
-            }`}
-          />
+        <div className="about-stage relative z-0 order-1 min-h-[220px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-full">
+          {baseImage || mediaVideo(source) ? (
+            <StageMedia
+              image={baseImage}
+              video={mediaVideo(source)}
+              base
+              playing={!activeId}
+            />
+          ) : null}
+          {features.map((item) =>
+            item.image || mediaVideo(item) ? (
+              <StageMedia
+                key={item.id}
+                aboutId={item.id}
+                image={item.image}
+                video={mediaVideo(item)}
+                active={item.id === activeId}
+                playing={item.id === activeId}
+              />
+            ) : null,
+          )}
         </div>
       </div>
     </section>
+  );
+}
+
+function StageMedia({
+  image,
+  video,
+  aboutId,
+  base,
+  active,
+  playing,
+}: {
+  image?: string;
+  video?: string;
+  aboutId?: string;
+  base?: boolean;
+  active?: boolean;
+  playing?: boolean;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const node = videoRef.current;
+    if (!node) return;
+    if (playing) node.play().catch(() => {});
+    else node.pause();
+  }, [playing, video]);
+
+  const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
+  if (video) {
+    return (
+      <video
+        ref={videoRef}
+        data-about-image={aboutId}
+        src={video}
+        poster={image ? mediaImage(image) : undefined}
+        loop
+        muted
+        playsInline
+        className={className}
+      />
+    );
+  }
+  if (!image) return null;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img data-about-image={aboutId} src={mediaImage(image)} alt="" className={className} />
   );
 }
 

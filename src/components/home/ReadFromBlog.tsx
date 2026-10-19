@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { StoreBlogPost } from "@/types/product";
 import { resolveBannerUrl } from "@/lib/format";
+import { BlogCover } from "@/components/home/BlogCover";
 
 const FALLBACK_POSTS: {
   slug: string;
@@ -58,6 +59,14 @@ function mediaVideo(post: { videoUrl?: string; playbackUrl?: string }) {
   return resolveBannerUrl(post.videoUrl);
 }
 
+function posterFor(video?: string, image?: string) {
+  if (image) return image;
+  if (!video) return "";
+  const clean = video.split("?")[0];
+  if (!clean.endsWith(".mp4")) return "";
+  return clean.replace(/\.mp4$/, ".jpg");
+}
+
 function formatDate(value?: string) {
   if (!value) return "March 25, 2026";
   try {
@@ -107,29 +116,11 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
             href={`/blog/${post.slug}`}
             className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-[0_1px_0_rgba(15,61,46,0.04)] transition hover:-translate-y-0.5 hover:shadow-md"
           >
-            <div
-              className="relative aspect-[16/11] w-full overflow-hidden"
-              style={{ backgroundColor: post.coverTint }}
-            >
-              {mediaVideo(post) ? (
-                <video
-                  src={mediaVideo(post)}
-                  poster={mediaImage(post.coverImage) || undefined}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="h-full w-full object-cover"
-                />
-              ) : post.coverImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={mediaImage(post.coverImage)}
-                  alt=""
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-                />
-              ) : null}
-            </div>
+            <BlogCover
+              image={posterFor(mediaVideo(post), mediaImage(post.coverImage))}
+              video={mediaVideo(post)}
+              className="relative aspect-[16/11] w-full overflow-hidden bg-[#f3f3f3]"
+            />
 
             <div className="flex flex-1 flex-col bg-[#fffafb] px-5 pb-5 pt-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-pink">

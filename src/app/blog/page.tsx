@@ -1,5 +1,18 @@
 import Link from "next/link";
 import { getBlogs } from "@/lib/api";
+import { resolveBannerUrl } from "@/lib/format";
+import { BlogCover } from "@/components/home/BlogCover";
+
+function coverSrc(post: { coverImage?: string; playbackUrl?: string; videoUrl?: string }) {
+  if (post.coverImage) return resolveBannerUrl(post.coverImage);
+  const video = post.playbackUrl || "";
+  if (video.endsWith(".mp4")) return resolveBannerUrl(video.replace(/\.mp4$/, ".jpg"));
+  return "";
+}
+
+function videoSrc(post: { playbackUrl?: string }) {
+  return post.playbackUrl ? resolveBannerUrl(post.playbackUrl) : "";
+}
 
 export default async function BlogIndexPage() {
   const { posts } = await getBlogs(1, 24);
@@ -21,12 +34,11 @@ export default async function BlogIndexPage() {
               href={`/blog/${post.slug}`}
               className="overflow-hidden rounded-3xl border border-[var(--border)] bg-white/45 transition hover:-translate-y-0.5"
             >
-              {post.coverImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={post.coverImage} alt="" className="aspect-[16/10] w-full object-cover" />
-              ) : (
-                <div className="aspect-[16/10] bg-temple/10" />
-              )}
+              <BlogCover
+                image={coverSrc(post)}
+                video={videoSrc(post)}
+                className="aspect-[16/10] w-full bg-[#f3f3f3]"
+              />
               <div className="p-5">
                 <h2 className="font-display text-2xl">{post.title}</h2>
                 {post.excerpt ? (

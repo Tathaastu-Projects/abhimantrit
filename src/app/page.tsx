@@ -2,6 +2,7 @@ import { getHomeContent } from "@/lib/api";
 import { HomeBanners } from "@/components/home/CmsBlocks";
 // import { SacredEssentials } from "@/components/home/SacredEssentials";
 import { ShopByCategory } from "@/components/home/ShopByCategory";
+import { LatestProducts } from "@/components/home/LatestProducts";
 import { AboutAbhimantrit } from "@/components/home/AboutAbhimantrit";
 import { FeaturedFinds } from "@/components/home/FeaturedFinds";
 import { Testimonials } from "@/components/home/Testimonials";
@@ -25,9 +26,10 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 const INTENTIONS = ["Peace", "Wealth", "Health", "Protection", "Relationship", "Success", "Spirituality"];
 
 export default async function HomePage() {
-  const [home, rashi, ...intentionLists] = await Promise.all([
+  const [home, rashi, latest, ...intentionLists] = await Promise.all([
     getHomeContent(),
     getCatalog({ q: "राशि", limit: 24 }),
+    getCatalog({ sort: "newest", limit: 20 }),
     ...INTENTIONS.map((intention) => getCatalog({ intention, limit: 1 })),
   ]);
   const intentionProducts = Object.fromEntries(
@@ -52,6 +54,7 @@ export default async function HomePage() {
       {/* <ZodiacNav /> */}
       <RashiBracelets products={rashi.data || []} />
       <ShopByCategory tiles={home.categoryTiles} />
+      <LatestProducts products={latest.data || []} />
       <AboutAbhimantrit about={home.aboutSection} />
       <FeaturedFinds featured={home.featuredFinds} />
       <Testimonials items={home.testimonials} />

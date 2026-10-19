@@ -692,6 +692,45 @@ a {
   animation-play-state: paused;
 }
 
+.about-stage__img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.about-stage__img--base {
+  object-fit: cover;
+  object-position: right center;
+  opacity: 1;
+}
+
+.about-stage__img.is-active {
+  opacity: 1;
+}
+
+.about-stage:has(.about-stage__img.is-active) .about-stage__img--base {
+  opacity: 0;
+}
+
+.about-swap:has([data-about="lab"]:hover) .about-stage__img,
+.about-swap:has([data-about="ritual"]:hover) .about-stage__img,
+.about-swap:has([data-about="quality"]:hover) .about-stage__img,
+.about-swap:has([data-about="guided"]:hover) .about-stage__img {
+  opacity: 0;
+}
+
+.about-swap:has([data-about="lab"]:hover) [data-about-image="lab"],
+.about-swap:has([data-about="ritual"]:hover) [data-about-image="ritual"],
+.about-swap:has([data-about="quality"]:hover) [data-about-image="quality"],
+.about-swap:has([data-about="guided"]:hover) [data-about-image="guided"] {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reviews-marquee {
     animation: none;

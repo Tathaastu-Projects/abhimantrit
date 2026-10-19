@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Script from "next/script";
 import { resolveBannerUrl } from "@/lib/format";
 
 export type Testimonial = {
@@ -35,26 +33,11 @@ function videoSrc(url?: string) {
 
 export function Testimonials({ items }: { items?: Testimonial[] }) {
   const cards = (items || []).filter((item) => item.quote && item.name);
-  const [index, setIndex] = useState(0);
-  const count = cards.length;
-
-  useEffect(() => {
-    if (count < 2) return;
-    const timer = window.setInterval(() => {
-      setIndex((current) => (current + 1) % count);
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [count, index]);
-
-  if (!count) return null;
-  const showArrows = count > 1;
-
-  const go = (step: number) => {
-    setIndex((current) => (current + step + count) % count);
-  };
+  if (!cards.length) return null;
+  const showArrows = cards.length > 1;
 
   return (
-    <section id="testimonials" className="w-full bg-white py-14 md:py-16">
+    <section id="testimonials" data-testimonials className="w-full bg-white py-14 md:py-16">
       <h2 className="text-center font-display text-[2rem] font-medium tracking-[-0.02em] text-[#1c1c1c] md:text-[2.4rem]">
         Testimonials
       </h2>
@@ -62,47 +45,42 @@ export function Testimonials({ items }: { items?: Testimonial[] }) {
         {showArrows ? (
           <button
             type="button"
+            data-testimonials-prev
             aria-label="Previous review"
-            onClick={() => go(-1)}
             className="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#ececec] text-[#4a4a4a] shadow-sm"
           >
             <Arrow direction="left" />
           </button>
         ) : null}
-        <div className="overflow-hidden">
-          <div
-            className="flex transition-transform duration-700 ease-in-out"
-            style={{
-              width: `${count * 100}%`,
-              transform: `translateX(-${(index * 100) / count}%)`,
-            }}
-          >
+        <div data-testimonials-frame className="overflow-hidden">
+          <div data-testimonials-track className="flex">
             {cards.map((item, cardIndex) => (
-              <ReviewCard key={`${item.name}-${cardIndex}`} item={item} width={`${100 / count}%`} />
+              <ReviewCard key={`${item.name}-${cardIndex}`} item={item} />
             ))}
           </div>
         </div>
         {showArrows ? (
           <button
             type="button"
+            data-testimonials-next
             aria-label="Next review"
-            onClick={() => go(1)}
             className="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#ececec] text-[#4a4a4a] shadow-sm"
           >
             <Arrow direction="right" />
           </button>
         ) : null}
       </div>
+      {showArrows ? <Script src="/testimonials-slider.js?v=1" strategy="afterInteractive" /> : null}
     </section>
   );
 }
 
-function ReviewCard({ item, width }: { item: Testimonial; width: string }) {
+function ReviewCard({ item }: { item: Testimonial }) {
   const photo = imageSrc(item.imageUrl);
   const video = item.playbackUrl ? resolveBannerUrl(item.playbackUrl) : videoSrc(item.videoUrl);
 
   return (
-    <article className="grid h-[300px] shrink-0 overflow-hidden bg-[#f3f3f3] md:grid-cols-[1.15fr_0.85fr]" style={{ width }}>
+    <article data-testimonials-slide className="grid h-[300px] w-full min-w-full shrink-0 overflow-hidden bg-[#f3f3f3] md:grid-cols-[1.15fr_0.85fr]">
       <div className="flex min-h-0 flex-col justify-center overflow-hidden px-6 py-5 md:px-10">
         <div className="flex gap-1 text-[#e0b100]" aria-label="5 stars">
           {Array.from({ length: 5 }).map((_, star) => (

@@ -345,12 +345,16 @@ export type HomeContent = {
     intro?: string;
     width?: number;
     height?: number;
+    videoUrl?: string;
+    playbackUrl?: string;
     features?: {
       id: string;
       title: string;
       description: string;
       icon?: "badge" | "ritual" | "check" | "star";
       image?: string;
+      videoUrl?: string;
+      playbackUrl?: string;
     }[];
   };
   trustBadges?: { id: string; label: string; description?: string }[];
