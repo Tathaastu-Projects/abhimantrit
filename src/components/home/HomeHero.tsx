@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Script from "next/script";
+import { preload } from "react-dom";
 
 /**
  * Hero slides come from the admin panel. Image and text move together.
@@ -23,6 +25,9 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
   const source = slides;
   const track = [source[source.length - 1], ...source, source[0]];
   const pages = track.length;
+  if (source[0]?.src) {
+    preload(source[0].src, { as: "image", fetchPriority: "high" });
+  }
 
   return (
     <section
@@ -33,18 +38,6 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
       aria-label="Home banners"
       suppressHydrationWarning
     >
-      <style>{`
-        @keyframes home-hero-step {
-          0%, 78% { transform: translate3d(-${100 / pages}%, 0, 0); }
-          100% { transform: translate3d(-${200 / pages}%, 0, 0); }
-        }
-        #home-hero [data-hero-track] {
-          animation: home-hero-step 3.8s linear infinite;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          #home-hero [data-hero-track] { animation: none; }
-        }
-      `}</style>
 
       <div
         data-hero-track
@@ -68,6 +61,9 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
                 width={1920}
                 height={785}
                 draggable={false}
+                decoding="async"
+                fetchPriority={i === 1 ? "high" : "low"}
+                loading={i === 1 ? "eager" : "lazy"}
                 className="absolute inset-0 h-full w-full object-fill"
               />
 
@@ -132,7 +128,7 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
         <ArrowIcon direction="right" />
       </button>
 
-      <script src="/hero-slider.js?v=3" defer />
+      <Script src="/hero-slider.js?v=4" strategy="afterInteractive" />
     </section>
   );
 }

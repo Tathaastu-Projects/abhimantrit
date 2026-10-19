@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { CatalogFacets } from "@/types/product";
 import { titleCase } from "@/lib/format";
@@ -40,6 +40,7 @@ export function FilterSidebar({ facets, className }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [open, setOpen] = useState(false);
 
   const active = useMemo(() => {
     const obj: Record<string, string> = {};
@@ -74,14 +75,44 @@ export function FilterSidebar({ facets, className }: Props) {
   );
 
   return (
-    <aside className={cn("space-y-6", className)}>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-ink"
+      >
+        Filters
+        {hasFilters ? <span className="h-2 w-2 rounded-full bg-temple" aria-hidden /> : null}
+      </button>
+
+      {open ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/40"
+          aria-label="Close filters"
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
+
+    <aside
+      className={cn(
+        "fixed bottom-0 left-0 top-0 z-50 w-[min(100%,320px)] space-y-6 overflow-y-auto bg-[#faf8f5] p-5 shadow-xl transition-transform duration-300",
+        open ? "translate-x-0" : "-translate-x-full",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl">Filters</h2>
-        {hasFilters ? (
-          <button type="button" onClick={clearAll} className="text-sm text-temple hover:underline">
-            Clear all
+        <div className="flex items-center gap-3">
+          {hasFilters ? (
+            <button type="button" onClick={clearAll} className="text-sm text-temple hover:underline">
+              Clear all
+            </button>
+          ) : null}
+          <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold text-ink">
+            Close
           </button>
-        ) : null}
+        </div>
       </div>
 
       <div>
@@ -202,5 +233,6 @@ export function FilterSidebar({ facets, className }: Props) {
         </Link>
       </div>
     </aside>
+    </>
   );
 }

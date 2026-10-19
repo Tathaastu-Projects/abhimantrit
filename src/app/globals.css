@@ -376,7 +376,12 @@ a {
 }
 
 .product-card__badge--dark {
-  background: var(--forest);
+  border-radius: 999px;
+  background: #1b4332;
+  padding: 0.35rem 0.7rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
 }
 
 .product-card__badge--sale {
@@ -419,8 +424,13 @@ a {
 
 .product-card__bag,
 .product-card__details {
-  opacity: 0;
   pointer-events: none;
+}
+
+.product-card__details {
+  opacity: 0;
+  transform: translateX(16px);
+  transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
 .product-card__details {
@@ -435,9 +445,9 @@ a {
   justify-content: center;
   gap: 0.65rem;
   overflow: auto;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
   padding: 0.7rem 0.5rem;
-  border-left: 1px solid #eee;
 }
 
 .product-card__detail {
@@ -480,18 +490,30 @@ a {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
 }
 
 @media (hover: hover) and (min-width: 768px) {
-  .product-card__cta {
+  .product-card__cta,
+  .card-hover__cta {
     display: none;
   }
 
   .product-card:hover .product-card__bag,
   .product-card:focus-within .product-card__bag,
+  .card-hover:hover .product-card__bag,
+  .card-hover:focus-within .product-card__bag {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
   .product-card:hover .product-card__details,
-  .product-card:focus-within .product-card__details {
+  .product-card:focus-within .product-card__details,
+  .card-hover:hover .product-card__details,
+  .card-hover:focus-within .product-card__details {
     opacity: 1;
+    transform: translateX(0);
     pointer-events: auto;
   }
 }
@@ -621,7 +643,7 @@ a {
 
 /* Shop by Category — Figma mosaic ~1920×1308 */
 .category-mosaic {
-  gap: 10px;
+  gap: 12px;
   aspect-ratio: 1920 / 1000;
   grid-template-columns: 1.05fr 1.15fr 0.9fr;
   grid-template-rows: 0.72fr 0.72fr 0.95fr 0.72fr;

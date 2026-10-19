@@ -199,6 +199,8 @@ export type StoreBlogPost = {
   excerpt?: string;
   content?: string;
   coverImage?: string;
+  videoUrl?: string;
+  playbackUrl?: string;
   author?: string;
   tags?: string[];
   publishedAt?: string;
@@ -361,6 +363,7 @@ export type HomeContent = {
     newArrivals?: StoreProduct[];
   };
   latestBlogs: StoreBlogPost[];
+  testimonials?: { quote: string; name: string; imageUrl?: string; videoUrl?: string; playbackUrl?: string }[];
   faqs?: { question: string; answer: string }[];
   consultCta?: HomeConsultCta;
   faqPage?: StoreCmsPage | null;

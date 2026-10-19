@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
-import { discountPercent, formatINR, primaryImage, resolveImageUrl } from "@/lib/format";
+import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 
 const SIGNS = [
@@ -28,6 +28,51 @@ function signOf(title: string) {
   );
 }
 
+export function HoverDetails({ labels }: { labels: string[] }) {
+  if (!labels.length) return null;
+  return (
+    <aside className="product-card__details" aria-hidden>
+      {labels.map((label) => (
+        <p key={label} className="product-card__detail">
+          <span className="product-card__detail-icon" aria-hidden>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.6" />
+              <path d="M12 8.5v4.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <circle cx="12" cy="15.8" r="0.8" fill="currentColor" />
+            </svg>
+          </span>
+          {label}
+        </p>
+      ))}
+    </aside>
+  );
+}
+
+export function BagButton({
+  href,
+  label,
+  onClick,
+  disabled,
+}: {
+  href?: string;
+  label: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
+  if (href) {
+    return (
+      <Link href={href} className="product-card__bag" style={{ color: "#ffffff" }}>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" className="product-card__bag" style={{ color: "#ffffff" }} onClick={onClick} disabled={disabled}>
+      {label}
+    </button>
+  );
+}
+
 function stonesOf(title: string) {
   const parts = title.split(/\s[–—-]\s/);
   return parts.length > 1 ? parts.slice(1).join(" · ") : "";
@@ -47,7 +92,7 @@ export function RashiBracelets({ products }: { products: StoreProduct[] }) {
   if (!cards.length) return null;
 
   return (
-    <section id="rashi-bracelets" className="w-full bg-[#fbf8f4] py-12 md:py-16">
+    <section id="rashi-bracelets" className="w-full bg-[#fbf8f4] pt-4 pb-12 md:pt-6 md:pb-16">
       <div className="px-5 md:px-8 xl:px-10">
         <h2 className="font-display text-[1.7rem] font-semibold tracking-[-0.02em] text-[#1c1c1c] md:text-[2rem]">
           Rashi Bracelets Collection
@@ -77,21 +122,27 @@ function RashiCard({
   const mrp = product.effectiveMrp ?? product.mrp;
   const off = product.effectiveDiscountPercent ?? product.discountPercent ?? discountPercent(mrp, sale);
   const stock = product.effectiveStock ?? product.totalStock ?? product.quantity;
-  const needsVariant = (product.variants || []).some((variant) => variant.isActive);
+  const activeVariant = (product.variants || []).find((variant) => variant.isActive);
   const stones = stonesOf(product.title);
   const intention = product.intentions?.[0];
   const rating = product.ratingCount ? product.ratingAvg : undefined;
+  const details = hoverLines(product);
+  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
 
-  function add() {
-    if (needsVariant || stock <= 0) return;
+  function add(event: React.MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (stock <= 0) return;
     addItem({
       productId: product._id,
       slug: product.slug,
       title: product.title,
       image: img.url,
-      unitSalePrice: sale,
-      unitMrp: mrp,
-      maxQty: stock,
+      variantId: activeVariant?._id || null,
+      variantLabel: activeVariant?.label,
+      unitSalePrice: activeVariant?.salePrice || sale,
+      unitMrp: activeVariant?.mrp || mrp,
+      maxQty: activeVariant?.quantity || stock,
       qty: 1,
     });
     setAdded(true);
@@ -115,19 +166,23 @@ function RashiCard({
         </div>
       </div>
 
-      <Link href={`/product/${product.slug}`} className="relative mt-3 block overflow-hidden rounded-xl bg-[#f6f3ee]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={resolveImageUrl(img.url)}
-          alt={product.title}
-          className="h-[168px] w-full object-contain p-3"
-        />
+      <div className="card-hover relative mt-3 overflow-hidden rounded-xl bg-[#f6f3ee]">
+        <Link href={`/product/${product.slug}`} className="block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolveImageUrl(img.url)}
+            alt={product.title}
+            className="h-[168px] w-full object-contain p-3"
+          />
+        </Link>
         {off > 0 ? (
-          <span className="absolute right-2 top-2 rounded-md bg-[#1c2434] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+          <span className="absolute right-2 top-2 z-[2] rounded-md bg-[#1c2434] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
             Sale
           </span>
         ) : null}
-      </Link>
+        <HoverDetails labels={details} />
+        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0} />
+      </div>
 
       <div className="mt-3 flex items-center gap-1.5 px-1 text-[11px] text-[#6b6660]">
         {rating ? (
@@ -160,23 +215,16 @@ function RashiCard({
         {off > 0 ? <span className="text-xs font-semibold text-[#c45c26]">{off}% off</span> : null}
       </p>
 
-      {needsVariant ? (
-        <Link
-          href={`/product/${product.slug}`}
-          className="mt-3 rounded-xl bg-[#1c2434] py-2.5 text-center text-sm font-semibold text-white"
-        >
-          Add {formatINR(sale)}
-        </Link>
-      ) : (
+      <div className="card-hover__cta">
         <button
           type="button"
           onClick={add}
           disabled={stock <= 0}
-          className="mt-3 rounded-xl bg-[#1c2434] py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300"
+          className="mt-3 w-full rounded-xl bg-[#1c2434] py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300"
         >
           {stock <= 0 ? "Out of stock" : added ? "Added" : `Add ${formatINR(sale)}`}
         </button>
-      )}
+      </div>
     </article>
   );
 }

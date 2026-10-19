@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { StoreBlogPost } from "@/types/product";
+import { resolveBannerUrl } from "@/lib/format";
 
 const FALLBACK_POSTS: {
   slug: string;
@@ -8,6 +9,8 @@ const FALLBACK_POSTS: {
   date: string;
   coverTint: string;
   coverImage?: string;
+  videoUrl?: string;
+  playbackUrl?: string;
 }[] = [
   {
     slug: "planets-not-aligned-vedic-astrology",
@@ -32,6 +35,29 @@ const FALLBACK_POSTS: {
   },
 ];
 
+function driveFileId(url: string) {
+  const file = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (file) return file[1];
+  if (!/drive\.google\.com|googleusercontent\.com/.test(url)) return "";
+  const id = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  return id ? id[1] : "";
+}
+
+function mediaImage(url?: string) {
+  if (!url) return "";
+  const id = driveFileId(url);
+  if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+  return resolveBannerUrl(url);
+}
+
+function mediaVideo(post: { videoUrl?: string; playbackUrl?: string }) {
+  if (post.playbackUrl) return resolveBannerUrl(post.playbackUrl);
+  if (!post.videoUrl) return "";
+  const id = driveFileId(post.videoUrl);
+  if (id) return "";
+  return resolveBannerUrl(post.videoUrl);
+}
+
 function formatDate(value?: string) {
   if (!value) return "March 25, 2026";
   try {
@@ -54,6 +80,8 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
     date: formatDate(post.publishedAt),
     coverTint: FALLBACK_POSTS[i % FALLBACK_POSTS.length].coverTint,
     coverImage: post.coverImage,
+    videoUrl: post.videoUrl,
+    playbackUrl: post.playbackUrl,
   }));
 
   const list = fromApi.length ? fromApi : FALLBACK_POSTS;
@@ -83,10 +111,20 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
               className="relative aspect-[16/11] w-full overflow-hidden"
               style={{ backgroundColor: post.coverTint }}
             >
-              {post.coverImage ? (
+              {mediaVideo(post) ? (
+                <video
+                  src={mediaVideo(post)}
+                  poster={mediaImage(post.coverImage) || undefined}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              ) : post.coverImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={post.coverImage}
+                  src={mediaImage(post.coverImage)}
                   alt=""
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                 />

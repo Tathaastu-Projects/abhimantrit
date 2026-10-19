@@ -14,6 +14,27 @@ export function discountPercent(mrp: number, salePrice: number): number {
   return Math.round(((mrp - salePrice) / mrp) * 100);
 }
 
+/** Lines on the right of a product photo while the pointer is over the card. */
+export function hoverLines(product: {
+  hoverDetails?: { label?: string }[];
+  intentions?: string[];
+  attributes?: { material?: string; stone?: string; origin?: string; zodiac?: string };
+}): string[] {
+  const saved = (product.hoverDetails || []).map((item) => item.label?.trim() || "").filter(Boolean);
+  if (saved.length) return saved.slice(0, 6);
+  const attrs = product.attributes || {};
+  return [
+    attrs.material ? `Material: ${attrs.material}` : "",
+    attrs.stone || "",
+    attrs.origin ? `Origin: ${attrs.origin}` : "",
+    attrs.zodiac ? `Zodiac: ${attrs.zodiac}` : "",
+    product.intentions?.[0] || "",
+  ]
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
 /** Homepage slides live on the store, except images uploaded from admin (`/uploads`). */
 export function resolveBannerUrl(url?: string | null): string {
   if (!url) return "";

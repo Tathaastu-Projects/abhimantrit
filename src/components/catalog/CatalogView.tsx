@@ -67,16 +67,17 @@ export function CatalogView({
           </div>
         ) : null}
 
-        <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:gap-8">
-          <Suspense fallback={<div className="skeleton h-96" />}>
-            <FilterSidebar facets={facets} className="lg:sticky lg:top-24 lg:self-start" />
-          </Suspense>
-
+        <div>
           <div>
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
-              <p className="text-sm text-ink-soft">
-                {pagination.total} {pagination.total === 1 ? "result" : "results"}
-              </p>
+              <div className="flex items-center gap-3">
+                <Suspense fallback={<div className="skeleton h-10 w-24 rounded-full" />}>
+                  <FilterSidebar facets={facets} />
+                </Suspense>
+                <p className="text-sm text-ink-soft">
+                  {pagination.total} {pagination.total === 1 ? "result" : "results"}
+                </p>
+              </div>
               <Suspense fallback={null}>
                 <SortSelect options={sortOptions} />
               </Suspense>

@@ -73,26 +73,28 @@ const TILES = [
   },
 ];
 
+function TileLabel({ label }: { label: string }) {
+  return (
+    <span className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/55 via-black/20 to-transparent px-3 pb-3 pt-10 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-white md:pb-4 md:text-[11px]">
+      {label}
+    </span>
+  );
+}
+
 function Tile({ tile }: { tile: CategoryTile }) {
   return (
     <Link
       href={tile.href}
-      className="group relative block min-h-0 overflow-hidden bg-[#f3f0ea]"
+      className="group relative block min-h-0 overflow-hidden bg-[#efe8dc]"
       style={{ gridArea: tile.area }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={resolveBannerUrl(tile.image)}
         alt={tile.label}
-        className="absolute inset-0 h-full w-full object-fill"
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
       />
-      <span
-        className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest md:bottom-4 md:left-4 md:text-base lg:text-[1.05rem] ${
-          tile.underline ? "underline decoration-forest/70 underline-offset-4" : ""
-        }`}
-      >
-        {tile.label}
-      </span>
+      <TileLabel label={tile.label} />
     </Link>
   );
 }
@@ -102,52 +104,80 @@ const FULL_WIDTH_MOBILE = new Set(["bracelets", "frame", "rudraksha", "tumbles"]
 export function ShopByCategory({ tiles }: { tiles?: CategoryTile[] }) {
   const items = tiles?.length ? tiles : TILES;
   return (
-    <section id="shop-by-category" className="container-pad pt-2 pb-12 md:pt-2 md:pb-16">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-          Explore the collection
-        </p>
-        <h2 className="mt-2 font-display text-[1.85rem] font-semibold text-forest md:text-[2.15rem]">
-          Shop by Category
-        </h2>
-      </div>
+    <section id="shop-by-category" className="relative overflow-hidden bg-[#f6efe4] py-14 md:py-20">
+      <SideArt side="left" />
+      <SideArt side="right" />
 
-      {/* Desktop / tablet — Figma 1920×1308 mosaic */}
-      <div className="category-mosaic mt-9 hidden w-full overflow-hidden md:grid">
+      <h2 className="relative text-center font-display text-[1.7rem] font-medium tracking-[-0.02em] text-[#1c1c1c] md:text-[2rem]">
+        Shop by Category
+      </h2>
+
+      <div className="category-mosaic relative mx-auto mt-8 hidden w-[min(920px,72vw)] overflow-hidden md:grid">
         {items.map((tile) => (
           <Tile key={tile.id} tile={tile} />
         ))}
       </div>
 
-      {/* Mobile — simple stacked tiles */}
-      <div className="mt-8 grid grid-cols-2 gap-2.5 md:hidden">
+      <div className="relative mt-8 grid grid-cols-2 gap-2.5 px-4 md:hidden">
         {items.map((tile) => {
           const full = FULL_WIDTH_MOBILE.has(tile.id);
           return (
-          <Link
-            key={tile.id}
-            href={tile.href}
-            className={`group relative overflow-hidden bg-[#f3f0ea] ${
-              full ? "col-span-2 min-h-[170px]" : "min-h-[150px]"
-            }`}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={resolveBannerUrl(tile.image)}
-              alt={tile.label}
-              className="absolute inset-0 h-full w-full object-fill"
-            />
-            <span
-              className={`absolute bottom-3 left-3 z-[1] font-display text-sm font-semibold text-forest ${
-                tile.underline ? "underline decoration-forest/70 underline-offset-4" : ""
+            <Link
+              key={tile.id}
+              href={tile.href}
+              className={`group relative overflow-hidden bg-[#efe8dc] ${
+                full ? "col-span-2 min-h-[170px]" : "min-h-[150px]"
               }`}
             >
-              {tile.label}
-            </span>
-          </Link>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolveBannerUrl(tile.image)}
+                alt={tile.label}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <TileLabel label={tile.label} />
+            </Link>
           );
         })}
       </div>
     </section>
+  );
+}
+
+function SideArt({ side }: { side: "left" | "right" }) {
+  const place = side === "left" ? "left-0" : "right-0";
+  return (
+    <div className={`pointer-events-none absolute bottom-0 top-0 hidden w-[18%] xl:block ${place}`} aria-hidden>
+      {side === "left" ? <GiftScene /> : <VaseScene />}
+    </div>
+  );
+}
+
+function GiftScene() {
+  return (
+    <svg viewBox="0 0 220 520" className="h-full w-full" fill="none">
+      <path d="M40 150c30-70 90-90 120-40 18 30 8 70-20 90" stroke="#e7a090" strokeWidth="10" strokeLinecap="round" />
+      <rect x="58" y="230" width="92" height="78" rx="8" fill="#f0b7a4" />
+      <path d="M104 230v78M58 268h92" stroke="#fff7ef" strokeWidth="8" />
+      <path d="M86 230c-16-22-2-36 18-22 8 6 10 16 0 22M122 230c16-22 2-36-18-22-8 6-10 16 0 22" stroke="#d98474" strokeWidth="6" strokeLinecap="round" />
+      <path d="M30 390c28-18 46-8 58 16 10 20 6 48-16 62" stroke="#8eae86" strokeWidth="8" strokeLinecap="round" />
+      <path d="M48 420c20-24 48-20 58 6" stroke="#6d9470" strokeWidth="6" strokeLinecap="round" />
+      <circle cx="156" cy="360" r="18" fill="#f3d7a4" />
+    </svg>
+  );
+}
+
+function VaseScene() {
+  return (
+    <svg viewBox="0 0 220 520" className="h-full w-full" fill="none">
+      <path d="M70 250c8-40 18-70 8-110" stroke="#7ea184" strokeWidth="6" strokeLinecap="round" />
+      <path d="M78 170c18-8 28 6 22 22" stroke="#6d9470" strokeWidth="5" strokeLinecap="round" />
+      <path d="M118 240c6-36 22-64 36-96" stroke="#8eae86" strokeWidth="6" strokeLinecap="round" />
+      <ellipse cx="92" cy="268" rx="28" ry="10" fill="#d7efe4" />
+      <path d="M70 268c-6 28 4 70 22 92 10 12 28 16 36 4 8-14 10-48 2-78" fill="#c9ebe0" />
+      <path d="M150 300c-4 24 6 58 22 74 12 12 26 8 30-6 4-16-2-46-10-68" fill="#f6d7b0" />
+      <ellipse cx="164" cy="304" rx="22" ry="8" fill="#f8e6cf" />
+      <rect x="126" y="430" width="36" height="48" rx="6" fill="#f0c36e" />
+    </svg>
   );
 }

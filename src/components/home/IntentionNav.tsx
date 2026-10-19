@@ -1,199 +1,188 @@
-import Image from "next/image";
-import Link from "next/link";
-import type { HomeIntention } from "@/types/product";
+"use client";
 
-/**
- * Static intention art: /public/intentions (frontend only).
- * Figma card size: 237.43 × 277
- */
-const INTENTION_META: Record<
-  string,
+import Link from "next/link";
+import { useState } from "react";
+import type { StoreProduct } from "@/types/product";
+import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
+import { useCartStore } from "@/lib/cart-store";
+import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
+
+const INTENTIONS = [
   {
-    label: string;
-    description: string;
-    image: string;
-    gradient: string;
-    titleColor: string;
-  }
-> = {
-  Peace: {
+    id: "Peace",
     label: "Peace",
     description: "Calm mind & balance",
     image: "/intentions/peace-cut.webp",
-    gradient: "linear-gradient(180deg, #f4eefc 0%, #dcc8f4 55%, #c9aee8 100%)",
-    titleColor: "#5b3d8a",
   },
-  Wealth: {
+  {
+    id: "Wealth",
     label: "Wealth",
     description: "Abundance & growth",
     image: "/intentions/wealth-cut.webp",
-    gradient: "linear-gradient(180deg, #f8f1e4 0%, #e8d4b0 55%, #d9bc8a 100%)",
-    titleColor: "#7a5a2e",
   },
-  Health: {
+  {
+    id: "Health",
     label: "Health",
     description: "Vitality & healing",
     image: "/intentions/health-cut.webp",
-    gradient: "linear-gradient(180deg, #eef8f0 0%, #cfe8d4 55%, #aed9ba 100%)",
-    titleColor: "#2f6b45",
   },
-  Protection: {
+  {
+    id: "Protection",
     label: "Protection",
     description: "Shield & strength",
     image: "/intentions/protection-cut.webp",
-    gradient: "linear-gradient(180deg, #eef5fb 0%, #c9dff3 55%, #a8c9e8 100%)",
-    titleColor: "#2f5f8a",
   },
-  Relationship: {
+  {
+    id: "Relationship",
     label: "Relationship",
     description: "Harmony & love",
     image: "/intentions/relationship-cut.webp",
-    gradient: "linear-gradient(180deg, #fdecef 0%, #f5c9d2 55%, #e8a8b6 100%)",
-    titleColor: "#8a3d52",
   },
-  Love: {
-    label: "Relationship",
-    description: "Harmony & love",
-    image: "/intentions/relationship-cut.webp",
-    gradient: "linear-gradient(180deg, #fdecef 0%, #f5c9d2 55%, #e8a8b6 100%)",
-    titleColor: "#8a3d52",
-  },
-  Success: {
+  {
+    id: "Success",
     label: "Success",
     description: "Clarity & progress",
     image: "/intentions/success-cut.webp",
-    gradient: "linear-gradient(180deg, #fff7e6 0%, #f5dfb0 55%, #ebc878 100%)",
-    titleColor: "#8a6a1e",
   },
-  Spirituality: {
+  {
+    id: "Spirituality",
     label: "Spirituality",
     description: "Devotion & depth",
     image: "/intentions/spirituality-cut.webp",
-    gradient: "linear-gradient(180deg, #f5f0e8 0%, #e2d5c2 55%, #cfc0a8 100%)",
-    titleColor: "#6b5740",
   },
-};
-
-/** Figma left → right */
-const INTENTION_ORDER = [
-  "Peace",
-  "Wealth",
-  "Health",
-  "Protection",
-  "Relationship",
-  "Success",
-  "Spirituality",
 ] as const;
 
-const FALLBACK_KEYS = INTENTION_ORDER;
-
-function normalizeIntentionKey(value: string) {
-  if (value === "Love" || value === "love") return "Relationship";
-  return value;
+function stonesOf(title: string) {
+  const parts = title.split(/\s[–—-]\s/);
+  return parts.length > 1 ? parts.slice(1).join(" · ") : "";
 }
 
-function sortIntentions(list: HomeIntention[]) {
-  const rank = new Map(INTENTION_ORDER.map((key, index) => [key, index]));
-  return [...list].sort((a, b) => {
-    const aKey = normalizeIntentionKey(a.id || a.label);
-    const bKey = normalizeIntentionKey(b.id || b.label);
-    return (
-      (rank.get(aKey as (typeof INTENTION_ORDER)[number]) ?? 99) -
-      (rank.get(bKey as (typeof INTENTION_ORDER)[number]) ?? 99)
-    );
+export function IntentionNav({ products }: { products: Record<string, StoreProduct> }) {
+  const cards = INTENTIONS.flatMap((intention) => {
+    const product = products[intention.id];
+    return product ? [{ intention, product }] : [];
   });
-}
-
-/** Shop by Intention — Figma: 237×277 cards, white arrow CTA */
-export function IntentionNav({ intentions }: { intentions?: HomeIntention[] }) {
-  const source = intentions?.length
-    ? sortIntentions(intentions).slice(0, 7)
-    : FALLBACK_KEYS.map((id) => ({
-        id,
-        label: INTENTION_META[id].label,
-        href: `/intention/${encodeURIComponent(id)}`,
-      }));
+  if (!cards.length) return null;
 
   return (
-    <section id="intentions" className="container-pad pt-4 pb-2 md:pt-5 md:pb-3">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-          What are you seeking?
-        </p>
-        <h2 className="mt-2 font-display text-[1.85rem] font-semibold text-forest md:text-[2.15rem]">
+    <section id="intentions" className="w-full bg-[#fbf8f4] pt-6 pb-4 md:pt-8 md:pb-6">
+      <div className="px-5 md:px-8 xl:px-10">
+        <h2 className="font-display text-[1.7rem] font-semibold tracking-[-0.02em] text-[#1c1c1c] md:text-[2rem]">
           Shop By Intention
         </h2>
       </div>
 
-      {/* Figma: 7 cards × 237×277, ~18px gap */}
-      <div className="mt-9 flex flex-wrap justify-center gap-3 md:gap-4 lg:gap-[18px]">
-        {source.map((intention, i) => {
-          const key = normalizeIntentionKey(intention.label || intention.id);
-          const meta =
-            INTENTION_META[key] ||
-            INTENTION_META[intention.id] ||
-            INTENTION_META.Peace;
-          const href =
-            intention.href ||
-            `/intention/${encodeURIComponent(
-              intention.id === "Love" || intention.label === "Love"
-                ? "Relationship"
-                : intention.id || intention.label,
-            )}`;
-
-          return (
-            <Link
-              key={intention.id || intention.label}
-              href={href}
-              className="group flex h-[240px] w-full max-w-[190px] shrink-0 flex-col items-center rounded-[16px] px-2.5 pb-3.5 pt-4 text-center transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              style={{ background: meta.gradient }}
-            >
-              <div className="flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full bg-white/75">
-                <Image
-                  src={meta.image}
-                  alt={meta.label}
-                  width={200}
-                  height={200}
-                  priority={i < 4}
-                  sizes="92px"
-                  className="h-[128%] w-[128%] max-w-none object-contain transition duration-300 group-hover:scale-[1.32]"
-                />
-              </div>
-
-              <p
-                className="mt-2.5 font-display text-[0.98rem] font-semibold leading-tight tracking-[-0.01em]"
-                style={{ color: meta.titleColor }}
-              >
-                {meta.label || intention.label}
-              </p>
-              <p className="mt-0.5 px-1 text-[10px] leading-snug text-[#6b6560]">
-                {meta.description}
-              </p>
-
-              <span
-                className="mt-auto inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#8a8580] shadow-sm transition group-hover:scale-105"
-                aria-hidden
-              >
-                <ArrowIcon />
-              </span>
-            </Link>
-          );
-        })}
+      <div className="mt-6 flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
+        {cards.map(({ intention, product }) => (
+          <IntentionCard key={intention.id} intention={intention} product={product} />
+        ))}
       </div>
     </section>
   );
 }
 
-function ArrowIcon() {
+function IntentionCard({
+  intention,
+  product,
+}: {
+  intention: (typeof INTENTIONS)[number];
+  product: StoreProduct;
+}) {
+  const addItem = useCartStore((s) => s.addItem);
+  const [added, setAdded] = useState(false);
+  const img = primaryImage(product.images);
+  const sale = product.effectiveSalePrice ?? product.salePrice;
+  const mrp = product.effectiveMrp ?? product.mrp;
+  const off = product.effectiveDiscountPercent ?? product.discountPercent ?? discountPercent(mrp, sale);
+  const stock = product.effectiveStock ?? product.totalStock ?? product.quantity;
+  const activeVariant = (product.variants || []).find((variant) => variant.isActive);
+  const stones = stonesOf(product.title);
+  const rating = product.ratingCount ? product.ratingAvg : undefined;
+  const details = hoverLines(product);
+  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
+
+  function add(event: React.MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (stock <= 0) return;
+    addItem({
+      productId: product._id,
+      slug: product.slug,
+      title: product.title,
+      image: img.url,
+      variantId: activeVariant?._id || null,
+      variantLabel: activeVariant?.label,
+      unitSalePrice: activeVariant?.salePrice || sale,
+      unitMrp: activeVariant?.mrp || mrp,
+      maxQty: activeVariant?.quantity || stock,
+      qty: 1,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  }
+
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M5 12h12M13 6l6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
+      <div className="flex items-center gap-2.5 px-1">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={intention.image} alt="" className="h-9 w-9 object-contain" />
+        <div className="min-w-0">
+          <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">{intention.label}</p>
+          <p className="truncate text-[11px] text-[#8a8580]">{intention.description}</p>
+        </div>
+      </div>
+
+      <div className="card-hover relative mt-3 overflow-hidden rounded-xl bg-[#f6f3ee]">
+        <Link href={`/product/${product.slug}`} className="block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolveImageUrl(img.url)}
+            alt={product.title}
+            className="h-[168px] w-full object-contain p-3"
+          />
+        </Link>
+        {off > 0 ? (
+          <span className="absolute right-2 top-2 z-[2] rounded-md bg-[#1c2434] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+            Sale
+          </span>
+        ) : null}
+        <HoverDetails labels={details} />
+        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0} />
+      </div>
+
+      <div className="mt-3 flex items-center gap-1.5 px-1 text-[11px] text-[#6b6660]">
+        {rating ? (
+          <span className="inline-flex items-center gap-1 font-semibold text-[#1c1c1c]">
+            <span className="text-[#f5a524]">●</span>
+            {rating.toFixed(1)}
+          </span>
+        ) : null}
+        {stones ? <span className="truncate">{stones}</span> : null}
+      </div>
+
+      <Link
+        href={`/product/${product.slug}`}
+        className="mt-1 line-clamp-2 px-1 text-[13px] font-medium leading-snug text-[#1c1c1c]"
+      >
+        {product.title}
+      </Link>
+
+      <p className="mt-2 flex items-baseline gap-2 px-1">
+        <span className="text-base font-semibold text-[#1c1c1c]">{formatINR(sale)}</span>
+        {mrp > sale ? <span className="text-xs text-[#9a9590] line-through">{formatINR(mrp)}</span> : null}
+        {off > 0 ? <span className="text-xs font-semibold text-[#c45c26]">{off}% off</span> : null}
+      </p>
+
+      <div className="card-hover__cta">
+        <button
+          type="button"
+          onClick={add}
+          disabled={stock <= 0}
+          className="mt-3 w-full rounded-xl bg-[#1c2434] py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300"
+        >
+          {stock <= 0 ? "Out of stock" : added ? "Added" : `Add ${formatINR(sale)}`}
+        </button>
+      </div>
+    </article>
   );
 }

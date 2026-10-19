@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
-import { primaryImage } from "@/lib/format";
+import { hoverLines, primaryImage } from "@/lib/format";
 import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/cn";
@@ -54,29 +54,29 @@ export function ProductCard({
   const discount = product.effectiveDiscountPercent ?? product.discountPercent;
   const stock = product.effectiveStock ?? product.totalStock ?? product.quantity;
   const activeVariants = (product.variants || []).filter((v) => v.isActive);
-  const needsVariant = activeVariants.length > 0;
 
-  function quickAdd() {
-    if (needsVariant) return;
+  function quickAdd(event: React.MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (stock <= 0) return;
+    const variant = activeVariants[0];
     addItem({
       productId: product._id,
       slug: product.slug,
       title: product.title,
       image: img.url,
-      unitSalePrice: sale,
-      unitMrp: mrp,
-      maxQty: stock,
+      variantId: variant?._id || null,
+      variantLabel: variant?.label,
+      unitSalePrice: variant?.salePrice || sale,
+      unitMrp: variant?.mrp || mrp,
+      maxQty: variant?.quantity || stock,
       qty: 1,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   }
 
-  const cta = needsVariant ? (
-    <Link href={`/product/${product.slug}`} className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}>
-      View details
-    </Link>
-  ) : stock <= 0 ? (
+  const cta = stock <= 0 ? (
     <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
       Out of stock
     </button>
@@ -90,7 +90,7 @@ export function ProductCard({
     </button>
   );
 
-  const details = (product.hoverDetails || []).map((item) => item.label).filter(Boolean).slice(0, 6);
+  const details = hoverLines(product);
   const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
 
   return (
@@ -131,21 +131,15 @@ export function ProductCard({
             ))}
           </aside>
         ) : null}
-        {needsVariant ? (
-          <Link href={`/product/${product.slug}`} className="product-card__bag" style={{ color: "#ffffff" }}>
-            Add to bag
-          </Link>
-        ) : (
-          <button
-            type="button"
-            className="product-card__bag"
-            style={{ color: "#ffffff" }}
-            onClick={quickAdd}
-            disabled={stock <= 0}
-          >
-            {bagLabel}
-          </button>
-        )}
+        <button
+          type="button"
+          className="product-card__bag"
+          style={{ color: "#ffffff" }}
+          onClick={quickAdd}
+          disabled={stock <= 0}
+        >
+          {bagLabel}
+        </button>
       </div>
 
       <div className="product-card__body">

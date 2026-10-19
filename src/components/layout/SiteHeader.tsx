@@ -147,6 +147,10 @@ function SiteHeaderShell({
               <img
                 src={logoSrc}
                 alt="Abhimantrit by Tathaastu"
+                width={160}
+                height={48}
+                fetchPriority="high"
+                decoding="async"
                 className="h-9 w-auto object-contain object-left sm:h-10 md:h-12"
               />
             </Link>

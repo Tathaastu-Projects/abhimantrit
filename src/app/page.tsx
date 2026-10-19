@@ -4,7 +4,7 @@ import { HomeBanners } from "@/components/home/CmsBlocks";
 import { ShopByCategory } from "@/components/home/ShopByCategory";
 import { AboutAbhimantrit } from "@/components/home/AboutAbhimantrit";
 import { FeaturedFinds } from "@/components/home/FeaturedFinds";
-import { LovedByCustomers } from "@/components/home/LovedByCustomers";
+import { Testimonials } from "@/components/home/Testimonials";
 import { ReadFromBlog } from "@/components/home/ReadFromBlog";
 import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
@@ -22,11 +22,20 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
  * About → Loved by Customers →
  * Read From Our Blog → (Sacred Essentials / Bestsellers / Consult / Certified hidden) → FAQ
  */
+const INTENTIONS = ["Peace", "Wealth", "Health", "Protection", "Relationship", "Success", "Spirituality"];
+
 export default async function HomePage() {
-  const [home, rashi] = await Promise.all([
+  const [home, rashi, ...intentionLists] = await Promise.all([
     getHomeContent(),
     getCatalog({ q: "राशि", limit: 24 }),
+    ...INTENTIONS.map((intention) => getCatalog({ intention, limit: 1 })),
   ]);
+  const intentionProducts = Object.fromEntries(
+    INTENTIONS.flatMap((intention, index) => {
+      const product = intentionLists[index]?.data?.[0];
+      return product ? [[intention, product]] : [];
+    }),
+  );
   // const products =
   //   home.carousels?.bestsellers?.length
   //     ? home.carousels.bestsellers
@@ -39,13 +48,13 @@ export default async function HomePage() {
       <HomeBanners banners={home.banners || []} managed={home.homeSliderManaged} />
       <HeroTicker />
       <HomeTrustBar />
-      <IntentionNav intentions={home.intentions} />
+      <IntentionNav products={intentionProducts} />
       {/* <ZodiacNav /> */}
       <RashiBracelets products={rashi.data || []} />
       <ShopByCategory tiles={home.categoryTiles} />
       <AboutAbhimantrit about={home.aboutSection} />
       <FeaturedFinds featured={home.featuredFinds} />
-      <LovedByCustomers />
+      <Testimonials items={home.testimonials} />
       <ReadFromBlog posts={home.latestBlogs} />
       {/* <SacredEssentials categories={home.categories} /> */}
       {/* <HomeProductSection products={products} limit={8} /> */}
