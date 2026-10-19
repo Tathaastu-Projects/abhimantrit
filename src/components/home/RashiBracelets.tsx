@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import type { StoreProduct } from "@/types/product";
 import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
@@ -56,7 +56,7 @@ export function BagButton({
 }: {
   href?: string;
   label: string;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }) {
   if (href) {
