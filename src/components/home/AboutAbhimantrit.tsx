@@ -40,7 +40,7 @@ function mediaImage(url?: string) {
   return resolveBannerUrl(url);
 }
 
-function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string }) {
+function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string } | null) {
   if (item?.playbackUrl) return resolveBannerUrl(item.playbackUrl);
   const video = item?.videoUrl || "";
   if (!video || driveFileId(video)) return "";
