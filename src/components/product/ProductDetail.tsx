@@ -95,7 +95,7 @@ export function ProductDetail({
               <img
                 src={resolveImageUrl(activeImage)}
                 alt={product.title}
-                className="aspect-square w-full object-contain object-center p-4 md:p-8"
+                className="block aspect-square w-full object-cover object-center"
               />
             </div>
             {images.length > 1 ? (
@@ -116,7 +116,7 @@ export function ProductDetail({
                     <img
                       src={resolveImageUrl(img.url)}
                       alt={img.alt || product.title}
-                      className="h-full w-full object-contain object-center p-1.5"
+                      className="block h-full w-full object-cover object-center"
                     />
                   </button>
                 ))}

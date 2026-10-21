@@ -5,6 +5,7 @@ import { useState, type MouseEvent } from "react";
 import type { StoreProduct } from "@/types/product";
 import { discountPercent, formatINR, hoverLines, primaryImage } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
+import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
 
 function ProductTile({ product }: { product: StoreProduct }) {
@@ -41,7 +42,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
   }
 
   return (
-    <article className="flex min-w-0 flex-col rounded-2xl border border-[#ececec] bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
+    <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-[#ececec] bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] sm:w-[270px]">
       <div className="card-hover relative overflow-hidden rounded-xl bg-[#f7f7f7]">
         <Link href={`/product/${product.slug}`} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -50,7 +51,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
             alt={img.alt || product.title}
             loading="lazy"
             decoding="async"
-            className="aspect-square w-full object-contain p-2"
+            className="block aspect-square w-full object-cover object-center"
             onError={() => setImgSrc("/placeholder-product.svg")}
           />
         </Link>
@@ -93,11 +94,11 @@ export function LatestProducts({ products }: { products: StoreProduct[] }) {
           Browse our collection of products
         </p>
       </div>
-      <div className="container-pad mt-8 grid grid-cols-5 gap-3 md:gap-4">
+      <CardScroller className="flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
         {products.slice(0, 20).map((product) => (
           <ProductTile key={product._id} product={product} />
         ))}
-      </div>
+      </CardScroller>
       <div className="mt-8 flex justify-center">
         <Link
           href="/shop?sort=newest"

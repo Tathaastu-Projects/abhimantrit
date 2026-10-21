@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
 import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
+import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
 
 const INTENTIONS = [
@@ -72,11 +73,11 @@ export function IntentionNav({ products }: { products: Record<string, StoreProdu
         </h2>
       </div>
 
-      <div className="mt-6 flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
+      <CardScroller className="flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
         {cards.map(({ intention, product }) => (
           <IntentionCard key={intention.id} intention={intention} product={product} />
         ))}
-      </div>
+      </CardScroller>
     </section>
   );
 }
@@ -138,7 +139,7 @@ function IntentionCard({
           <img
             src={resolveImageUrl(img.url)}
             alt={product.title}
-            className="h-[168px] w-full object-contain p-3"
+            className="block aspect-square w-full object-cover object-center"
           />
         </Link>
         {off > 0 ? (

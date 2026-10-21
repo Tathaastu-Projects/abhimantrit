@@ -24,35 +24,30 @@ type NavItem = {
 /** Figma main nav */
 const MAIN_NAV: NavItem[] = [
   { id: "home", label: "Home", href: "/", icon: "home" },
-  { id: "rudraksha", label: "Rudraksha", href: "/shop/rudraksha" },
-  { id: "gemstone", label: "Gemstones", href: "/shop/gemstone" },
-  { id: "bracelet", label: "Bracelets & Malas", href: "/shop/bracelet" },
-  { id: "intention", label: "Shop by Intention", href: "/#intentions" },
+  { id: "rudraksha", label: "Rudraksha & Malas", href: "/shop/rudraksha" },
+  { id: "bracelet", label: "Bracelets & Gemstones", href: "/shop?category=bracelet,gemstone" },
+  { id: "pyramids", label: "Pyramids & Tumbles", href: "/shop?q=pyramid" },
   { id: "sale", label: "Sale", href: "/shop?onSale=true" },
 ];
 
 function useActiveNavId() {
   const pathname = usePathname() || "/";
   const searchParams = useSearchParams();
-  const [hash, setHash] = useState("");
-
-  useEffect(() => {
-    const syncHash = () => setHash(typeof window !== "undefined" ? window.location.hash : "");
-    syncHash();
-    window.addEventListener("hashchange", syncHash);
-    return () => window.removeEventListener("hashchange", syncHash);
-  }, [pathname]);
-
+  const category = searchParams.get("category") || "";
+  const query = (searchParams.get("q") || "").toLowerCase();
   const onSale = searchParams.get("onSale") === "true" || searchParams.get("sale") === "true";
 
-  if (pathname.startsWith("/shop/rudraksha")) return "rudraksha";
-  if (pathname.startsWith("/shop/gemstone")) return "gemstone";
-  if (pathname.startsWith("/shop/bracelet")) return "bracelet";
-  if (pathname.startsWith("/intention")) return "intention";
   if (pathname === "/shop" && onSale) return "sale";
-  if (pathname === "/" && (hash === "#intentions" || hash.startsWith("#intentions"))) {
-    return "intention";
+  if (pathname.startsWith("/shop/rudraksha")) return "rudraksha";
+  if (
+    pathname.startsWith("/shop/gemstone") ||
+    pathname.startsWith("/shop/bracelet") ||
+    category.includes("bracelet") ||
+    category.includes("gemstone")
+  ) {
+    return "bracelet";
   }
+  if (pathname === "/shop" && (query.includes("pyramid") || query.includes("tumble"))) return "pyramids";
   if (pathname === "/") return "home";
   return null;
 }
