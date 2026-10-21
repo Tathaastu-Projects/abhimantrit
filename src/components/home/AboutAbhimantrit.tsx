@@ -33,13 +33,6 @@ function driveFileId(url: string) {
   return id ? id[1] : "";
 }
 
-function mediaImage(url?: string) {
-  if (!url) return "";
-  const id = driveFileId(url);
-  if (id) return `https://lh3.googleusercontent.com/d/${id}`;
-  return resolveBannerUrl(url);
-}
-
 function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string } | null) {
   if (item?.playbackUrl) return resolveBannerUrl(item.playbackUrl);
   const video = item?.videoUrl || "";
@@ -104,8 +97,6 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
       playbackUrl: custom?.playbackUrl || "",
     };
   });
-  const savedImage = source?.image || "";
-  const baseImage = savedImage.includes("/about/abhimantrit-banner") ? "" : savedImage;
   const intro = source?.intro || DEFAULT_INTRO;
   const [activeId, setActiveId] = useState("");
 
@@ -136,7 +127,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                   key={item.id}
                   data-about={item.id}
                   className={`about-point flex cursor-pointer items-center gap-4 py-4 transition-all duration-300 md:gap-5 md:py-5 ${
-                    selected ? "is-active opacity-100 blur-none" : "opacity-70 blur-[0.4px]"
+                    selected ? "is-active" : ""
                   }`}
                   tabIndex={0}
                   onMouseEnter={() => setActiveId(item.id)}
@@ -160,8 +151,8 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                       {item.title}
                     </p>
                     <p
-                      className={`overflow-hidden text-xs leading-relaxed text-[#3f3c39] transition-all duration-300 md:text-[13px] ${
-                        selected ? "mt-1 max-h-24 opacity-100" : "mt-0 max-h-0 opacity-0"
+                      className={`about-point__copy overflow-hidden text-xs leading-relaxed text-[#3f3c39] transition-all duration-300 md:text-[13px] ${
+                        selected ? "is-open" : ""
                       }`}
                     >
                       {item.description}
@@ -177,20 +168,14 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
         </div>
 
         <div className="about-stage relative z-0 order-1 min-h-[220px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-full">
-          {baseImage || mediaVideo(source) ? (
-            <StageMedia
-              image={baseImage}
-              video={mediaVideo(source)}
-              base
-              playing={!activeId}
-            />
+          {mediaVideo(source) ? (
+            <StageMedia video={mediaVideo(source)} base playing={!activeId} />
           ) : null}
           {features.map((item) =>
-            item.image || mediaVideo(item) ? (
+            mediaVideo(item) ? (
               <StageMedia
                 key={item.id}
                 aboutId={item.id}
-                image={item.image}
                 video={mediaVideo(item)}
                 active={item.id === activeId}
                 playing={item.id === activeId}
@@ -204,15 +189,13 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
 }
 
 function StageMedia({
-  image,
   video,
   aboutId,
   base,
   active,
   playing,
 }: {
-  image?: string;
-  video?: string;
+  video: string;
   aboutId?: string;
   base?: boolean;
   active?: boolean;
@@ -222,29 +205,33 @@ function StageMedia({
   useEffect(() => {
     const node = videoRef.current;
     if (!node) return;
-    if (playing) node.play().catch(() => {});
-    else node.pause();
+    node.muted = true;
+    node.defaultMuted = true;
+    if (!playing) {
+      node.pause();
+      return;
+    }
+    const start = () => {
+      node.play().catch(() => {});
+    };
+    if (node.readyState >= 2) start();
+    else node.addEventListener("canplay", start, { once: true });
+    return () => node.removeEventListener("canplay", start);
   }, [playing, video]);
 
   const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
-  if (video) {
-    return (
-      <video
-        ref={videoRef}
-        data-about-image={aboutId}
-        src={video}
-        poster={image ? mediaImage(image) : undefined}
-        loop
-        muted
-        playsInline
-        className={className}
-      />
-    );
-  }
-  if (!image) return null;
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img data-about-image={aboutId} src={mediaImage(image)} alt="" className={className} />
+    <video
+      ref={videoRef}
+      data-about-image={aboutId}
+      src={video}
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="auto"
+      className={className}
+    />
   );
 }
 

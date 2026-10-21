@@ -727,6 +727,33 @@ a {
   opacity: 1;
 }
 
+.about-point {
+  opacity: 0.7;
+  filter: blur(0.4px);
+}
+
+.about-point.is-active,
+.about-point:hover,
+.about-point:focus-visible {
+  opacity: 1;
+  filter: none;
+}
+
+.about-point__copy {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+}
+
+.about-point.is-active .about-point__copy,
+.about-point:hover .about-point__copy,
+.about-point:focus-visible .about-point__copy,
+.about-point__copy.is-open {
+  margin-top: 0.25rem;
+  max-height: 6rem;
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reviews-marquee {
     animation: none;
