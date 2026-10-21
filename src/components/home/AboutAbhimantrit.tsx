@@ -202,6 +202,8 @@ function StageMedia({
   playing?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     const node = videoRef.current;
     if (!node) return;
@@ -209,9 +211,15 @@ function StageMedia({
     node.defaultMuted = true;
     if (!playing) {
       node.pause();
+      setReady(false);
       return;
     }
+    if (node.getAttribute("src") !== video) {
+      node.src = video;
+      node.load();
+    }
     const start = () => {
+      setReady(true);
       node.play().catch(() => {});
     };
     if (node.readyState >= 2) start();
@@ -221,17 +229,24 @@ function StageMedia({
 
   const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
   return (
-    <video
-      ref={videoRef}
-      data-about-image={aboutId}
-      src={video}
-      autoPlay
-      loop
-      muted
-      playsInline
-      preload="auto"
-      className={className}
-    />
+    <>
+      <video
+        ref={videoRef}
+        data-about-image={aboutId}
+        autoPlay={playing}
+        loop
+        muted
+        playsInline
+        preload={playing ? "auto" : "none"}
+        className={className}
+      />
+      {playing && !ready ? (
+        <div className="about-stage__loading" role="status">
+          <span className="about-stage__spinner" aria-hidden />
+          Loading video
+        </div>
+      ) : null}
+    </>
   );
 }
 

@@ -709,6 +709,36 @@ a {
   opacity: 1;
 }
 
+.about-stage__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: #f7f1e8;
+  color: #6b6560;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.about-stage__spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid rgba(15, 61, 46, 0.18);
+  border-top-color: #0f3d2e;
+  border-radius: 999px;
+  animation: about-spin 0.8s linear infinite;
+}
+
+@keyframes about-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .about-stage:has(.about-stage__img.is-active) .about-stage__img--base {
   opacity: 0;
 }
