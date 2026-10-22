@@ -40,6 +40,12 @@ function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string } | null) {
   return resolveBannerUrl(video);
 }
 
+function mediaImage(item?: { image?: string; imageUrl?: string } | null) {
+  if (item?.image) return resolveBannerUrl(item.image);
+  if (item?.imageUrl) return resolveBannerUrl(item.imageUrl);
+  return "";
+}
+
 function posterUrl(item?: { image?: string; imageUrl?: string; videoUrl?: string; playbackUrl?: string } | null) {
   if (item?.image) return resolveBannerUrl(item.image);
   if (item?.imageUrl) return resolveBannerUrl(item.imageUrl);
@@ -77,7 +83,7 @@ const FEATURES: AboutFeature[] = [
   },
 ];
 
-/** About Abhimantrit — text and list on the left, image on the right. Hover a point to swap the image. */
+/** About Abhimantrit — text and list on the left, image/video on the right. Hover a point to swap the image. */
 export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
   const [live, setLive] = useState<AboutSection | null | undefined>(about);
   const source = live || about;
@@ -103,12 +109,16 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
       title: custom?.title || item.title,
       description: custom?.description || item.description,
       image: custom?.image || "",
+      imageUrl: custom?.imageUrl || "",
       videoUrl: custom?.videoUrl || "",
       playbackUrl: custom?.playbackUrl || "",
     };
   });
   const intro = source?.intro || DEFAULT_INTRO;
   const [activeId, setActiveId] = useState("");
+
+  const baseVideo = mediaVideo(source);
+  const baseImg = mediaImage(source);
 
   return (
     <section id="about" className="about-swap w-full overflow-hidden bg-[#f7f1e8]">
@@ -178,29 +188,81 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
         </div>
 
         <div className="about-stage relative z-0 order-1 min-h-[220px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-full">
-          {mediaVideo(source) ? (
+          {/* Base Media (Video or Image) from MongoDB */}
+          {baseVideo ? (
             <StageMedia
-              video={mediaVideo(source)}
+              video={baseVideo}
               poster={posterUrl(source)}
               base
               playing={!activeId}
             />
+          ) : baseImg ? (
+            <StageImage
+              src={baseImg}
+              alt="About Abhimantrit"
+              base
+            />
           ) : null}
-          {features.map((item) =>
-            mediaVideo(item) ? (
-              <StageMedia
-                key={item.id}
-                aboutId={item.id}
-                video={mediaVideo(item)}
-                poster={posterUrl(item)}
-                active={item.id === activeId}
-                playing={item.id === activeId}
-              />
-            ) : null,
-          )}
+
+          {/* Feature Hover Media (Image or Video) from MongoDB */}
+          {features.map((item) => {
+            const video = mediaVideo(item);
+            const image = mediaImage(item);
+            const isHovered = item.id === activeId;
+            if (video) {
+              return (
+                <StageMedia
+                  key={item.id}
+                  aboutId={item.id}
+                  video={video}
+                  poster={image || posterUrl(item)}
+                  active={isHovered}
+                  playing={isHovered}
+                />
+              );
+            }
+            if (image) {
+              return (
+                <StageImage
+                  key={item.id}
+                  aboutId={item.id}
+                  src={image}
+                  alt={item.title}
+                  active={isHovered}
+                />
+              );
+            }
+            return null;
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+function StageImage({
+  src,
+  alt,
+  aboutId,
+  base,
+  active,
+}: {
+  src: string;
+  alt?: string;
+  aboutId?: string;
+  base?: boolean;
+  active?: boolean;
+}) {
+  const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt || "About Abhimantrit"}
+      data-about-image={aboutId}
+      className={className}
+      loading="eager"
+    />
   );
 }
 
