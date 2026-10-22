@@ -13,12 +13,14 @@ export type AboutFeature = {
   description: string;
   icon?: "badge" | "ritual" | "check" | "star";
   image?: string;
+  imageUrl?: string;
   videoUrl?: string;
   playbackUrl?: string;
 };
 
 export type AboutSection = {
   image?: string;
+  imageUrl?: string;
   intro?: string;
   videoUrl?: string;
   playbackUrl?: string;
