@@ -5,6 +5,7 @@ import { ShopByCategory } from "@/components/home/ShopByCategory";
 import { LatestProducts } from "@/components/home/LatestProducts";
 import { AboutAbhimantrit } from "@/components/home/AboutAbhimantrit";
 import { FeaturedFinds } from "@/components/home/FeaturedFinds";
+import { ScreenToSpace } from "@/components/home/ScreenToSpace";
 import { Testimonials } from "@/components/home/Testimonials";
 import { ReadFromBlog } from "@/components/home/ReadFromBlog";
 import { HeroTicker } from "@/components/home/HeroTicker";
@@ -57,6 +58,7 @@ export default async function HomePage() {
       <LatestProducts products={latest.data || []} />
       <AboutAbhimantrit about={home.aboutSection} />
       <FeaturedFinds featured={home.featuredFinds} />
+      <ScreenToSpace section={home.screenToSpace} />
       <Testimonials items={home.testimonials} />
       <ReadFromBlog posts={home.latestBlogs} />
       {/* <SacredEssentials categories={home.categories} /> */}

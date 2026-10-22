@@ -86,7 +86,7 @@ export function ProductCard({
       onClick={quickAdd}
       className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}
     >
-      {added ? "Added" : "Add to cart"}
+      {added ? "Added" : "Add To Cart"}
     </button>
   );
 

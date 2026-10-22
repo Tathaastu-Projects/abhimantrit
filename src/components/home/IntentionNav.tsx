@@ -174,14 +174,14 @@ function IntentionCard({
         {off > 0 ? <span className="text-xs font-semibold text-[#c45c26]">{off}% off</span> : null}
       </p>
 
-      <div className="card-hover__cta">
+      <div className="card-hover__cta mt-auto pt-2">
         <button
           type="button"
           onClick={add}
           disabled={stock <= 0}
-          className="mt-3 w-full rounded-xl bg-[#1c2434] py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300"
+          className="w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-stone-300"
         >
-          {stock <= 0 ? "Out of stock" : added ? "Added" : `Add ${formatINR(sale)}`}
+          {stock <= 0 ? "Out of stock" : added ? "Added" : "Add To Cart"}
         </button>
       </div>
     </article>

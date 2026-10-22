@@ -131,6 +131,8 @@ export async function getHomeContent(): Promise<HomeContent> {
       homeSliderManaged: Boolean(data.homeSliderManaged),
       categoryTiles: data.categoryTiles || [],
       aboutSection: data.aboutSection,
+      featuredFinds: data.featuredFinds,
+      screenToSpace: data.screenToSpace,
       latestBlogs: data.latestBlogs || [],
       carousels: {
         featured: data.carousels?.featured || [],
@@ -453,13 +455,16 @@ export const FALLBACK_INTENTIONS = [
 ] as const;
 
 export const FALLBACK_CATEGORIES = [
+  "crystal-bracelets",
   "rudraksha",
-  "crystal",
-  "stone",
-  "gemstone",
-  "yantra",
-  "bracelet",
-  "combo",
+  "crystal-anklets",
+  "tumbles",
+  "crystal-trees",
+  "pyramids",
+  "loose-stones",
+  "mala",
+  "photo-frames",
+  "other",
 ] as const;
 
 export const FALLBACK_ZODIAC = [

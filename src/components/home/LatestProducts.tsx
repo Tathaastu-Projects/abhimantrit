@@ -73,9 +73,9 @@ function ProductTile({ product }: { product: StoreProduct }) {
         type="button"
         onClick={add}
         disabled={stock <= 0}
-        className="card-hover__cta mt-3 w-full rounded-full bg-forest py-2.5 text-sm font-semibold text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
+        className="card-hover__cta mt-auto pt-2 w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
       >
-        {stock <= 0 ? "Out of stock" : added ? "Added" : "Add to Cart"}
+        {stock <= 0 ? "Out of stock" : added ? "Added" : "Add To Cart"}
       </button>
     </article>
   );

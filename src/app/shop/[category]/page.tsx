@@ -27,14 +27,14 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
     ),
     getHomeContent(),
   ]);
-  const title = titleCase(category === "other" ? "pooja essentials" : category);
+  const title = titleCase(category);
 
   return (
     <>
       <CategoryBanner
         categoryKey={category}
         title={title}
-        eyebrow="Puja Essentials"
+        eyebrow="Collection"
         subtitle={`Certified ${title} curated for intention-led living and daily rituals.`}
         ctaHref="#catalog"
       />
@@ -43,7 +43,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
         hideTitle
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Puja Essentials", href: "/shop" },
+          { label: "Shop", href: "/shop" },
           { label: title },
         ]}
         products={catalog.data}

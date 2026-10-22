@@ -1,11 +1,13 @@
 export type ProductCategory =
+  | "crystal-bracelets"
   | "rudraksha"
-  | "crystal"
-  | "stone"
-  | "gemstone"
-  | "yantra"
-  | "bracelet"
-  | "combo"
+  | "crystal-anklets"
+  | "tumbles"
+  | "crystal-trees"
+  | "pyramids"
+  | "loose-stones"
+  | "mala"
+  | "photo-frames"
   | "other";
 
 export type Intention =
@@ -326,6 +328,27 @@ export type CategoryTile = {
   height?: number;
 };
 
+export type ScreenToSpaceItem = {
+  id: string;
+  overlayTag?: string;
+  videoUrl?: string;
+  imageUrl?: string;
+  productTitle: string;
+  productPrice: number;
+  productImage?: string;
+  productSlug?: string;
+  buttonText?: string;
+  dotsCount?: number;
+  isActive?: boolean;
+};
+
+export type ScreenToSpaceSection = {
+  title?: string;
+  subtitle?: string;
+  isActive?: boolean;
+  items?: ScreenToSpaceItem[];
+};
+
 export type HomeContent = {
   banners: StoreBanner[];
   homeSliderManaged?: boolean;
@@ -340,6 +363,7 @@ export type HomeContent = {
     ctaLabel?: string;
     ctaHref?: string;
   };
+  screenToSpace?: ScreenToSpaceSection;
   aboutSection?: {
     image?: string;
     intro?: string;
@@ -373,3 +397,4 @@ export type HomeContent = {
   faqPage?: StoreCmsPage | null;
   stats?: { listedProducts?: number; categoryCounts?: Record<string, number> };
 };
+

@@ -8,7 +8,7 @@ const FALLBACK: HomeCategoryCard[] = FALLBACK_CATEGORIES.map((id) => ({
   label: titleCase(id),
   href: `/shop/${id}`,
   productCount: 0,
-  image: id === "yantra" || id === "combo" ? "/pooja_essential_banner.svg" : "/home_banner.svg",
+  image: id === "photo-frames" ? "/pooja_essential_banner.svg" : "/home_banner.svg",
 }));
 
 export function CategoryNav({ categories }: { categories?: HomeCategoryCard[] }) {
