@@ -40,6 +40,16 @@ function mediaVideo(item?: { videoUrl?: string; playbackUrl?: string } | null) {
   return resolveBannerUrl(video);
 }
 
+function posterUrl(item?: { image?: string; imageUrl?: string; videoUrl?: string; playbackUrl?: string } | null) {
+  if (item?.image) return resolveBannerUrl(item.image);
+  if (item?.imageUrl) return resolveBannerUrl(item.imageUrl);
+  const video = mediaVideo(item);
+  if (video && !video.includes("drive.google.com")) {
+    return video.replace(/\.(mp4|webm|mov)$/i, ".jpg");
+  }
+  return "";
+}
+
 const FEATURES: AboutFeature[] = [
   {
     id: "lab",
@@ -169,7 +179,12 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
 
         <div className="about-stage relative z-0 order-1 min-h-[220px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-full">
           {mediaVideo(source) ? (
-            <StageMedia video={mediaVideo(source)} base playing={!activeId} />
+            <StageMedia
+              video={mediaVideo(source)}
+              poster={posterUrl(source)}
+              base
+              playing={!activeId}
+            />
           ) : null}
           {features.map((item) =>
             mediaVideo(item) ? (
@@ -177,6 +192,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                 key={item.id}
                 aboutId={item.id}
                 video={mediaVideo(item)}
+                poster={posterUrl(item)}
                 active={item.id === activeId}
                 playing={item.id === activeId}
               />
@@ -190,63 +206,50 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
 
 function StageMedia({
   video,
+  poster,
   aboutId,
   base,
   active,
   playing,
 }: {
   video: string;
+  poster?: string;
   aboutId?: string;
   base?: boolean;
   active?: boolean;
   playing?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const node = videoRef.current;
     if (!node) return;
     node.muted = true;
     node.defaultMuted = true;
-    if (!playing) {
+    if (playing) {
+      const p = node.play();
+      if (p !== undefined) {
+        p.catch(() => {});
+      }
+    } else {
       node.pause();
-      setReady(false);
-      return;
     }
-    if (node.getAttribute("src") !== video) {
-      node.src = video;
-      node.load();
-    }
-    const start = () => {
-      setReady(true);
-      node.play().catch(() => {});
-    };
-    if (node.readyState >= 2) start();
-    else node.addEventListener("canplay", start, { once: true });
-    return () => node.removeEventListener("canplay", start);
-  }, [playing, video]);
+  }, [playing]);
 
   const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
   return (
-    <>
-      <video
-        ref={videoRef}
-        data-about-image={aboutId}
-        autoPlay={playing}
-        loop
-        muted
-        playsInline
-        preload={playing ? "auto" : "none"}
-        className={className}
-      />
-      {playing && !ready ? (
-        <div className="about-stage__loading" role="status">
-          <span className="about-stage__spinner" aria-hidden />
-          Loading video
-        </div>
-      ) : null}
-    </>
+    <video
+      ref={videoRef}
+      data-about-image={aboutId}
+      src={video}
+      poster={poster}
+      autoPlay={playing}
+      loop
+      muted
+      playsInline
+      preload={base ? "auto" : "metadata"}
+      className={className}
+    />
   );
 }
 

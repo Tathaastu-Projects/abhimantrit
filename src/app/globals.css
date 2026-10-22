@@ -670,15 +670,16 @@ a {
   inset: 0;
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.35s ease;
 }
 
 .about-stage__img--base {
   object-fit: cover;
-  object-position: right center;
+  object-position: center;
   opacity: 1;
 }
 

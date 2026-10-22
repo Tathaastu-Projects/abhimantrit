@@ -23,43 +23,39 @@ type NavItem = {
 
 /** Figma main nav */
 const MAIN_NAV: NavItem[] = [
-  { id: "home", label: "Home", href: "/", icon: "home" },
-  { id: "rudraksha", label: "Rudraksha & Malas", href: "/shop/rudraksha" },
-  { id: "bracelet", label: "Bracelets & Gemstones", href: "/shop?category=bracelet,gemstone" },
-  { id: "pyramids", label: "Pyramids & Tumbles", href: "/shop?q=pyramid" },
-  { id: "sale", label: "Sale", href: "/shop?onSale=true" },
+  { id: "crystal-bracelets", label: "Crystal Bracelets", href: "/shop/crystal-bracelets" },
+  { id: "rudraksha", label: "Rudraksha", href: "/shop/rudraksha" },
+  { id: "crystal-anklets", label: "Crystal Anklets", href: "/shop/crystal-anklets" },
+  { id: "tumbles", label: "Tumbles", href: "/shop/tumbles" },
+  { id: "crystal-trees", label: "Crystal Trees", href: "/shop/crystal-trees" },
+  { id: "pyramids", label: "Pyramids", href: "/shop/pyramids" },
+  { id: "loose-stones", label: "Loose Stones", href: "/shop/loose-stones" },
+  { id: "mala", label: "Mala", href: "/shop/mala" },
+  { id: "photo-frames", label: "Photo Frames", href: "/shop/photo-frames" },
 ];
 
 function useActiveNavId() {
   const pathname = usePathname() || "/";
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category") || "";
-  const query = (searchParams.get("q") || "").toLowerCase();
-  const onSale = searchParams.get("onSale") === "true" || searchParams.get("sale") === "true";
 
-  if (pathname === "/shop" && onSale) return "sale";
-  if (pathname.startsWith("/shop/rudraksha")) return "rudraksha";
-  if (
-    pathname.startsWith("/shop/gemstone") ||
-    pathname.startsWith("/shop/bracelet") ||
-    category.includes("bracelet") ||
-    category.includes("gemstone")
-  ) {
-    return "bracelet";
-  }
-  if (pathname === "/shop" && (query.includes("pyramid") || query.includes("tumble"))) return "pyramids";
-  if (pathname === "/") return "home";
+  if (pathname === "/shop/crystal-bracelets") return "crystal-bracelets";
+  if (pathname === "/shop/rudraksha") return "rudraksha";
+  if (pathname === "/shop/crystal-anklets") return "crystal-anklets";
+  if (pathname === "/shop/tumbles") return "tumbles";
+  if (pathname === "/shop/crystal-trees") return "crystal-trees";
+  if (pathname === "/shop/pyramids") return "pyramids";
+  if (pathname === "/shop/loose-stones") return "loose-stones";
+  if (pathname === "/shop/mala") return "mala";
+  if (pathname === "/shop/photo-frames") return "photo-frames";
+
   return null;
 }
 
-function navLinkClass(active: boolean, isSale: boolean) {
+function navLinkClass(active: boolean) {
   return cn(
-    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-2 text-[13px] font-medium tracking-wide transition xl:px-3 xl:text-sm",
+    "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wide transition whitespace-nowrap xl:text-[13px]",
     active
-      ? "bg-[#F3B754] text-ink shadow-sm shadow-[#F3B754]/40"
-      : isSale
-        ? "font-semibold text-forest hover:bg-mist"
-        : "text-ink hover:bg-mist hover:text-forest",
+      ? "bg-[#F3B754] text-ink font-semibold shadow-sm shadow-[#F3B754]/30"
+      : "text-ink hover:bg-mist hover:text-forest",
   );
 }
 
@@ -90,7 +86,7 @@ function SiteHeaderShell({
 
   return (
     <header className="sticky top-0 z-50 bg-white">
-      {/* Figma top utility bar — light, above nav */}
+      {/* Top utility bar */}
       <div className="hidden border-b border-[var(--border)] bg-[#f5f5f3] px-4 py-1.5 sm:block md:px-6 lg:px-8">
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 text-[11px] text-ink-soft md:text-xs">
           <span aria-hidden />
@@ -125,9 +121,9 @@ function SiteHeaderShell({
         </div>
       </div>
 
-      {/* Main nav row */}
+      {/* Main header row */}
       <div className="border-b border-[var(--border)]">
-        <div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-3 px-3 py-2.5 sm:px-4 md:gap-5 md:px-6 md:py-3 lg:px-8">
+        <div className="flex w-full items-center justify-between gap-3 px-3 py-2.5 sm:px-4 md:gap-5 md:px-6 md:py-3 lg:px-8">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
@@ -151,32 +147,15 @@ function SiteHeaderShell({
             </Link>
           </div>
 
-          <nav className="hidden items-center justify-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
-            {MAIN_NAV.map((item) => {
-              const active = activeId === item.id;
-              const isSale = item.id === "sale";
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={navLinkClass(active, isSale)}
-                >
-                  {item.icon === "home" ? <HomeIcon /> : null}
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <div className="hidden max-w-md flex-1 md:block lg:max-w-xl">
+            <SearchBox
+              placeholder="Search for products, rituals, or remedies..."
+              className="max-w-none"
+              inputClassName="w-full rounded-full border border-[var(--border)] bg-[#f7f3ec] py-2 pl-9 pr-3 text-xs outline-none placeholder:text-ink-soft/80 focus:border-forest/40 focus:ring-2 focus:ring-forest/10"
+            />
+          </div>
 
           <div className="flex items-center justify-end gap-2 sm:gap-2.5">
-            <div className="hidden w-[220px] xl:block xl:w-[260px]">
-              <SearchBox
-                placeholder="Search for products, rituals, or remedies..."
-                className="max-w-none"
-                inputClassName="w-full rounded-full border border-[var(--border)] bg-[#f7f3ec] py-2 pl-9 pr-3 text-xs outline-none placeholder:text-ink-soft/80 focus:border-forest/40 focus:ring-2 focus:ring-forest/10"
-              />
-            </div>
             <Link href="/account" className="header-icon-btn hidden sm:inline-flex" aria-label="Account">
               <UserIcon />
               {mounted && customer ? (
@@ -198,13 +177,37 @@ function SiteHeaderShell({
         </div>
       </div>
 
+      {/* Category Tabs Row */}
+      <div className="border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
+          <nav
+            className="flex items-center justify-start md:justify-center gap-1 sm:gap-1.5 md:gap-2 overflow-x-auto py-2.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="Category Tabs"
+          >
+            {MAIN_NAV.map((item) => {
+              const active = activeId === item.id;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={navLinkClass(active)}
+                >
+                  {item.icon === "home" ? <HomeIcon /> : null}
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+
       {open ? (
         <div className="border-b border-[var(--border)] bg-white px-4 py-4 lg:hidden">
           <SearchBox placeholder="Search for products, rituals, or remedies..." />
           <div className="mt-4 grid gap-1">
             {MAIN_NAV.map((item) => {
               const active = activeId === item.id;
-              const isSale = item.id === "sale";
               return (
                 <Link
                   key={item.id}
@@ -212,11 +215,7 @@ function SiteHeaderShell({
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "inline-flex items-center gap-2 rounded-xl px-3 py-3 text-base font-semibold",
-                    active
-                      ? "bg-[#F3B754] text-ink"
-                      : isSale
-                        ? "text-forest hover:bg-mist"
-                        : "text-ink hover:bg-mist",
+                    active ? "bg-[#F3B754] text-ink" : "text-ink hover:bg-mist",
                   )}
                   onClick={() => setOpen(false)}
                 >
