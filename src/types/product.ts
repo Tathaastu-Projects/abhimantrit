@@ -192,6 +192,7 @@ export type StoreBanner = {
   ctaLabel?: string;
   ctaHref?: string;
   sortOrder?: number;
+  isActive?: boolean;
 };
 
 export type StoreBlogPost = {
