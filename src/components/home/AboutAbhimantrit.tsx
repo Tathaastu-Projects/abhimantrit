@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getApiBaseUrl } from "@/lib/env";
 import { resolveBannerUrl } from "@/lib/format";
 
 const DEFAULT_INTRO =
@@ -87,22 +86,7 @@ const FEATURES: AboutFeature[] = [
 
 /** About Abhimantrit — text and list on the left, image/video on the right. Hover a point to swap the image. */
 export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
-  const [live, setLive] = useState<AboutSection | null | undefined>(about);
-  const source = live || about;
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${getApiBaseUrl()}/api/store/content/home`, { cache: "no-store" })
-      .then((res) => res.json())
-      .then((body) => {
-        const section = body?.data?.aboutSection as AboutSection | undefined;
-        if (!cancelled && section) setLive(section);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const source = about;
 
   const features = FEATURES.map((item) => {
     const custom = source?.features?.find((feature) => feature.id === item.id);

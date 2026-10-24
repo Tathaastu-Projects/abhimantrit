@@ -9,48 +9,13 @@ import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
 
 const INTENTIONS = [
-  {
-    id: "Peace",
-    label: "Peace",
-    description: "Calm mind & balance",
-    image: "/intentions/peace-cut.webp",
-  },
-  {
-    id: "Wealth",
-    label: "Wealth",
-    description: "Abundance & growth",
-    image: "/intentions/wealth-cut.webp",
-  },
-  {
-    id: "Health",
-    label: "Health",
-    description: "Vitality & healing",
-    image: "/intentions/health-cut.webp",
-  },
-  {
-    id: "Protection",
-    label: "Protection",
-    description: "Shield & strength",
-    image: "/intentions/protection-cut.webp",
-  },
-  {
-    id: "Relationship",
-    label: "Relationship",
-    description: "Harmony & love",
-    image: "/intentions/relationship-cut.webp",
-  },
-  {
-    id: "Success",
-    label: "Success",
-    description: "Clarity & progress",
-    image: "/intentions/success-cut.webp",
-  },
-  {
-    id: "Spirituality",
-    label: "Spirituality",
-    description: "Devotion & depth",
-    image: "/intentions/spirituality-cut.webp",
-  },
+  { id: "Peace", label: "Peace", description: "Calm mind & balance" },
+  { id: "Wealth", label: "Wealth", description: "Abundance & growth" },
+  { id: "Health", label: "Health", description: "Vitality & healing" },
+  { id: "Protection", label: "Protection", description: "Shield & strength" },
+  { id: "Relationship", label: "Relationship", description: "Harmony & love" },
+  { id: "Success", label: "Success", description: "Clarity & progress" },
+  { id: "Spirituality", label: "Spirituality", description: "Devotion & depth" },
 ] as const;
 
 function stonesOf(title: string) {
@@ -125,8 +90,13 @@ function IntentionCard({
   return (
     <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
       <div className="flex items-center gap-2.5 px-1">
+        {/* Intention icon uses product photo from backend catalog — no frontend static assets */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={intention.image} alt="" className="h-9 w-9 object-contain" />
+        <img
+          src={resolveImageUrl(img.url)}
+          alt=""
+          className="h-9 w-9 rounded-full object-cover"
+        />
         <div className="min-w-0">
           <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">{intention.label}</p>
           <p className="truncate text-[11px] text-[#8a8580]">{intention.description}</p>

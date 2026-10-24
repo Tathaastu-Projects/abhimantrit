@@ -3,15 +3,21 @@ import { getBlogs } from "@/lib/api";
 import { resolveBannerUrl } from "@/lib/format";
 import { BlogCover } from "@/components/home/BlogCover";
 
+function localUpload(url?: string) {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url) && !url.includes("/uploads/")) return "";
+  return resolveBannerUrl(url);
+}
+
 function coverSrc(post: { coverImage?: string; playbackUrl?: string; videoUrl?: string }) {
-  if (post.coverImage) return resolveBannerUrl(post.coverImage);
-  const video = post.playbackUrl || "";
-  if (video.endsWith(".mp4")) return resolveBannerUrl(video.replace(/\.mp4$/, ".jpg"));
+  if (post.coverImage) return localUpload(post.coverImage);
+  const video = localUpload(post.playbackUrl || post.videoUrl);
+  if (video.endsWith(".mp4")) return video.replace(/\.mp4$/, ".jpg");
   return "";
 }
 
-function videoSrc(post: { playbackUrl?: string }) {
-  return post.playbackUrl ? resolveBannerUrl(post.playbackUrl) : "";
+function videoSrc(post: { playbackUrl?: string; videoUrl?: string }) {
+  return localUpload(post.playbackUrl || post.videoUrl);
 }
 
 export default async function BlogIndexPage() {

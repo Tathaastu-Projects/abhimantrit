@@ -75,7 +75,7 @@ function SiteHeaderInner({ menu, logoSrc }: Props) {
 function SiteHeaderShell({
   menu: _menu,
   activeId,
-  logoSrc = "/tathaastu_logo.png",
+  logoSrc = "",
 }: Props & { activeId: string | null }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -134,16 +134,22 @@ function SiteHeaderShell({
               <MenuIcon />
             </button>
             <Link href="/" className="shrink-0" aria-label="Abhimantrit home">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={logoSrc}
-                alt="Abhimantrit by Tathaastu"
-                width={160}
-                height={48}
-                fetchPriority="high"
-                decoding="async"
-                className="h-9 w-auto object-contain object-left sm:h-10 md:h-12"
-              />
+              {logoSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={logoSrc}
+                  alt="Abhimantrit"
+                  width={160}
+                  height={48}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="h-9 w-auto max-w-[10rem] object-contain object-left sm:h-10 md:h-12"
+                />
+              ) : (
+                <span className="font-display text-lg font-semibold tracking-tight text-forest sm:text-xl">
+                  Abhimantrit
+                </span>
+              )}
             </Link>
           </div>
 

@@ -390,6 +390,10 @@ export type HomeContent = {
     bestsellers?: StoreProduct[];
     newArrivals?: StoreProduct[];
   };
+  /** One sample product per intention for Shop By Intention */
+  intentionProducts?: Record<string, StoreProduct>;
+  rashiProducts?: StoreProduct[];
+  latestProducts?: StoreProduct[];
   latestBlogs: StoreBlogPost[];
   testimonials?: { quote: string; name: string; imageUrl?: string; videoUrl?: string; playbackUrl?: string }[];
   faqs?: { question: string; answer: string }[];

@@ -155,7 +155,7 @@ function RashiCard({
       <div className="flex items-center gap-2.5 px-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/zodiac/${sign.slug}-cut.webp`}
+          src={resolveImageUrl(`/uploads/zodiac/${sign.slug}-cut.webp`)}
           alt=""
           className="h-9 w-9 object-contain"
         />

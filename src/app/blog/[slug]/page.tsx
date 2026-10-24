@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/lib/api";
+import { resolveBannerUrl } from "@/lib/format";
+import { BlogCover } from "@/components/home/BlogCover";
+
+function localUpload(url?: string) {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url) && !url.includes("/uploads/")) return "";
+  return resolveBannerUrl(url);
+}
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -32,12 +40,11 @@ export default async function BlogPostPage({ params }: Props) {
           {post.publishedAt ? ` · ${new Date(post.publishedAt).toLocaleDateString("en-IN")}` : ""}
         </p>
       ) : null}
-      {post.coverImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.coverImage}
-          alt=""
-          className="mt-8 aspect-[16/9] w-full rounded-3xl object-cover"
+      {localUpload(post.coverImage) || localUpload(post.playbackUrl) || localUpload(post.videoUrl) ? (
+        <BlogCover
+          image={localUpload(post.coverImage)}
+          video={localUpload(post.playbackUrl) || localUpload(post.videoUrl)}
+          className="mt-8 aspect-[16/9] w-full overflow-hidden rounded-3xl bg-[#f3f3f3]"
         />
       ) : null}
       <div className="mt-8 whitespace-pre-wrap text-base leading-relaxed text-ink-soft">

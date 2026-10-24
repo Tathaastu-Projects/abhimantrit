@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { CartSync } from "@/components/cart/CartSync";
 import { getStoreMenu, getStoreMeta } from "@/lib/api";
 import { resolveBannerUrl } from "@/lib/format";
 
@@ -12,6 +13,12 @@ export const metadata: Metadata = {
   },
   description:
     "Shop lab-certified Rudraksha, gemstones, crystals, yantras and spiritual jewellery — curated and energized with care.",
+  // No site favicon — blank so browsers do not show the default Next/Vercel icon
+  icons: {
+    icon: [{ url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" }],
+    shortcut: [{ url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" }],
+    apple: [{ url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" }],
+  },
 };
 
 export default async function RootLayout({
@@ -32,7 +39,8 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
-        <SiteHeader menu={menu} logoSrc={resolveBannerUrl(meta?.logoUrl) || "/tathaastu_logo.png"} />
+        <SiteHeader menu={menu} logoSrc={resolveBannerUrl(meta?.logoUrl) || ""} />
+        <CartSync />
         <main className="flex-1">{children}</main>
         <SiteFooter support={meta?.support} />
       </body>

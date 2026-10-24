@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { resolveImageUrl } from "@/lib/format";
 
 const ZODIAC_SIGNS = [
   { label: "Aries", slug: "aries" },
@@ -19,7 +20,7 @@ const ZODIAC_SIGNS = [
   { label: "Pisces", slug: "pisces" },
 ] as const;
 
-/** Shop by Zodiac — horizontal scroll cards + static icons in /public/zodiac */
+/** Shop by Zodiac — icons served from backend `/uploads/zodiac/` (admin/backend storage). */
 export function ZodiacNav() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
@@ -78,11 +79,12 @@ export function ZodiacNav() {
           >
             <div className="relative h-[108px] w-[108px] sm:h-[118px] sm:w-[118px]">
               <Image
-                src={`/zodiac/${sign.slug}-cut.webp`}
+                src={resolveImageUrl(`/uploads/zodiac/${sign.slug}-cut.webp`)}
                 alt={sign.label}
                 fill
                 priority={i < 4}
                 sizes="118px"
+                unoptimized
                 className="object-contain drop-shadow-sm transition duration-300 group-hover:scale-[1.04]"
               />
             </div>

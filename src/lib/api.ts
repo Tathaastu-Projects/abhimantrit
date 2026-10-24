@@ -63,7 +63,7 @@ async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): P
     ...init,
     headers,
     ...(isServer && method === "GET" && !auth?.fresh
-      ? { next: { revalidate: 30 } }
+      ? { next: { revalidate: 20 } }
       : { cache: "no-store" }),
   });
 
@@ -91,10 +91,21 @@ export function getApiBase() {
 
 export async function getStoreMeta(): Promise<StoreMeta | null> {
   try {
+    // Short revalidate keeps header/nav fast on every screen change
     const res = await apiFetch<ApiResult<StoreMeta>>("/api/store/meta");
     return res.data;
   } catch {
     return null;
+  }
+}
+
+export async function getBanners(key?: string): Promise<StoreBanner[]> {
+  try {
+    const query = key ? `?key=${encodeURIComponent(key)}` : "";
+    const res = await apiFetch<ApiResult<StoreBanner[]>>(`/api/store/banners${query}`);
+    return res.data || [];
+  } catch {
+    return [];
   }
 }
 
@@ -115,12 +126,12 @@ const EMPTY_HOME: HomeContent = {
   faqs: [],
 };
 
-export async function getHomeContent(): Promise<HomeContent> {
+export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeContent> {
   try {
     const res = await apiFetch<ApiResult<HomeContent> & Partial<HomeContent>>(
       "/api/store/content/home",
       undefined,
-      { fresh: true },
+      opts?.fresh ? { fresh: true } : undefined,
     );
     const data = res.data || (res as unknown as HomeContent);
     if (!data || typeof data !== "object") return EMPTY_HOME;
@@ -134,6 +145,9 @@ export async function getHomeContent(): Promise<HomeContent> {
       featuredFinds: data.featuredFinds,
       screenToSpace: data.screenToSpace,
       latestBlogs: data.latestBlogs || [],
+      intentionProducts: data.intentionProducts || {},
+      rashiProducts: data.rashiProducts || [],
+      latestProducts: data.latestProducts || data.carousels?.newArrivals || [],
       carousels: {
         featured: data.carousels?.featured || [],
         bestsellers: data.carousels?.bestsellers || [],
@@ -312,6 +326,28 @@ export async function removeFromWishlist(productId: string, auth: AuthOpts) {
   );
 }
 
+export async function syncCart(
+  items: {
+    productId: string;
+    slug: string;
+    title: string;
+    image: string;
+    variantId?: string | null;
+    variantLabel?: string;
+    unitSalePrice: number;
+    unitMrp: number;
+    qty: number;
+    maxQty?: number;
+  }[],
+  auth: AuthOpts,
+) {
+  return apiFetch<ApiResult<{ items: unknown[]; updatedAt?: string }>>(
+    "/api/store/cart",
+    { method: "PUT", body: JSON.stringify({ items }) },
+    auth,
+  );
+}
+
 export async function getProductReviews(slug: string, page = 1) {
   try {
     const res = await apiFetch<ApiResult<StoreReview[]>>(
@@ -397,25 +433,32 @@ export type StoreOrderResult = {
   createdAt: string;
 };
 
-export async function createStoreOrder(payload: {
-  customer: { name: string; email: string; phone: string };
-  shippingAddress: {
-    line1: string;
-    line2?: string;
-    city: string;
-    state: string;
-    pincode: string;
-    country?: string;
-  };
-  items: { productId: string; variantId?: string | null; quantity: number }[];
-  paymentMethod?: "cod" | "online";
-  couponCode?: string;
-  notes?: string;
-}) {
-  return apiFetch<ApiResult<StoreOrderResult>>("/api/store/orders", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+export async function createStoreOrder(
+  payload: {
+    customer: { name: string; email: string; phone: string };
+    shippingAddress: {
+      line1: string;
+      line2?: string;
+      city: string;
+      state: string;
+      pincode: string;
+      country?: string;
+    };
+    items: { productId: string; variantId?: string | null; quantity: number }[];
+    paymentMethod?: "cod" | "online";
+    couponCode?: string;
+    notes?: string;
+  },
+  auth?: AuthOpts,
+) {
+  return apiFetch<ApiResult<StoreOrderResult>>(
+    "/api/store/orders",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    auth,
+  );
 }
 
 export async function trackOrder(orderNumber: string, phone: string) {

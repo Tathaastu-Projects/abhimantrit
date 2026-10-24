@@ -35,21 +35,42 @@ export function hoverLines(product: {
     .slice(0, 4);
 }
 
-/** Homepage slides live on the store, except images uploaded from admin (`/uploads`). */
+/**
+ * Backend media under `/uploads/...` is proxied by Next (`next.config` rewrites),
+ * so we keep those paths same-origin. Absolute API upload URLs are normalized too.
+ */
+function toStorefrontUploadPath(url: string): string | null {
+  if (url.startsWith("/uploads/")) return url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.pathname.startsWith("/uploads/")) return parsed.pathname;
+  } catch {
+    /* ignore */
+  }
+  const base = getApiBaseUrlOrEmpty();
+  if (base && url.startsWith(base)) {
+    const path = url.slice(base.length);
+    if (path.startsWith("/uploads/")) return path;
+  }
+  return null;
+}
+
+/** Homepage slides / CMS media — prefer same-origin `/uploads` via Next proxy. */
 export function resolveBannerUrl(url?: string | null): string {
   if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
-    return url;
-  }
-  if (url.startsWith("/uploads/")) return resolveImageUrl(url);
+  if (url.startsWith("data:")) return url;
+  const uploadPath = toStorefrontUploadPath(url);
+  if (uploadPath) return uploadPath;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
   return url.startsWith("/") ? url : `/${url}`;
 }
 
 export function resolveImageUrl(url?: string | null): string {
   if (!url) return "/placeholder-product.svg";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
-    return url;
-  }
+  if (url.startsWith("data:")) return url;
+  const uploadPath = toStorefrontUploadPath(url);
+  if (uploadPath) return uploadPath;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
   const base = getApiBaseUrlOrEmpty();
   if (!base) return url.startsWith("/") ? url : `/${url}`;
   return `${base}${url.startsWith("/") ? url : `/${url}`}`;

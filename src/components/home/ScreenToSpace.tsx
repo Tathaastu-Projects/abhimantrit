@@ -45,81 +45,14 @@ interface ScreenToSpaceProps {
   section?: ScreenToSpaceSection | null;
 }
 
-const FALLBACK_ITEMS: ScreenToSpaceItem[] = [
-  {
-    id: "reel-1",
-    overlayTag: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    imageUrl: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&q=80",
-    productTitle: "Arra Brass Tea Pan With Wooden...",
-    productPrice: 4581,
-    productImage: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&q=80",
-    productSlug: "arra-brass-tea-pan-with-wooden-handle",
-    buttonText: "SHOP NOW",
-    dotsCount: 4,
-    isActive: true,
-  },
-  {
-    id: "reel-2",
-    overlayTag: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    imageUrl: "https://images.unsplash.com/photo-1608755728617-aefab37d2edd?w=800&q=80",
-    productTitle: "Kanchdeep Diya Set of 24",
-    productPrice: 1690,
-    productImage: "https://images.unsplash.com/photo-1608755728617-aefab37d2edd?w=300&q=80",
-    productSlug: "kanchdeep-diya-set-of-24",
-    buttonText: "SHOP NOW",
-    dotsCount: 4,
-    isActive: true,
-  },
-  {
-    id: "reel-3",
-    overlayTag: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800&q=80",
-    productTitle: "Fiore Ceramic Serving Bowl",
-    productPrice: 2150,
-    productImage: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=300&q=80",
-    productSlug: "fiore-ceramic-serving-bowl",
-    buttonText: "SHOP NOW",
-    dotsCount: 4,
-    isActive: true,
-  },
-  {
-    id: "reel-4",
-    overlayTag: "1. Beal Gond Katira cooler",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-    imageUrl: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
-    productTitle: "Dewy Glass Jug With Wooden Lid",
-    productPrice: 2508,
-    productImage: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&q=80",
-    productSlug: "dewy-glass-jug-with-wooden-lid",
-    buttonText: "SHOP NOW",
-    dotsCount: 4,
-    isActive: true,
-  },
-  {
-    id: "reel-5",
-    overlayTag: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-    imageUrl: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80",
-    productTitle: "Handcrafted Brass Dhoop Dani & Lamp",
-    productPrice: 1850,
-    productImage: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&q=80",
-    productSlug: "handcrafted-brass-dhoop-dani-lamp",
-    buttonText: "SHOP NOW",
-    dotsCount: 4,
-    isActive: true,
-  },
-];
-
 function ReelCard({ item }: { item: ScreenToSpaceItem }) {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Media must come from admin/backend (/uploads/...) — no frontend hardcoded assets
   const video = resolveBannerUrl(item.videoUrl);
   const image = resolveBannerUrl(item.imageUrl);
-  const productImg = resolveImageUrl(item.productImage || item.imageUrl);
+  const productImg = resolveImageUrl(item.productImage || item.imageUrl || "");
   const productHref = item.productSlug
     ? item.productSlug.startsWith("/")
       ? item.productSlug
@@ -200,12 +133,14 @@ function ReelCard({ item }: { item: ScreenToSpaceItem }) {
         <div className="flex items-center gap-2.5">
           {/* Product Thumbnail */}
           <div className="relative h-12 w-12 sm:h-13 sm:w-13 shrink-0 rounded-lg overflow-hidden bg-stone-100 border border-stone-200/70">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={productImg}
-              alt={item.productTitle}
-              className="h-full w-full object-cover"
-            />
+            {productImg ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={productImg}
+                alt={item.productTitle}
+                className="h-full w-full object-cover"
+              />
+            ) : null}
           </div>
 
           {/* Product Details */}
@@ -260,8 +195,8 @@ export function ScreenToSpace({ section }: ScreenToSpaceProps) {
 
   const title = section?.title || "from screen to space, seamlessly";
   const subtitle = section?.subtitle || "";
-  const rawItems = section?.items?.length ? section.items : FALLBACK_ITEMS;
-  const items = rawItems.filter((item) => item.isActive !== false);
+  // Only admin/CMS items — never use hardcoded frontend media
+  const items = (section?.items || []).filter((item) => item.isActive !== false);
 
   if (!items.length) {
     return null;

@@ -1,4 +1,4 @@
-import { getCatalog, getHomeContent } from "@/lib/api";
+import { getBanners, getCatalog } from "@/lib/api";
 import { searchParamsToCatalog } from "@/lib/catalog-params";
 import { CatalogView } from "@/components/catalog/CatalogView";
 import { CategoryBanner } from "@/components/catalog/CategoryBanner";
@@ -11,7 +11,7 @@ type Props = {
 export default async function ShopPage({ searchParams }: Props) {
   const sp = await searchParams;
   const params = searchParamsToCatalog(sp);
-  const [catalog, home] = await Promise.all([getCatalog(params), getHomeContent()]);
+  const [catalog, banners] = await Promise.all([getCatalog(params), getBanners()]);
 
   return (
     <>
@@ -21,7 +21,7 @@ export default async function ShopPage({ searchParams }: Props) {
         eyebrow="Collection"
         subtitle="Authentic items for your daily rituals, festivals and special occasions."
         ctaHref="#catalog"
-        banners={home.banners}
+        banners={banners}
       />
       <CatalogView
         title="Puja Essentials"
@@ -35,10 +35,10 @@ export default async function ShopPage({ searchParams }: Props) {
       />
       <ConsultationCta
         cta={{
-          title: home.consultCta?.title || "Not sure what to wear? Talk to our experts",
-          subtitle: home.consultCta?.subtitle,
-          ctaLabel: home.consultCta?.ctaLabel || "Request consultation",
-          ctaHref: home.consultCta?.ctaHref,
+          title: "Not sure what to wear? Talk to our experts",
+          subtitle: "Get a free recommendation aligned to your intention.",
+          ctaLabel: "Request consultation",
+          ctaHref: "/contact",
         }}
       />
     </>

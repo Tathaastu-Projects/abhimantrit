@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCatalog, getHomeContent, FALLBACK_CATEGORIES } from "@/lib/api";
+import { getBanners, getCatalog, FALLBACK_CATEGORIES } from "@/lib/api";
 import { searchParamsToCatalog } from "@/lib/catalog-params";
 import { CatalogView } from "@/components/catalog/CatalogView";
 import { CategoryBanner } from "@/components/catalog/CategoryBanner";
@@ -18,14 +18,14 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
   if (!allowed.has(category)) notFound();
 
   const sortFromUrl = Array.isArray(sp.sort) ? sp.sort[0] : sp.sort;
-  const [catalog, home] = await Promise.all([
+  const [catalog, banners] = await Promise.all([
     getCatalog(
       searchParamsToCatalog(sp, {
         category,
         sort: sortFromUrl || "best_selling",
       }),
     ),
-    getHomeContent(),
+    getBanners(),
   ]);
   const title = titleCase(category);
 
@@ -37,7 +37,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
         eyebrow="Collection"
         subtitle={`Certified ${title} curated for intention-led living and daily rituals.`}
         ctaHref="#catalog"
-        banners={home.banners}
+        banners={banners}
       />
       <CatalogView
         title={title}
@@ -55,10 +55,10 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
       />
       <ConsultationCta
         cta={{
-          title: home.consultCta?.title || "Not sure what to wear? Talk to our experts",
-          subtitle: home.consultCta?.subtitle,
-          ctaLabel: home.consultCta?.ctaLabel || "Request consultation",
-          ctaHref: home.consultCta?.ctaHref,
+          title: "Not sure what to wear? Talk to our experts",
+          subtitle: "Get a free recommendation aligned to your intention.",
+          ctaLabel: "Request consultation",
+          ctaHref: "/contact",
         }}
       />
     </>

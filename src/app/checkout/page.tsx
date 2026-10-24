@@ -42,6 +42,7 @@ export default function CheckoutPage() {
   const clear = useCartStore((s) => s.clear);
   const subtotalFn = useCartStore((s) => s.subtotal);
   const customer = useAuthStore((s) => s.customer);
+  const token = useAuthStore((s) => s.token);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -144,29 +145,32 @@ export default function CheckoutPage() {
     const fd = new FormData(e.currentTarget);
     let createdOrderId: string | null = null;
     try {
-      const res = await createStoreOrder({
-        customer: {
-          name: String(fd.get("name") || ""),
-          email: String(fd.get("email") || ""),
-          phone: String(fd.get("phone") || ""),
+      const res = await createStoreOrder(
+        {
+          customer: {
+            name: String(fd.get("name") || customer?.name || ""),
+            email: String(fd.get("email") || customer?.email || ""),
+            phone: String(fd.get("phone") || customer?.phone || ""),
+          },
+          shippingAddress: {
+            line1: String(fd.get("line1") || ""),
+            line2: String(fd.get("line2") || ""),
+            city: String(fd.get("city") || ""),
+            state: String(fd.get("state") || ""),
+            pincode: String(fd.get("pincode") || ""),
+            country: "India",
+          },
+          items: items.map((i) => ({
+            productId: i.productId,
+            variantId: i.variantId || null,
+            quantity: i.qty,
+          })),
+          paymentMethod,
+          couponCode: coupon?.code,
+          notes: String(fd.get("notes") || ""),
         },
-        shippingAddress: {
-          line1: String(fd.get("line1") || ""),
-          line2: String(fd.get("line2") || ""),
-          city: String(fd.get("city") || ""),
-          state: String(fd.get("state") || ""),
-          pincode: String(fd.get("pincode") || ""),
-          country: "India",
-        },
-        items: items.map((i) => ({
-          productId: i.productId,
-          variantId: i.variantId || null,
-          quantity: i.qty,
-        })),
-        paymentMethod,
-        couponCode: coupon?.code,
-        notes: String(fd.get("notes") || ""),
-      });
+        { token },
+      );
 
       const order = res.data;
       createdOrderId = order.id;

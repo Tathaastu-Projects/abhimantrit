@@ -3,60 +3,19 @@ import type { StoreBlogPost } from "@/types/product";
 import { resolveBannerUrl } from "@/lib/format";
 import { BlogCover } from "@/components/home/BlogCover";
 
-const FALLBACK_POSTS: {
-  slug: string;
-  title: string;
-  category: string;
-  date: string;
-  coverTint: string;
-  coverImage?: string;
-  videoUrl?: string;
-  playbackUrl?: string;
-}[] = [
-  {
-    slug: "planets-not-aligned-vedic-astrology",
-    title: "Top 5 Signs Your Planets Are Not Aligned According to Vedic Astrology",
-    category: "Vedic Astrology",
-    date: "March 25, 2026",
-    coverTint: "#f3e6d4",
-  },
-  {
-    slug: "vastu-tips-for-home-positive-energy",
-    title: "10 Vastu Tips for Home to Attract Positive Energy",
-    category: "Vastu Tips",
-    date: "March 25, 2026",
-    coverTint: "#f3e6d4",
-  },
-  {
-    slug: "vastu-plants-for-home-luck",
-    title: "Vastu Plants for Home: Which Ones Bring Luck and Positivity?",
-    category: "Vastu Shastra",
-    date: "March 25, 2026",
-    coverTint: "#e8edd4",
-  },
-];
-
-function driveFileId(url: string) {
-  const file = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (file) return file[1];
-  if (!/drive\.google\.com|googleusercontent\.com/.test(url)) return "";
-  const id = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  return id ? id[1] : "";
-}
+const COVER_TINTS = ["#f3e6d4", "#f3e6d4", "#e8edd4"];
 
 function mediaImage(url?: string) {
   if (!url) return "";
-  const id = driveFileId(url);
-  if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+  if (/^https?:\/\//i.test(url) && !url.includes("/uploads/")) return "";
   return resolveBannerUrl(url);
 }
 
 function mediaVideo(post: { videoUrl?: string; playbackUrl?: string }) {
-  if (post.playbackUrl) return resolveBannerUrl(post.playbackUrl);
-  if (!post.videoUrl) return "";
-  const id = driveFileId(post.videoUrl);
-  if (id) return "";
-  return resolveBannerUrl(post.videoUrl);
+  const raw = post.playbackUrl || post.videoUrl || "";
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw) && !raw.includes("/uploads/")) return "";
+  return resolveBannerUrl(raw);
 }
 
 function posterFor(video?: string, image?: string) {
@@ -68,7 +27,7 @@ function posterFor(video?: string, image?: string) {
 }
 
 function formatDate(value?: string) {
-  if (!value) return "March 25, 2026";
+  if (!value) return "";
   try {
     return new Date(value).toLocaleDateString("en-IN", {
       day: "numeric",
@@ -82,18 +41,18 @@ function formatDate(value?: string) {
 
 /** Read From Our Blog — after Certified & Authentic */
 export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
-  const fromApi = (posts || []).slice(0, 3).map((post, i) => ({
+  const list = (posts || []).slice(0, 3).map((post, i) => ({
     slug: post.slug,
     title: post.title,
     category: post.tags?.[0] || "Journal",
     date: formatDate(post.publishedAt),
-    coverTint: FALLBACK_POSTS[i % FALLBACK_POSTS.length].coverTint,
+    coverTint: COVER_TINTS[i % COVER_TINTS.length],
     coverImage: post.coverImage,
     videoUrl: post.videoUrl,
     playbackUrl: post.playbackUrl,
   }));
 
-  const list = fromApi.length ? fromApi : FALLBACK_POSTS;
+  if (!list.length) return null;
 
   return (
     <section id="blog" className="w-full bg-white py-14 md:py-16">
