@@ -47,17 +47,28 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
       >
         {track.map((slide, i) => {
           const isClone = i === 0 || i === track.length - 1;
+          const line1 = slide.title?.[0]?.trim() || "";
+          const line2 = slide.title?.[1]?.trim() || "";
+          const hasTitle = Boolean(line1 || line2);
+          const hasSubtitle = Boolean(slide.subtitle?.trim());
+          const hasCta = Boolean(slide.cta?.trim());
+          const hasText = hasTitle || hasSubtitle || hasCta;
+          const bannerHref = slide.href || "/shop";
+
           return (
-            <div
+            <Link
               key={`${slide.src}-${i}`}
-              className="relative h-[500px] shrink-0"
+              href={bannerHref}
+              className="relative block h-[500px] shrink-0 group focus:outline-none cursor-pointer"
               style={{ width: `${100 / pages}%` }}
               aria-hidden={isClone ? true : undefined}
+              tabIndex={isClone ? -1 : undefined}
+              data-hero-pause
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={slide.src}
-                alt={isClone ? "" : slide.alt}
+                alt={isClone ? "" : slide.alt || "Banner"}
                 width={1920}
                 height={785}
                 draggable={false}
@@ -67,46 +78,53 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
                 className="absolute inset-0 h-full w-full object-fill"
               />
 
-              <div
-                className="pointer-events-none absolute inset-y-0 left-0 w-[62%] sm:w-[56%] md:w-[52%]"
-                style={{
-                  background:
-                    "linear-gradient(90deg, rgba(243,235,224,0.92) 0%, rgba(243,235,224,0.72) 48%, rgba(243,235,224,0.18) 78%, rgba(243,235,224,0) 100%)",
-                }}
-                aria-hidden
-              />
+              {hasText ? (
+                <>
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-0 w-[62%] sm:w-[56%] md:w-[52%]"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, rgba(243,235,224,0.92) 0%, rgba(243,235,224,0.72) 48%, rgba(243,235,224,0.18) 78%, rgba(243,235,224,0) 100%)",
+                    }}
+                    aria-hidden
+                  />
 
-              <div className="pointer-events-none absolute inset-0 flex items-center">
-                <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
-                  <div className="home-hero__copy pointer-events-auto">
-                    {i === 1 ? (
-                      <h1 className="home-hero__title">
-                        <span className="home-hero__title-line">{slide.title[0]}</span>
-                        <span className="home-hero__title-line home-hero__title-line--strong">
-                          {slide.title[1]}
-                        </span>
-                      </h1>
-                    ) : (
-                      <p className="home-hero__title">
-                        <span className="home-hero__title-line">{slide.title[0]}</span>
-                        <span className="home-hero__title-line home-hero__title-line--strong">
-                          {slide.title[1]}
-                        </span>
-                      </p>
-                    )}
-                    <p className="home-hero__sub">{slide.subtitle}</p>
-                    <Link
-                      href={slide.href}
-                      className="home-hero__cta"
-                      data-hero-pause
-                      tabIndex={isClone ? -1 : undefined}
-                    >
-                      {slide.cta}
-                    </Link>
+                  <div className="pointer-events-none absolute inset-0 flex items-center">
+                    <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
+                      <div className="home-hero__copy">
+                        {hasTitle ? (
+                          i === 1 ? (
+                            <h1 className="home-hero__title">
+                              {line1 ? <span className="home-hero__title-line">{line1}</span> : null}
+                              {line2 ? (
+                                <span className="home-hero__title-line home-hero__title-line--strong">
+                                  {line2}
+                                </span>
+                              ) : null}
+                            </h1>
+                          ) : (
+                            <p className="home-hero__title">
+                              {line1 ? <span className="home-hero__title-line">{line1}</span> : null}
+                              {line2 ? (
+                                <span className="home-hero__title-line home-hero__title-line--strong">
+                                  {line2}
+                                </span>
+                              ) : null}
+                            </p>
+                          )
+                        ) : null}
+                        {hasSubtitle ? <p className="home-hero__sub">{slide.subtitle}</p> : null}
+                        {hasCta ? (
+                          <span className="home-hero__cta inline-flex group-hover:brightness-105">
+                            {slide.cta}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                </>
+              ) : null}
+            </Link>
           );
         })}
       </div>

@@ -37,6 +37,7 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
         eyebrow="Collection"
         subtitle={`Certified ${title} curated for intention-led living and daily rituals.`}
         ctaHref="#catalog"
+        banners={home.banners}
       />
       <CatalogView
         title={title}

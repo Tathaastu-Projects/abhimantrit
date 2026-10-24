@@ -9,11 +9,11 @@ function toSlide(banner: StoreBanner): HeroSlide | null {
   const line2 = banner.titleLine2?.trim() || "";
   return {
     src: resolveBannerUrl(banner.imageUrl),
-    alt: line1 || "Abhimantrit banner",
+    alt: line1 || line2 || "Abhimantrit banner",
     title: [line1, line2],
-    subtitle: banner.subtitle || "",
-    cta: banner.ctaLabel || "Explore",
-    href: banner.ctaHref || "/shop",
+    subtitle: banner.subtitle?.trim() || "",
+    cta: banner.ctaLabel ? banner.ctaLabel.trim() : "",
+    href: banner.ctaHref || (banner.category ? `/category/${banner.category}` : "/shop"),
   };
 }
 
@@ -25,9 +25,9 @@ export function HomeBanners({
   managed?: boolean;
 }) {
   const slides = (banners || [])
-    .filter((banner) => banner.key === "home-slider")
+    .filter((banner) => banner.key === "home-slider" && banner.isActive !== false)
     .map(toSlide)
-    .filter((slide): slide is HeroSlide => Boolean(slide?.src && slide.title[0]));
+    .filter((slide): slide is HeroSlide => Boolean(slide?.src));
   if (!slides.length) return null;
   return <HomeHero slides={slides} />;
 }

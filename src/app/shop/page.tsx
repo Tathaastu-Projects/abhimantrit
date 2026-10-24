@@ -21,6 +21,7 @@ export default async function ShopPage({ searchParams }: Props) {
         eyebrow="Collection"
         subtitle="Authentic items for your daily rituals, festivals and special occasions."
         ctaHref="#catalog"
+        banners={home.banners}
       />
       <CatalogView
         title="Puja Essentials"

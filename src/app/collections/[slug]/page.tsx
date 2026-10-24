@@ -34,6 +34,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         eyebrow="Puja Essentials"
         subtitle={c.subtitle || c.description || "Authentic items for your daily rituals."}
         ctaHref="#catalog"
+        banners={home.banners}
       />
       <CatalogView
         title={c.title}

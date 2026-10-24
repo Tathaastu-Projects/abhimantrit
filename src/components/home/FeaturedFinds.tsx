@@ -12,6 +12,24 @@ export type FeaturedFindsContent = {
   ctaHref?: string;
 };
 
+function getEmbedUrl(url?: string): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  const ytMatch = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}`;
+  }
+  const vimeoMatch = trimmed.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  if (vimeoMatch) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&muted=1&loop=1`;
+  }
+  const driveMatch = trimmed.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveMatch) {
+    return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+  }
+  return null;
+}
+
 /** Karungali mala feature — video on the left, photo on the right. */
 export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | null }) {
   const eyebrow = featured?.eyebrow || "Featured finds";
@@ -23,6 +41,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
   const ctaHref = featured?.ctaHref || "/product/gm-karungali-mala";
   const video = resolveBannerUrl(featured?.videoUrl);
   const image = resolveBannerUrl(featured?.imageUrl);
+  const videoEmbed = getEmbedUrl(video);
 
   return (
     <section id="featured-finds" className="w-full bg-[#f6f1ea] py-14 md:py-16">
@@ -36,7 +55,14 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 md:gap-4">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-[#e7e1d8] sm:aspect-[5/4]">
-            {video ? (
+            {videoEmbed ? (
+              <iframe
+                src={videoEmbed}
+                className="h-full w-full object-cover"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            ) : video ? (
               <video
                 src={video}
                 className="h-full w-full object-cover"
@@ -44,6 +70,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
                 muted
                 loop
                 playsInline
+                controls
               />
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[#8a8580]">
