@@ -1,11 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import Script from "next/script";
+import { useEffect, useRef, useState } from "react";
 import { preload } from "react-dom";
 
 /**
- * Hero slides come from the admin panel. Image and text move together.
- * Auto-advances every 3 seconds. The motion is plain HTML/CSS plus
- * /hero-slider.js so it still runs after a production deploy.
+ * Hero slides from the admin panel. Auto-advances every 3s.
+ * Client-side timer (not an external script) so production deploy
+ * and soft navigation keep autoplay working.
  */
 export type HeroSlide = {
   src: string;
@@ -16,37 +18,143 @@ export type HeroSlide = {
   href: string;
 };
 
+const AUTO_MS = 3000;
+const MOVE_MS = 700;
+
 /**
  * Full-bleed hero. Height is locked at 500px. Width follows the screen.
- * The picture is stretched so the whole image stays visible, edge to edge.
  */
 export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
   if (!slides?.length) return null;
+  return <HomeHeroCarousel slides={slides} />;
+}
+
+function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const source = slides;
-  const track = [source[source.length - 1], ...source, source[0]];
-  const pages = track.length;
+  const trackSlides = [source[source.length - 1], ...source, source[0]];
+  const pages = trackSlides.length;
+  const count = source.length;
+
+  const indexRef = useRef(1);
+  const timerRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
+  const countRef = useRef(count);
+  const goRef = useRef<(direction: number) => void>(() => {});
+  countRef.current = count;
+
+  const [index, setIndex] = useState(1);
+  const [animate, setAnimate] = useState(false);
+
   if (source[0]?.src) {
     preload(source[0].src, { as: "image", fetchPriority: "high" });
   }
 
+  useEffect(() => {
+    function clearTimer() {
+      if (timerRef.current != null) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+
+    function render(next: number, withAnim: boolean) {
+      indexRef.current = next;
+      setAnimate(withAnim);
+      setIndex(next);
+    }
+
+    function arm() {
+      clearTimer();
+      if (pausedRef.current || countRef.current < 1) return;
+      timerRef.current = window.setInterval(() => {
+        goRef.current(1);
+      }, AUTO_MS);
+    }
+
+    function go(direction: number) {
+      const total = countRef.current;
+      let next = indexRef.current + direction;
+      if (next < 0) next = 0;
+      if (next > total + 1) next = total + 1;
+      render(next, true);
+
+      if (next === 0) {
+        window.setTimeout(() => {
+          if (indexRef.current === 0) render(total, false);
+        }, MOVE_MS);
+      } else if (next === total + 1) {
+        window.setTimeout(() => {
+          if (indexRef.current === total + 1) render(1, false);
+        }, MOVE_MS);
+      }
+      arm();
+    }
+
+    goRef.current = go;
+    pausedRef.current = false;
+    arm();
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        clearTimer();
+      } else if (!pausedRef.current) {
+        arm();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      clearTimer();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [count]);
+
+  const pauseHover = () => {
+    // Touch can fire enter without leave — only pause for real mouse hover
+    if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) {
+      return;
+    }
+    pausedRef.current = true;
+    if (timerRef.current != null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const resumeHover = () => {
+    if (!pausedRef.current) return;
+    pausedRef.current = false;
+    if (timerRef.current != null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (countRef.current < 1) return;
+    timerRef.current = window.setInterval(() => {
+      goRef.current(1);
+    }, AUTO_MS);
+  };
+
   return (
     <section
       id="home-hero"
-      data-count={source.length}
+      data-count={count}
       className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
-      suppressHydrationWarning
+      onMouseEnter={pauseHover}
+      onMouseLeave={resumeHover}
     >
-
       <div
         data-hero-track
         className="flex h-[500px]"
-        style={{ width: `${pages * 100}%`, transform: `translate3d(-${100 / pages}%, 0, 0)` }}
-        suppressHydrationWarning
+        style={{
+          width: `${pages * 100}%`,
+          transform: `translate3d(-${(index * 100) / pages}%, 0, 0)`,
+          transition: animate ? `transform ${MOVE_MS}ms ease-in-out` : "none",
+        }}
       >
-        {track.map((slide, i) => {
-          const isClone = i === 0 || i === track.length - 1;
+        {trackSlides.map((slide, i) => {
+          const isClone = i === 0 || i === trackSlides.length - 1;
           const line1 = slide.title?.[0]?.trim() || "";
           const line2 = slide.title?.[1]?.trim() || "";
           const hasTitle = Boolean(line1 || line2);
@@ -63,7 +171,6 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
               style={{ width: `${100 / pages}%` }}
               aria-hidden={isClone ? true : undefined}
               tabIndex={isClone ? -1 : undefined}
-              data-hero-pause
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -129,24 +236,34 @@ export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
         })}
       </div>
 
-      <button
-        type="button"
-        data-hero-dir="-1"
-        className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
-        aria-label="Previous banner"
-      >
-        <ArrowIcon direction="left" />
-      </button>
-      <button
-        type="button"
-        data-hero-dir="1"
-        className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
-        aria-label="Next banner"
-      >
-        <ArrowIcon direction="right" />
-      </button>
-
-      <Script src="/hero-slider.js?v=4" strategy="afterInteractive" />
+      {count > 1 ? (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goRef.current(-1);
+            }}
+            className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
+            aria-label="Previous banner"
+          >
+            <ArrowIcon direction="left" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goRef.current(1);
+            }}
+            className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
+            aria-label="Next banner"
+          >
+            <ArrowIcon direction="right" />
+          </button>
+        </>
+      ) : null}
     </section>
   );
 }
