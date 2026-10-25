@@ -442,18 +442,21 @@ a {
   display: flex;
   width: 46%;
   flex-direction: column;
-  justify-content: center;
-  gap: 0.65rem;
-  overflow: auto;
+  justify-content: stretch;
+  gap: 0;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(6px);
-  padding: 0.7rem 0.5rem;
+  padding: 0;
 }
 
 .product-card__detail {
   display: flex;
+  flex: 1 1 0;
+  min-height: 0;
   align-items: center;
   gap: 0.4rem;
+  padding: 0 0.5rem;
   color: #3a3a3a;
   font-size: 9px;
   font-weight: 700;
