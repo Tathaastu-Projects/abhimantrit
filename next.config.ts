@@ -35,6 +35,13 @@ if (hostname) {
 }
 
 const nextConfig: NextConfig = {
+  // Required when `next dev` is exposed via nginx on the real domain.
+  // Without this, client JS may not hydrate → Add to Cart / banners / buttons stop working.
+  allowedDevOrigins: [
+    "abhimantritstore.com",
+    "www.abhimantritstore.com",
+    "admin.abhimantritstore.com",
+  ],
   turbopack: {
     root: process.cwd(),
   },

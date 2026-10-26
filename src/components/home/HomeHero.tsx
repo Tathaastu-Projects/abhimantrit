@@ -219,11 +219,11 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
       {realCount > 1 ? (
         <>
-          {/* Bottom placement so sticky site header (z-50) never covers the controls */}
+          {/* z-[60] keeps arrows above sticky header (z-50) so clicks work */}
           <button
             type="button"
             onClick={onPrev}
-            className="absolute bottom-5 left-3 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:left-5"
+            className="absolute left-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:left-5"
             aria-label="Previous banner"
           >
             <ArrowIcon direction="left" />
@@ -231,7 +231,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
           <button
             type="button"
             onClick={onNext}
-            className="absolute bottom-5 right-3 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:right-5"
+            className="absolute right-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:right-5"
             aria-label="Next banner"
           >
             <ArrowIcon direction="right" />
