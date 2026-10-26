@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { preload } from "react-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Hero slides from the admin panel. Auto-advances every 3s.
- * Client-side timer (not an external script) so production deploy
- * and soft navigation keep autoplay working.
+ * Home / category banner carousel.
+ * Each slide is 100% of the viewport strip; track moves by -index * 100%.
+ * Autoplay + arrows are plain React state (no external script).
  */
 export type HeroSlide = {
   src: string;
@@ -21,136 +20,120 @@ export type HeroSlide = {
 const AUTO_MS = 3000;
 const MOVE_MS = 700;
 
-/**
- * Full-bleed hero. Height is locked at 500px. Width follows the screen.
- */
 export function HomeHero({ slides }: { slides?: HeroSlide[] }) {
   if (!slides?.length) return null;
   return <HomeHeroCarousel slides={slides} />;
 }
 
 function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
-  const source = slides;
-  const trackSlides = [source[source.length - 1], ...source, source[0]];
-  const pages = trackSlides.length;
-  const count = source.length;
+  // [cloneLast, ...real, cloneFirst] for infinite loop
+  const trackSlides = [slides[slides.length - 1], ...slides, slides[0]];
+  const realCount = slides.length;
 
-  const indexRef = useRef(1);
-  const timerRef = useRef<number | null>(null);
-  const pausedRef = useRef(false);
-  const countRef = useRef(count);
-  const goRef = useRef<(direction: number) => void>(() => {});
-  countRef.current = count;
-
+  // index 1 = first real slide
   const [index, setIndex] = useState(1);
-  const [animate, setAnimate] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const indexRef = useRef(1);
+  const animatingRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  if (source[0]?.src) {
-    preload(source[0].src, { as: "image", fetchPriority: "high" });
-  }
+  const clearTimer = useCallback(() => {
+    if (timerRef.current != null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const jumpWithoutAnim = useCallback((next: number) => {
+    animatingRef.current = false;
+    setAnimating(false);
+    indexRef.current = next;
+    setIndex(next);
+  }, []);
+
+  const goTo = useCallback(
+    (next: number, withAnim: boolean) => {
+      if (withAnim) {
+        animatingRef.current = true;
+        setAnimating(true);
+      } else {
+        animatingRef.current = false;
+        setAnimating(false);
+      }
+      indexRef.current = next;
+      setIndex(next);
+    },
+    [],
+  );
+
+  const step = useCallback(
+    (direction: 1 | -1) => {
+      if (realCount < 1) return;
+      const cur = indexRef.current;
+      let next = cur + direction;
+      if (next < 0) next = 0;
+      if (next > realCount + 1) next = realCount + 1;
+      goTo(next, true);
+
+      // After reaching a clone, snap to the matching real slide
+      window.setTimeout(() => {
+        if (indexRef.current === 0) jumpWithoutAnim(realCount);
+        else if (indexRef.current === realCount + 1) jumpWithoutAnim(1);
+      }, MOVE_MS);
+    },
+    [goTo, jumpWithoutAnim, realCount],
+  );
+
+  const startAuto = useCallback(() => {
+    clearTimer();
+    if (realCount < 2) return;
+    timerRef.current = setInterval(() => {
+      step(1);
+    }, AUTO_MS);
+  }, [clearTimer, realCount, step]);
 
   useEffect(() => {
-    function clearTimer() {
-      if (timerRef.current != null) {
-        window.clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-
-    function render(next: number, withAnim: boolean) {
-      indexRef.current = next;
-      setAnimate(withAnim);
-      setIndex(next);
-    }
-
-    function arm() {
-      clearTimer();
-      if (pausedRef.current || countRef.current < 1) return;
-      timerRef.current = window.setInterval(() => {
-        goRef.current(1);
-      }, AUTO_MS);
-    }
-
-    function go(direction: number) {
-      const total = countRef.current;
-      let next = indexRef.current + direction;
-      if (next < 0) next = 0;
-      if (next > total + 1) next = total + 1;
-      render(next, true);
-
-      if (next === 0) {
-        window.setTimeout(() => {
-          if (indexRef.current === 0) render(total, false);
-        }, MOVE_MS);
-      } else if (next === total + 1) {
-        window.setTimeout(() => {
-          if (indexRef.current === total + 1) render(1, false);
-        }, MOVE_MS);
-      }
-      arm();
-    }
-
-    goRef.current = go;
-    pausedRef.current = false;
-    arm();
-
+    startAuto();
     const onVisibility = () => {
-      if (document.hidden) {
-        clearTimer();
-      } else if (!pausedRef.current) {
-        arm();
-      }
+      if (document.hidden) clearTimer();
+      else startAuto();
     };
     document.addEventListener("visibilitychange", onVisibility);
-
     return () => {
       clearTimer();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [count]);
+  }, [clearTimer, startAuto]);
 
-  const pauseHover = () => {
-    // Touch can fire enter without leave — only pause for real mouse hover
-    if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) {
-      return;
-    }
-    pausedRef.current = true;
-    if (timerRef.current != null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+  const onPrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    step(-1);
+    startAuto();
   };
 
-  const resumeHover = () => {
-    if (!pausedRef.current) return;
-    pausedRef.current = false;
-    if (timerRef.current != null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (countRef.current < 1) return;
-    timerRef.current = window.setInterval(() => {
-      goRef.current(1);
-    }, AUTO_MS);
+  const onNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    step(1);
+    startAuto();
   };
 
   return (
     <section
       id="home-hero"
-      data-count={count}
+      data-count={realCount}
       className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
-      onMouseEnter={pauseHover}
-      onMouseLeave={resumeHover}
     >
       <div
         data-hero-track
-        className="flex h-[500px]"
+        className="flex h-full w-full"
         style={{
-          width: `${pages * 100}%`,
-          transform: `translate3d(-${(index * 100) / pages}%, 0, 0)`,
-          transition: animate ? `transform ${MOVE_MS}ms ease-in-out` : "none",
+          transform: `translate3d(-${index * 100}%, 0, 0)`,
+          transition: animating ? `transform ${MOVE_MS}ms ease-in-out` : "none",
+          willChange: "transform",
         }}
       >
         {trackSlides.map((slide, i) => {
@@ -167,8 +150,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
             <Link
               key={`${slide.src}-${i}`}
               href={bannerHref}
-              className="relative block h-[500px] shrink-0 group focus:outline-none cursor-pointer"
-              style={{ width: `${100 / pages}%` }}
+              className="relative block h-[500px] w-full min-w-full max-w-full shrink-0 grow-0 basis-full group focus:outline-none cursor-pointer"
               aria-hidden={isClone ? true : undefined}
               tabIndex={isClone ? -1 : undefined}
             >
@@ -195,7 +177,6 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
                     }}
                     aria-hidden
                   />
-
                   <div className="pointer-events-none absolute inset-0 flex items-center">
                     <div className="w-full px-14 sm:px-16 md:px-20 lg:px-24">
                       <div className="home-hero__copy">
@@ -236,28 +217,21 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
         })}
       </div>
 
-      {count > 1 ? (
+      {realCount > 1 ? (
         <>
+          {/* Bottom placement so sticky site header (z-50) never covers the controls */}
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              goRef.current(-1);
-            }}
-            className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:left-5"
+            onClick={onPrev}
+            className="absolute bottom-5 left-3 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:left-5"
             aria-label="Previous banner"
           >
             <ArrowIcon direction="left" />
           </button>
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              goRef.current(1);
-            }}
-            className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-forest shadow-md transition hover:bg-white md:right-5"
+            onClick={onNext}
+            className="absolute bottom-5 right-3 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:right-5"
             aria-label="Next banner"
           >
             <ArrowIcon direction="right" />
