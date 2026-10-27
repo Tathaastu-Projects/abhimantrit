@@ -8,13 +8,13 @@ export const BUSINESS = {
   /** Public display name on policies / share title */
   displayName: "Abhimantrit by Tathasstu",
   /** Parent / group company */
-  parentCompany: "Thrive Tech Labs Private Limited",
+  parentCompany: "THRIVELABS TECH PRIVATE LIMITED",
   /** Legal entity name */
-  legalName: "Thrive Tech Labs Private Limited",
+  legalName: "THRIVELABS TECH PRIVATE LIMITED",
   founder: "Dr. Priyanka Singh",
   tagline: "Sacred Rudraksha, gemstones, crystals & spiritual jewellery",
   companyAbout:
-    "Abhimantrit is a subsidiary of Thrive Tech Labs Private Limited and operates within its group of companies, offering astrology, spiritual guidance, and holistic healing services through its platform.",
+    "Abhimantrit is a subsidiary of THRIVELABS TECH PRIVATE LIMITED and operates within its group of companies, offering astrology, spiritual guidance, and holistic healing services through its platform.",
   email: "care@tathasstu.com",
   phone: "+91-9756303737",
   addressLines: [
