@@ -8,6 +8,10 @@ import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/cn";
 
+function useInCart(productId: string) {
+  return useCartStore((s) => s.items.some((i) => i.productId === productId));
+}
+
 function DetailIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -46,7 +50,7 @@ export function ProductCard({
   tone?: "default" | "premium";
 }) {
   const addItem = useCartStore((s) => s.addItem);
-  const [added, setAdded] = useState(false);
+  const inCart = useInCart(product._id);
   const img = primaryImage(product.images);
   const [imgSrc, setImgSrc] = useState(img.url);
   const sale = product.effectiveSalePrice ?? product.salePrice;
@@ -58,7 +62,7 @@ export function ProductCard({
   function quickAdd(event: React.MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    if (stock <= 0) return;
+    if (stock <= 0 || inCart) return;
     const variant = activeVariants[0];
     addItem({
       productId: product._id,
@@ -72,26 +76,32 @@ export function ProductCard({
       maxQty: variant?.quantity || stock,
       qty: 1,
     });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
   }
 
-  const cta = stock <= 0 ? (
-    <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
-      Out of stock
-    </button>
-  ) : (
-    <button
-      type="button"
-      onClick={quickAdd}
-      className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}
-    >
-      {added ? "Added" : "Add To Cart"}
-    </button>
-  );
+  const cta =
+    stock <= 0 ? (
+      <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
+        Out of stock
+      </button>
+    ) : inCart ? (
+      <Link
+        href="/cart"
+        className={cn("btn w-full text-center", tone === "premium" ? "btn-premium" : "btn-primary")}
+      >
+        In cart
+      </Link>
+    ) : (
+      <button
+        type="button"
+        onClick={quickAdd}
+        className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}
+      >
+        Add To Cart
+      </button>
+    );
 
   const details = hoverLines(product);
-  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
+  const bagLabel = inCart ? "In cart" : stock <= 0 ? "Out of stock" : "Add to bag";
 
   return (
     <article className={cn("product-card", tone === "premium" && "product-card--premium")}>
@@ -131,15 +141,21 @@ export function ProductCard({
             ))}
           </aside>
         ) : null}
-        <button
-          type="button"
-          className="product-card__bag"
-          style={{ color: "#ffffff" }}
-          onClick={quickAdd}
-          disabled={stock <= 0}
-        >
-          {bagLabel}
-        </button>
+        {inCart ? (
+          <Link href="/cart" className="product-card__bag" style={{ color: "#ffffff" }}>
+            {bagLabel}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className="product-card__bag"
+            style={{ color: "#ffffff" }}
+            onClick={quickAdd}
+            disabled={stock <= 0}
+          >
+            {bagLabel}
+          </button>
+        )}
       </div>
 
       <div className="product-card__body">

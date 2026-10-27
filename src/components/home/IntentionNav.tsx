@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
 import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
@@ -55,7 +54,7 @@ function IntentionCard({
   product: StoreProduct;
 }) {
   const addItem = useCartStore((s) => s.addItem);
-  const [added, setAdded] = useState(false);
+  const inCart = useCartStore((s) => s.items.some((i) => i.productId === product._id));
   const img = primaryImage(product.images);
   const sale = product.effectiveSalePrice ?? product.salePrice;
   const mrp = product.effectiveMrp ?? product.mrp;
@@ -65,12 +64,12 @@ function IntentionCard({
   const stones = stonesOf(product.title);
   const rating = product.ratingCount ? product.ratingAvg : undefined;
   const details = hoverLines(product);
-  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
+  const bagLabel = inCart ? "In cart" : stock <= 0 ? "Out of stock" : "Add to bag";
 
   function add(event: React.MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    if (stock <= 0) return;
+    if (stock <= 0 || inCart) return;
     addItem({
       productId: product._id,
       slug: product.slug,
@@ -83,8 +82,6 @@ function IntentionCard({
       maxQty: activeVariant?.quantity || stock,
       qty: 1,
     });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
   }
 
   return (
@@ -118,7 +115,7 @@ function IntentionCard({
           </span>
         ) : null}
         <HoverDetails labels={details} />
-        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0} />
+        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0 || inCart} />
       </div>
 
       <div className="mt-3 flex items-center gap-1.5 px-1 text-[11px] text-[#6b6660]">
@@ -145,14 +142,23 @@ function IntentionCard({
       </p>
 
       <div className="card-hover__cta mt-auto pt-2">
-        <button
-          type="button"
-          onClick={add}
-          disabled={stock <= 0}
-          className="w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-stone-300"
-        >
-          {stock <= 0 ? "Out of stock" : added ? "Added" : "Add To Cart"}
-        </button>
+        {inCart ? (
+          <Link
+            href="/cart"
+            className="block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
+          >
+            In cart
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={add}
+            disabled={stock <= 0}
+            className="w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-stone-300"
+          >
+            {stock <= 0 ? "Out of stock" : "Add To Cart"}
+          </button>
+        )}
       </div>
     </article>
   );

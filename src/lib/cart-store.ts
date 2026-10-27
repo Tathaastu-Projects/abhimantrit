@@ -24,6 +24,10 @@ type CartState = {
   clear: () => void;
   count: () => number;
   subtotal: () => number;
+  /** True if this product (any variant) is already in the cart */
+  hasProduct: (productId: string) => boolean;
+  /** True if this product + variant line is already in the cart */
+  hasItem: (productId: string, variantId?: string | null) => boolean;
 };
 
 function sameLine(a: CartItem, productId: string, variantId?: string | null) {
@@ -40,18 +44,9 @@ export const useCartStore = create<CartState>()(
           const existing = state.items.find((i) =>
             sameLine(i, item.productId, item.variantId),
           );
+          // Already in cart — do not add again from product cards / quick-add
           if (existing) {
-            const nextQty = Math.min(
-              existing.qty + qty,
-              existing.maxQty ?? item.maxQty ?? 99,
-            );
-            return {
-              items: state.items.map((i) =>
-                sameLine(i, item.productId, item.variantId)
-                  ? { ...i, qty: nextQty }
-                  : i,
-              ),
-            };
+            return { items: state.items };
           }
           return {
             items: [
@@ -86,6 +81,9 @@ export const useCartStore = create<CartState>()(
       count: () => get().items.reduce((sum, i) => sum + i.qty, 0),
       subtotal: () =>
         get().items.reduce((sum, i) => sum + i.unitSalePrice * i.qty, 0),
+      hasProduct: (productId) => get().items.some((i) => i.productId === productId),
+      hasItem: (productId, variantId) =>
+        get().items.some((i) => sameLine(i, productId, variantId)),
     }),
     { name: "tathaastu-cart-v1" },
   ),

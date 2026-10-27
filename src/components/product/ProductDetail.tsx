@@ -34,6 +34,13 @@ export function ProductDetail({
   const [msg, setMsg] = useState("");
 
   const selected = activeVariants.find((v) => v._id === variantId);
+  const inCart = useCartStore((s) =>
+    s.items.some(
+      (i) =>
+        i.productId === product._id &&
+        (i.variantId || null) === (selected?._id || null),
+    ),
+  );
   const images = product.images?.length
     ? product.images
     : [{ url: "/placeholder-product.svg", alt: product.title, isPrimary: true }];
@@ -54,6 +61,10 @@ export function ProductDetail({
     }
     if (outOfStock) {
       setMsg("This item is out of stock");
+      return;
+    }
+    if (inCart) {
+      window.location.href = goCheckout ? "/checkout" : "/cart";
       return;
     }
     addItem({
@@ -209,34 +220,42 @@ export function ProductDetail({
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="flex h-12 items-center rounded-full border border-[var(--border)] bg-white">
-                <button type="button" className="h-full px-4 text-lg" onClick={() => setQty((q) => Math.max(1, q - 1))}>
-                  −
-                </button>
-                <span className="min-w-10 text-center text-sm font-semibold">{qty}</span>
+              {!inCart ? (
+                <div className="flex h-12 items-center rounded-full border border-[var(--border)] bg-white">
+                  <button type="button" className="h-full px-4 text-lg" onClick={() => setQty((q) => Math.max(1, q - 1))}>
+                    −
+                  </button>
+                  <span className="min-w-10 text-center text-sm font-semibold">{qty}</span>
+                  <button
+                    type="button"
+                    className="h-full px-4 text-lg"
+                    onClick={() => setQty((q) => Math.min(stock || 99, q + 1))}
+                  >
+                    +
+                  </button>
+                </div>
+              ) : null}
+              {inCart ? (
+                <Link href="/cart" className="btn btn-primary h-12 min-w-[180px] text-center leading-[3rem]">
+                  In cart — View bag
+                </Link>
+              ) : (
                 <button
                   type="button"
-                  className="h-full px-4 text-lg"
-                  onClick={() => setQty((q) => Math.min(stock || 99, q + 1))}
+                  disabled={outOfStock}
+                  onClick={() => addToCart(false)}
+                  className="btn btn-primary h-12 min-w-[180px] disabled:opacity-50"
                 >
-                  +
+                  Add to Cart
                 </button>
-              </div>
-              <button
-                type="button"
-                disabled={outOfStock}
-                onClick={() => addToCart(false)}
-                className="btn btn-primary h-12 min-w-[180px] disabled:opacity-50"
-              >
-                Add to Cart
-              </button>
+              )}
               <button
                 type="button"
                 disabled={outOfStock}
                 onClick={() => addToCart(true)}
                 className="btn btn-ghost h-12 disabled:opacity-50"
               >
-                Buy Now
+                {inCart ? "Checkout" : "Buy Now"}
               </button>
               <WishlistButton productId={product._id} />
             </div>

@@ -10,7 +10,7 @@ import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
 
 function ProductTile({ product }: { product: StoreProduct }) {
   const addItem = useCartStore((s) => s.addItem);
-  const [added, setAdded] = useState(false);
+  const inCart = useCartStore((s) => s.items.some((i) => i.productId === product._id));
   const img = primaryImage(product.images);
   const [imgSrc, setImgSrc] = useState(img.url);
   const sale = product.effectiveSalePrice ?? product.salePrice;
@@ -19,12 +19,12 @@ function ProductTile({ product }: { product: StoreProduct }) {
   const stock = product.effectiveStock ?? product.totalStock ?? product.quantity;
   const variant = (product.variants || []).find((item) => item.isActive);
   const details = hoverLines(product);
-  const bagLabel = added ? "Added" : stock <= 0 ? "Out of stock" : "Add to bag";
+  const bagLabel = inCart ? "In cart" : stock <= 0 ? "Out of stock" : "Add to bag";
 
   function add(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    if (stock <= 0) return;
+    if (stock <= 0 || inCart) return;
     addItem({
       productId: product._id,
       slug: product.slug,
@@ -37,8 +37,6 @@ function ProductTile({ product }: { product: StoreProduct }) {
       maxQty: variant?.quantity || stock,
       qty: 1,
     });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
   }
 
   return (
@@ -56,7 +54,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
           />
         </Link>
         <HoverDetails labels={details} />
-        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0} />
+        <BagButton label={bagLabel} onClick={add} disabled={stock <= 0 || inCart} />
       </div>
       <Link
         href={`/product/${product.slug}`}
@@ -69,14 +67,23 @@ function ProductTile({ product }: { product: StoreProduct }) {
         {mrp > sale ? <span className="text-sm text-[#9a9a9a] line-through">{formatINR(mrp)}</span> : null}
         {off > 0 ? <span className="text-sm font-bold text-gold">{off}% OFF</span> : null}
       </p>
-      <button
-        type="button"
-        onClick={add}
-        disabled={stock <= 0}
-        className="card-hover__cta mt-auto pt-2 w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
-      >
-        {stock <= 0 ? "Out of stock" : added ? "Added" : "Add To Cart"}
-      </button>
+      {inCart ? (
+        <Link
+          href="/cart"
+          className="card-hover__cta mt-auto pt-2 block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
+        >
+          In cart
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={add}
+          disabled={stock <= 0}
+          className="card-hover__cta mt-auto pt-2 w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
+        >
+          {stock <= 0 ? "Out of stock" : "Add To Cart"}
+        </button>
+      )}
     </article>
   );
 }
