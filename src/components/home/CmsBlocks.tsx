@@ -2,18 +2,24 @@ import type { StoreBanner, StoreBlogPost } from "@/types/product";
 import Link from "next/link";
 import { HomeHero, type HeroSlide } from "@/components/home/HomeHero";
 import { resolveBannerUrl } from "@/lib/format";
+import { shopCategoryHref } from "@/lib/categoryRoutes";
 
 function toSlide(banner: StoreBanner): HeroSlide | null {
   if (!banner.imageUrl) return null;
   const line1 = banner.title?.trim() || "";
   const line2 = banner.titleLine2?.trim() || "";
+  const href = banner.ctaHref
+    ? shopCategoryHref(banner.ctaHref, banner.category)
+    : banner.category
+      ? shopCategoryHref(`/shop/${banner.category}`, banner.category)
+      : "/shop";
   return {
     src: resolveBannerUrl(banner.imageUrl),
     alt: line1 || line2 || "Abhimantrit banner",
     title: [line1, line2],
     subtitle: banner.subtitle?.trim() || "",
     cta: banner.ctaLabel ? banner.ctaLabel.trim() : "",
-    href: banner.ctaHref || (banner.category ? `/category/${banner.category}` : "/shop"),
+    href,
   };
 }
 

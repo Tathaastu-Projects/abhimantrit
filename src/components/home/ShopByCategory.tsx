@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CategoryTile } from "@/types/product";
 import { resolveBannerUrl } from "@/lib/format";
+import { shopCategoryHref } from "@/lib/categoryRoutes";
 
 function TileLabel({ label }: { label: string }) {
   return (
@@ -12,9 +13,10 @@ function TileLabel({ label }: { label: string }) {
 
 function Tile({ tile }: { tile: CategoryTile }) {
   const src = resolveBannerUrl(tile.image);
+  const href = shopCategoryHref(tile.href, tile.id);
   return (
     <Link
-      href={tile.href}
+      href={href}
       className="group relative block min-h-0 overflow-hidden bg-[#efe8dc]"
       style={{ gridArea: tile.area }}
     >
@@ -54,10 +56,11 @@ export function ShopByCategory({ tiles }: { tiles?: CategoryTile[] }) {
         {items.map((tile) => {
           const full = FULL_WIDTH_MOBILE.has(tile.id);
           const src = resolveBannerUrl(tile.image);
+          const href = shopCategoryHref(tile.href, tile.id);
           return (
             <Link
               key={tile.id}
-              href={tile.href}
+              href={href}
               className={`group relative overflow-hidden bg-[#efe8dc] ${
                 full ? "col-span-2 min-h-[170px]" : "min-h-[150px]"
               }`}

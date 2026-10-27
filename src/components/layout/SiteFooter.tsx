@@ -87,19 +87,31 @@ export function SiteFooter({ support }: Props) {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brass-soft">Shop</p>
           <ul className="mt-4 space-y-2 text-sm text-white/80">
             <li>
+              <Link href="/shop/crystal-bracelets">Crystal Bracelets</Link>
+            </li>
+            <li>
               <Link href="/shop/rudraksha">Rudraksha</Link>
             </li>
             <li>
-              <Link href="/shop/gemstone">Gemstones</Link>
+              <Link href="/shop/crystal-anklets">Crystal Anklets</Link>
             </li>
             <li>
-              <Link href="/shop/crystal">Crystals</Link>
+              <Link href="/shop/tumbles">Tumbles</Link>
             </li>
             <li>
-              <Link href="/shop/bracelet">Bracelets</Link>
+              <Link href="/shop/crystal-trees">Crystal Trees</Link>
             </li>
             <li>
-              <Link href="/collections/bestsellers">Bestsellers</Link>
+              <Link href="/shop/pyramids">Pyramids</Link>
+            </li>
+            <li>
+              <Link href="/shop/loose-stones">Loose Stones</Link>
+            </li>
+            <li>
+              <Link href="/shop/mala">Mala</Link>
+            </li>
+            <li>
+              <Link href="/shop/photo-frames">Photo Frames</Link>
             </li>
           </ul>
         </div>
