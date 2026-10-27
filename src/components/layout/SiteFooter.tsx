@@ -37,10 +37,13 @@ export function SiteFooter({ support }: Props) {
     <footer className="mt-16 bg-forest text-white">
       <div className="container-pad grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
         <div>
-          <p className="font-display text-3xl">{BUSINESS.brandName}</p>
+          <p className="font-display text-3xl">{BUSINESS.displayName}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
             Sacred objects chosen with care — Rudraksha, gemstones, crystals and yantras for a
             calmer, clearer path. By {BUSINESS.founder}.
+          </p>
+          <p className="mt-3 max-w-sm text-xs leading-relaxed text-white/60">
+            {BUSINESS.companyAbout}
           </p>
           {formReady ? (
             <form
@@ -139,6 +142,11 @@ export function SiteFooter({ support }: Props) {
                 <a href={`tel:${contactPhone.replace(/\s/g, "")}`}>{contactPhone}</a>
               </li>
             ) : null}
+            {BUSINESS.addressLines.map((line) => (
+              <li key={line} className="text-white/60">
+                {line}
+              </li>
+            ))}
             <li className="text-white/60">COD available · Lab certified</li>
           </ul>
         </div>

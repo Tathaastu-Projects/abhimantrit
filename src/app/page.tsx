@@ -22,8 +22,11 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
  * One backend call — home payload already includes products for
  * intention / rashi / latest sections (fast navigation + less API load).
  */
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
-  const home = await getHomeContent();
+  // Always fetch fresh home payload so new Rashi products appear immediately
+  const home = await getHomeContent({ fresh: true });
   const intentionProducts = home.intentionProducts || {};
   const rashiProducts = home.rashiProducts || [];
   const latestProducts =
@@ -34,7 +37,7 @@ export default async function HomePage() {
   return (
     <>
       <HomeBanners banners={home.banners || []} managed={home.homeSliderManaged} />
-      <HeroTicker />
+      <HeroTicker phrases={home.heroTicker} />
       <HomeTrustBar />
       <IntentionNav products={intentionProducts} />
       <RashiBracelets products={rashiProducts} />

@@ -1,26 +1,25 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/legal/LegalPage";
-import { BUSINESS, supportEmail } from "@/lib/business";
+import { BUSINESS } from "@/lib/business";
+import { CompanyContactBlock } from "@/components/legal/CompanyContactBlock";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: `How Abhimantrit by ${BUSINESS.brandName} collects, uses, and protects your personal information.`,
-};
+export async function generateMetadata() {
+  return buildPageMetadata("privacy");
+}
 
 export default function PrivacyPolicyPage() {
-  const email = supportEmail();
 
   return (
     <LegalPage title="Privacy Policy" updated="13 October 2026">
       <p>
-        At <strong>Abhimantrit by {BUSINESS.brandName}</strong> (“we”, “our” or “us”), we value your
+        At <strong>{BUSINESS.displayName}</strong> (“we”, “our” or “us”), we value your
         trust and are committed to protecting your personal information. This Privacy Policy
         explains how we collect, use, store and protect your information when you visit our website,
         browse our products, place an order, contact us or use any of our services.
       </p>
       <p>
-        Abhimantrit by {BUSINESS.brandName} offers spiritual products that are prepared and
+        {BUSINESS.displayName} offers spiritual products that are prepared and
         abhimantrit (energised) through sacred practices and positive intentions before being shipped
         to customers.
       </p>
@@ -192,7 +191,7 @@ export default function PrivacyPolicyPage() {
       </p>
       <p>
         These third parties operate independently and may have their own privacy policies and data
-        handling practices. Abhimantrit by {BUSINESS.brandName} does not control the privacy
+        handling practices. {BUSINESS.displayName} does not control the privacy
         practices or security measures of independent third-party websites.
       </p>
       <p>
@@ -299,28 +298,12 @@ export default function PrivacyPolicyPage() {
         personal information.
       </p>
 
-      <h2>13. Contact Us</h2>
+      <h2>13. Company &amp; Contact Us</h2>
       <p>
         If you have any questions, concerns or requests regarding this Privacy Policy or the handling
         of your personal information, please contact us:
       </p>
-      <ul>
-        <li>
-          <strong>Brand:</strong> Abhimantrit by {BUSINESS.brandName}
-        </li>
-        <li>
-          <strong>Website:</strong> <Link href="/">this website</Link>
-        </li>
-        <li>
-          <strong>Email:</strong> <a href={`mailto:${email}`}>{email}</a>
-        </li>
-        <li>
-          <strong>Business name:</strong> {BUSINESS.legalName}, operated by {BUSINESS.founder}
-        </li>
-        <li>
-          <strong>Business address:</strong> {BUSINESS.addressLines.join(", ")}
-        </li>
-      </ul>
+      <CompanyContactBlock />
       <p>
         We will review and respond to privacy-related enquiries in accordance with applicable law.
         You can also reach us through <Link href="/contact">Contact Us</Link>.

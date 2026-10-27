@@ -1,25 +1,24 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/legal/LegalPage";
-import { BUSINESS, supportEmail } from "@/lib/business";
+import { BUSINESS } from "@/lib/business";
+import { CompanyContactBlock } from "@/components/legal/CompanyContactBlock";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description: `Terms of use and sale for Abhimantrit by ${BUSINESS.brandName}.`,
-};
+export async function generateMetadata() {
+  return buildPageMetadata("terms");
+}
 
 export default function TermsPage() {
-  const email = supportEmail();
 
   return (
     <LegalPage title="Terms & Conditions" updated="13 October 2026">
       <p>
-        Welcome to <strong>Abhimantrit by {BUSINESS.brandName}</strong>. These Terms &amp;
+        Welcome to <strong>{BUSINESS.displayName}</strong>. These Terms &amp;
         Conditions (“Terms”) govern your access to and use of our website and your purchase of
         products and related services offered through it.
       </p>
       <p>
-        Abhimantrit by {BUSINESS.brandName} offers spiritual products, including crystals,
+        {BUSINESS.displayName} offers spiritual products, including crystals,
         bracelets, anklets, malas, rudraksha, pyramids, spiritual frames, crystal trees, loose
         stones and other spiritual accessories. Our products are prepared and abhimantrit
         (pre-energised) through sacred practices and positive intentions before being shipped to
@@ -59,7 +58,7 @@ export default function TermsPage() {
 
       <h2>2. Our Products</h2>
       <p>
-        Abhimantrit by {BUSINESS.brandName} offers spiritual products intended for personal use,
+        {BUSINESS.displayName} offers spiritual products intended for personal use,
         gifting, spiritual practices and related purposes.
       </p>
       <p>Our product range may include:</p>
@@ -94,7 +93,7 @@ export default function TermsPage() {
 
       <h2>3. Abhimantrit Products and Spiritual Significance</h2>
       <p>
-        A defining feature of Abhimantrit by {BUSINESS.brandName} is that our products are
+        A defining feature of {BUSINESS.displayName} is that our products are
         abhimantrit, meaning they are prepared and pre-energised through sacred practices and
         positive intentions before shipping.
       </p>
@@ -233,7 +232,7 @@ export default function TermsPage() {
         the recipient’s name, address, postal code and contact number.
       </p>
       <p>
-        Abhimantrit by {BUSINESS.brandName} will not be responsible for delays caused by incorrect or
+        {BUSINESS.displayName} will not be responsible for delays caused by incorrect or
         incomplete delivery information supplied by the customer, although we will make reasonable
         efforts to assist with delivery-related issues.
       </p>
@@ -324,10 +323,10 @@ export default function TermsPage() {
       <p>
         All website content, including text, product descriptions, photographs, graphics, logos,
         illustrations, videos, original designs and other creative materials, is owned by or licensed
-        to Abhimantrit by {BUSINESS.brandName}, unless otherwise indicated.
+        to {BUSINESS.displayName}, unless otherwise indicated.
       </p>
       <p>
-        The Abhimantrit by {BUSINESS.brandName} name, branding, logos and associated creative assets
+        The {BUSINESS.displayName} name, branding, logos and associated creative assets
         may not be copied, reproduced, modified, distributed or commercially used without prior
         written authorisation from the relevant rights holder, except where permitted by law.
       </p>
@@ -373,7 +372,7 @@ export default function TermsPage() {
 
       <h2>15. Limitation of Liability</h2>
       <p>
-        To the extent permitted by applicable law, Abhimantrit by {BUSINESS.brandName} will not be
+        To the extent permitted by applicable law, {BUSINESS.displayName} will not be
         responsible for indirect or consequential losses arising from the use or inability to use our
         website or from reliance on general spiritual descriptions of our products.
       </p>
@@ -432,28 +431,12 @@ export default function TermsPage() {
         consumer commission or other forum where legally entitled to do so.
       </p>
 
-      <h2>19. Contact Us</h2>
+      <h2>19. Company &amp; Contact Us</h2>
       <p>
         If you have questions, concerns or requests relating to these Terms, our products or an
         order, please contact us using the details below.
       </p>
-      <ul>
-        <li>
-          <strong>Brand:</strong> Abhimantrit by {BUSINESS.brandName}
-        </li>
-        <li>
-          <strong>Website:</strong> <Link href="/">this website</Link>
-        </li>
-        <li>
-          <strong>Email:</strong> <a href={`mailto:${email}`}>{email}</a>
-        </li>
-        <li>
-          <strong>Business name:</strong> {BUSINESS.legalName}, operated by {BUSINESS.founder}
-        </li>
-        <li>
-          <strong>Business address:</strong> {BUSINESS.addressLines.join(", ")}
-        </li>
-      </ul>
+      <CompanyContactBlock />
       <p>
         We will make reasonable efforts to address your enquiry and respond in accordance with
         applicable law. You can also use our <Link href="/contact">Contact Us</Link> page.

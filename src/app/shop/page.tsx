@@ -3,6 +3,11 @@ import { searchParamsToCatalog } from "@/lib/catalog-params";
 import { CatalogView } from "@/components/catalog/CatalogView";
 import { CategoryBanner } from "@/components/catalog/CategoryBanner";
 import { ConsultationCta } from "@/components/home/ConsultationCta";
+import { buildPageMetadata } from "@/lib/seo";
+
+export async function generateMetadata() {
+  return buildPageMetadata("shop");
+}
 
 type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

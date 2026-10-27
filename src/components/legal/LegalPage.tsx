@@ -11,7 +11,7 @@ export function LegalPage({ title, updated = "September 2026", children }: Props
   return (
     <article className="container-pad max-w-3xl py-14 md:py-16">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-forest/70">
-        {BUSINESS.brandName}
+        {BUSINESS.displayName}
       </p>
       <h1 className="mt-2 font-display text-4xl text-ink md:text-5xl">{title}</h1>
       <p className="mt-3 text-sm text-ink-soft">Last updated: {updated}</p>

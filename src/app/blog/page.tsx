@@ -2,6 +2,11 @@ import Link from "next/link";
 import { getBlogs } from "@/lib/api";
 import { resolveBannerUrl } from "@/lib/format";
 import { BlogCover } from "@/components/home/BlogCover";
+import { buildPageMetadata } from "@/lib/seo";
+
+export async function generateMetadata() {
+  return buildPageMetadata("blog");
+}
 
 function localUpload(url?: string) {
   if (!url) return "";

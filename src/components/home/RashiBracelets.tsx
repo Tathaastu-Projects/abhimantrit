@@ -22,10 +22,17 @@ const SIGNS = [
   { slug: "pisces", english: "Pisces", hindi: "मीन", name: "Meen" },
 ] as const;
 
-function signOf(title: string) {
-  const text = title.toLowerCase();
+function signOf(product: StoreProduct) {
+  const title = String(product.title || "");
+  const zodiac = String(product.attributes?.zodiac || "");
+  const blob = `${title} ${zodiac}`.toLowerCase();
   return SIGNS.find(
-    (sign) => title.includes(sign.hindi) || text.includes(`(${sign.english.toLowerCase()}`),
+    (sign) =>
+      title.includes(sign.hindi) ||
+      blob.includes(`(${sign.english.toLowerCase()}`) ||
+      blob.includes(sign.english.toLowerCase()) ||
+      blob.includes(sign.name.toLowerCase()) ||
+      blob.includes(sign.slug),
   );
 }
 
@@ -80,18 +87,19 @@ function stonesOf(title: string) {
 }
 
 function pickOnePerSign(products: StoreProduct[]) {
-  const chosen: { sign: (typeof SIGNS)[number]; product: StoreProduct }[] = [];
-  for (const sign of SIGNS) {
-    const product = products.find((item) => signOf(item.title)?.slug === sign.slug);
-    if (product) chosen.push({ sign, product });
+  const chosen = new Map<(typeof SIGNS)[number]["slug"], StoreProduct>();
+  for (const product of products) {
+    const sign = signOf(product);
+    if (!sign || chosen.has(sign.slug)) continue;
+    chosen.set(sign.slug, product);
   }
   return chosen;
 }
 
 export function RashiBracelets({ products }: { products: StoreProduct[] }) {
-  const cards = pickOnePerSign(products);
-  if (!cards.length) return null;
+  const bySign = pickOnePerSign(products || []);
 
+  // Always show the 12-sign strip (even if some signs have no product yet)
   return (
     <section id="rashi-bracelets" className="w-full bg-[#fbf8f4] pt-4 pb-12 md:pt-6 md:pb-16">
       <div className="px-5 md:px-8 xl:px-10">
@@ -101,8 +109,8 @@ export function RashiBracelets({ products }: { products: StoreProduct[] }) {
       </div>
 
       <CardScroller className="flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
-        {cards.map(({ sign, product }) => (
-          <RashiCard key={sign.slug} sign={sign} product={product} />
+        {SIGNS.map((sign) => (
+          <RashiCard key={sign.slug} sign={sign} product={bySign.get(sign.slug) || null} />
         ))}
       </CardScroller>
     </section>
@@ -114,10 +122,55 @@ function RashiCard({
   product,
 }: {
   sign: (typeof SIGNS)[number];
-  product: StoreProduct;
+  product: StoreProduct | null;
 }) {
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
+  const shopHref = `/shop?zodiac=${encodeURIComponent(sign.english)}`;
+  const zodiacIcon = resolveImageUrl(`/uploads/zodiac/${sign.slug}-cut.webp`);
+
+  if (!product) {
+    return (
+      <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
+        <div className="flex items-center gap-2.5 px-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
+          <div className="min-w-0">
+            <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">
+              {sign.name} ({sign.english})
+            </p>
+            <p className="text-[11px] text-[#8a8580]">Rashi Crystal Bracelet</p>
+          </div>
+        </div>
+
+        <Link href={shopHref} className="relative mt-3 block overflow-hidden rounded-xl bg-[#f6f3ee]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={zodiacIcon}
+            alt={`${sign.name} (${sign.english})`}
+            className="block aspect-square w-full object-contain object-center p-8"
+          />
+        </Link>
+
+        <Link
+          href={shopHref}
+          className="mt-3 line-clamp-2 px-1 text-[13px] font-medium leading-snug text-[#1c1c1c]"
+        >
+          Shop {sign.name} ({sign.english}) bracelet
+        </Link>
+
+        <div className="card-hover__cta mt-auto pt-2">
+          <Link
+            href={shopHref}
+            className="block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
+          >
+            View Collection
+          </Link>
+        </div>
+      </article>
+    );
+  }
+
   const img = primaryImage(product.images);
   const sale = product.effectiveSalePrice ?? product.salePrice;
   const mrp = product.effectiveMrp ?? product.mrp;
@@ -135,9 +188,9 @@ function RashiCard({
     event.stopPropagation();
     if (stock <= 0) return;
     addItem({
-      productId: product._id,
-      slug: product.slug,
-      title: product.title,
+      productId: product!._id,
+      slug: product!.slug,
+      title: product!.title,
       image: img.url,
       variantId: activeVariant?._id || null,
       variantLabel: activeVariant?.label,
@@ -154,11 +207,7 @@ function RashiCard({
     <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
       <div className="flex items-center gap-2.5 px-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={resolveImageUrl(`/uploads/zodiac/${sign.slug}-cut.webp`)}
-          alt=""
-          className="h-9 w-9 object-contain"
-        />
+        <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
         <div className="min-w-0">
           <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">
             {sign.name} ({sign.english})

@@ -40,7 +40,9 @@ export default function ContactPage() {
         <aside className="space-y-5 rounded-2xl bg-mist px-5 py-6 text-sm leading-relaxed text-ink-soft">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest/70">Business</p>
-            <p className="mt-2 font-semibold text-ink">{BUSINESS.legalName}</p>
+            <p className="mt-2 font-semibold text-ink">{BUSINESS.displayName}</p>
+            <p className="mt-1 text-xs leading-relaxed">{BUSINESS.companyAbout}</p>
+            <p className="mt-2">Legal entity: {BUSINESS.legalName}</p>
             <p>Curated by {BUSINESS.founder}</p>
           </div>
           <div>

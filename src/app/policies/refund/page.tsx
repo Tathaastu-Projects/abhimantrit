@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/legal/LegalPage";
 import { BUSINESS, supportEmail } from "@/lib/business";
+import { CompanyContactBlock } from "@/components/legal/CompanyContactBlock";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Refund, Return & Replacement Policy",
-  description: `Cancellations, returns, replacements, and refunds for Abhimantrit by ${BUSINESS.brandName}.`,
-};
+export async function generateMetadata() {
+  return buildPageMetadata("refund");
+}
 
 export default function RefundPolicyPage() {
   const email = supportEmail();
@@ -14,7 +14,7 @@ export default function RefundPolicyPage() {
   return (
     <LegalPage title="Refund, Return & Replacement Policy" updated="13 October 2026">
       <p>
-        At <strong>Abhimantrit by {BUSINESS.brandName}</strong>, we strive to provide a smooth and
+        At <strong>{BUSINESS.displayName}</strong>, we strive to provide a smooth and
         reliable shopping experience. Every product is selected and prepared with care, and our
         products are abhimantrit (pre-energised) through sacred practices and positive intentions
         before being shipped.
@@ -307,7 +307,7 @@ export default function RefundPolicyPage() {
 
       <h2>14. Changes to This Policy</h2>
       <p>
-        Abhimantrit by {BUSINESS.brandName} may update this policy to reflect changes in our products,
+        {BUSINESS.displayName} may update this policy to reflect changes in our products,
         order processing procedures, return arrangements or applicable laws.
       </p>
       <p>The revised policy will be published on this page with an updated “Last Updated” date.</p>
@@ -317,25 +317,9 @@ export default function RefundPolicyPage() {
       </p>
       <p>We encourage customers to review this policy before placing an order.</p>
 
-      <h2>15. Contact Us</h2>
+      <h2>15. Company &amp; Contact Us</h2>
       <p>For questions about cancellations, returns, replacements or refunds, please contact us:</p>
-      <ul>
-        <li>
-          <strong>Brand:</strong> Abhimantrit by {BUSINESS.brandName}
-        </li>
-        <li>
-          <strong>Website:</strong> <Link href="/">this website</Link>
-        </li>
-        <li>
-          <strong>Email:</strong> <a href={`mailto:${email}`}>{email}</a>
-        </li>
-        <li>
-          <strong>Business name:</strong> {BUSINESS.legalName}, operated by {BUSINESS.founder}
-        </li>
-        <li>
-          <strong>Business address:</strong> {BUSINESS.addressLines.join(", ")}
-        </li>
-      </ul>
+      <CompanyContactBlock />
       <p>
         We will review your request and respond in accordance with this policy and applicable law.
         Shipping questions are covered in our{" "}

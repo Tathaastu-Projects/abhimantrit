@@ -262,6 +262,11 @@ export type StoreMenu = {
   utility?: MenuLink[];
 };
 
+export type PageSeo = {
+  metaTitle?: string;
+  metaDescription?: string;
+};
+
 export type StoreMeta = {
   categories: string[];
   intentions: Intention[];
@@ -272,6 +277,10 @@ export type StoreMeta = {
   support?: { email?: string; phone?: string };
   logoUrl?: string;
   sortOptions?: { value: string; label: string }[];
+  /** SEO by page key: home, shop, about, blog, … (managed in Admin → Home Page → SEO) */
+  seo?: Record<string, PageSeo>;
+  /** Top utility header bar phrases (Admin → Home Page → Top header bar) */
+  headerBar?: string[];
 };
 
 export type CollectionDetail = {
@@ -394,6 +403,8 @@ export type HomeContent = {
   /** One sample product per intention for Shop By Intention */
   intentionProducts?: Record<string, StoreProduct>;
   rashiProducts?: StoreProduct[];
+  /** Dark green auto-scroll strip under hero (Admin → Home Page → Hero ticker) */
+  heroTicker?: string[];
   latestProducts?: StoreProduct[];
   latestBlogs: StoreBlogPost[];
   testimonials?: { quote: string; name: string; imageUrl?: string; videoUrl?: string; playbackUrl?: string }[];

@@ -5,11 +5,17 @@ import { CatalogView } from "@/components/catalog/CatalogView";
 import { CategoryBanner } from "@/components/catalog/CategoryBanner";
 import { ConsultationCta } from "@/components/home/ConsultationCta";
 import { titleCase } from "@/lib/format";
+import { buildPageMetadata } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ category: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const { category } = await params;
+  return buildPageMetadata(category);
+}
 
 export default async function ShopCategoryPage({ params, searchParams }: Props) {
   const { category } = await params;

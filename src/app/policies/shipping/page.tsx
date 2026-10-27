@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/legal/LegalPage";
 import { BUSINESS, supportEmail } from "@/lib/business";
+import { CompanyContactBlock } from "@/components/legal/CompanyContactBlock";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy",
-  description: `Order processing, delivery timelines, and shipping charges for Abhimantrit by ${BUSINESS.brandName}.`,
-};
+export async function generateMetadata() {
+  return buildPageMetadata("shipping");
+}
 
 export default function ShippingPolicyPage() {
   const email = supportEmail();
@@ -14,7 +14,7 @@ export default function ShippingPolicyPage() {
   return (
     <LegalPage title="Shipping & Delivery Policy" updated="13 October 2026">
       <p>
-        At <strong>Abhimantrit by {BUSINESS.brandName}</strong>, we take care to prepare and package
+        At <strong>{BUSINESS.displayName}</strong>, we take care to prepare and package
         your spiritual products with devotion and attention. Every product offered as Abhimantrit is
         pre-energised through sacred practices and positive intentions before being dispatched, so it
         reaches you ready to be part of your spiritual journey.
@@ -117,7 +117,7 @@ export default function ShippingPolicyPage() {
         details are accurate and complete when placing your order.
       </p>
       <p>
-        Abhimantrit by {BUSINESS.brandName} cannot guarantee successful delivery where an order
+        {BUSINESS.displayName} cannot guarantee successful delivery where an order
         contains incorrect or incomplete information supplied by the customer. If you notice an error,
         contact us as soon as possible.
       </p>
@@ -196,7 +196,7 @@ export default function ShippingPolicyPage() {
       <h2>9. Abhimantrit Product Preparation</h2>
       <p>
         Products identified as Abhimantrit are pre-energised through the sacred practices followed by
-        Abhimantrit by {BUSINESS.brandName} before dispatch.
+        {BUSINESS.displayName} before dispatch.
       </p>
       <p>
         Shipping and delivery do not include a separate energisation ritual unless explicitly stated
@@ -239,22 +239,9 @@ export default function ShippingPolicyPage() {
         clearance or local delivery procedures.
       </p>
 
-      <h2>12. Contact Us</h2>
+      <h2>12. Company &amp; Contact Us</h2>
       <p>For questions about shipping, tracking or delivery, please contact:</p>
-      <ul>
-        <li>
-          <strong>Brand:</strong> Abhimantrit by {BUSINESS.brandName}
-        </li>
-        <li>
-          <strong>Website:</strong> <Link href="/">this website</Link>
-        </li>
-        <li>
-          <strong>Email:</strong> <a href={`mailto:${email}`}>{email}</a>
-        </li>
-        <li>
-          <strong>Business address:</strong> {BUSINESS.addressLines.join(", ")}
-        </li>
-      </ul>
+      <CompanyContactBlock />
       <p>
         Please include your order number in your communication so that we can assist you more
         efficiently. You can also use <Link href="/contact">Contact Us</Link>.
@@ -262,7 +249,7 @@ export default function ShippingPolicyPage() {
 
       <h2>13. Policy Updates</h2>
       <p>
-        Abhimantrit by {BUSINESS.brandName} may update this Shipping &amp; Delivery Policy from time
+        {BUSINESS.displayName} may update this Shipping &amp; Delivery Policy from time
         to time. Any updated version will be published on our website with its revised effective
         date. Changes will not remove rights that customers are entitled to under applicable law.
       </p>

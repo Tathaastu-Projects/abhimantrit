@@ -89,10 +89,13 @@ export function getApiBase() {
   return API_BASE || getApiBaseUrl();
 }
 
-export async function getStoreMeta(): Promise<StoreMeta | null> {
+export async function getStoreMeta(opts?: { fresh?: boolean }): Promise<StoreMeta | null> {
   try {
-    // Short revalidate keeps header/nav fast on every screen change
-    const res = await apiFetch<ApiResult<StoreMeta>>("/api/store/meta");
+    const res = await apiFetch<ApiResult<StoreMeta>>(
+      "/api/store/meta",
+      undefined,
+      opts?.fresh ? { fresh: true } : undefined,
+    );
     return res.data;
   } catch {
     return null;
@@ -147,6 +150,7 @@ export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeCo
       latestBlogs: data.latestBlogs || [],
       intentionProducts: data.intentionProducts || {},
       rashiProducts: data.rashiProducts || [],
+      heroTicker: data.heroTicker || [],
       latestProducts: data.latestProducts || data.carousels?.newArrivals || [],
       carousels: {
         featured: data.carousels?.featured || [],

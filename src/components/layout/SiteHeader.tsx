@@ -9,9 +9,17 @@ import { useAuthStore } from "@/lib/auth-store";
 import { SearchBox } from "@/components/layout/SearchBox";
 import { cn } from "@/lib/cn";
 
+const DEFAULT_HEADER_BAR = [
+  "💎 Energised Crystals by Dr. Priyanka Singh",
+  "✅ X-Ray & Lab-Certified",
+  "📦 Free-Insured Worldwide Shipping",
+];
+
 type Props = {
   menu: StoreMenu | null;
   logoSrc?: string;
+  /** Top utility bar phrases from Admin → Home Page → Top header bar */
+  headerBar?: string[];
 };
 
 type NavItem = {
@@ -59,23 +67,30 @@ function navLinkClass(active: boolean) {
   );
 }
 
-export function SiteHeader({ menu, logoSrc }: Props) {
+export function SiteHeader({ menu, logoSrc, headerBar }: Props) {
   return (
-    <Suspense fallback={<SiteHeaderShell menu={menu} logoSrc={logoSrc} activeId={null} />}>
-      <SiteHeaderInner menu={menu} logoSrc={logoSrc} />
+    <Suspense
+      fallback={
+        <SiteHeaderShell menu={menu} logoSrc={logoSrc} headerBar={headerBar} activeId={null} />
+      }
+    >
+      <SiteHeaderInner menu={menu} logoSrc={logoSrc} headerBar={headerBar} />
     </Suspense>
   );
 }
 
-function SiteHeaderInner({ menu, logoSrc }: Props) {
+function SiteHeaderInner({ menu, logoSrc, headerBar }: Props) {
   const activeId = useActiveNavId();
-  return <SiteHeaderShell menu={menu} logoSrc={logoSrc} activeId={activeId} />;
+  return (
+    <SiteHeaderShell menu={menu} logoSrc={logoSrc} headerBar={headerBar} activeId={activeId} />
+  );
 }
 
 function SiteHeaderShell({
   menu: _menu,
   activeId,
   logoSrc = "",
+  headerBar,
 }: Props & { activeId: string | null }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -84,22 +99,28 @@ function SiteHeaderShell({
 
   useEffect(() => setMounted(true), []);
 
+  const barItems =
+    headerBar && headerBar.length
+      ? headerBar.map((s) => String(s || "").trim()).filter(Boolean)
+      : DEFAULT_HEADER_BAR;
+
   return (
     <header className="sticky top-0 z-50 bg-white">
-      {/* Top utility bar */}
+      {/* Top utility bar — managed from Admin → Home Page → Top header bar */}
       <div className="hidden border-b border-[var(--border)] bg-[#f5f5f3] px-4 py-1.5 sm:block md:px-6 lg:px-8">
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 text-[11px] text-ink-soft md:text-xs">
           <span aria-hidden />
           <p className="text-center tracking-wide text-forest">
-            By Priyanka Singh
-            <span className="mx-2 text-forest/40" aria-hidden>
-              |
-            </span>
-            X-Ray &amp; Lab Certified
-            <span className="mx-2 text-forest/40" aria-hidden>
-              |
-            </span>
-            Free Insured Worldwide Shipping
+            {barItems.map((phrase, index) => (
+              <span key={`${index}-${phrase}`}>
+                {index > 0 ? (
+                  <span className="mx-2 text-forest/40" aria-hidden>
+                    |
+                  </span>
+                ) : null}
+                {phrase}
+              </span>
+            ))}
           </p>
           <div className="flex shrink-0 items-center justify-end gap-3 whitespace-nowrap tracking-wide">
             <Link href="/account" className="hover:text-forest">
