@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { subscribeNewsletter } from "@/lib/api";
-import { BUSINESS, supportEmail, supportPhone } from "@/lib/business";
+import { BUSINESS, copyrightLine, supportEmail, supportPhone } from "@/lib/business";
 
 type Props = {
   support?: { email?: string; phone?: string };
@@ -164,7 +164,7 @@ export function SiteFooter({ support }: Props) {
         </div>
       </div>
       <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
-        © {new Date().getFullYear()} {BUSINESS.legalName}. All rights reserved.
+        {copyrightLine()}
       </div>
     </footer>
   );

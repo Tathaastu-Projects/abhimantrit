@@ -8,13 +8,13 @@ export const BUSINESS = {
   /** Public display name on policies / share title */
   displayName: "Abhimantrit by Tathasstu",
   /** Parent / group company */
-  parentCompany: "Thrive Tech Land Private Limited",
+  parentCompany: "Thrive Tech Labs Private Limited",
   /** Legal entity name */
-  legalName: "Thrive Tech Land Private Limited",
+  legalName: "Thrive Tech Labs Private Limited",
   founder: "Dr. Priyanka Singh",
   tagline: "Sacred Rudraksha, gemstones, crystals & spiritual jewellery",
   companyAbout:
-    "Abhimantrit is a subsidiary of Thrive Tech Land Private Limited and operates within its group of companies, offering astrology, spiritual guidance, and holistic healing services through its platform.",
+    "Abhimantrit is a subsidiary of Thrive Tech Labs Private Limited and operates within its group of companies, offering astrology, spiritual guidance, and holistic healing services through its platform.",
   email: "care@tathasstu.com",
   phone: "+91-9756303737",
   addressLines: [
@@ -25,6 +25,11 @@ export const BUSINESS = {
   hours: "Mon–Sat, 10:00 AM – 6:00 PM IST",
   certifications: ["✅ X-Ray & Lab-Certified", "📦 Free-Insured Worldwide Shipping"],
 } as const;
+
+/** Footer / legal copyright line */
+export function copyrightLine(year = new Date().getFullYear()) {
+  return `© ${year} ${BUSINESS.legalName}. All rights reserved.`;
+}
 
 export function supportEmail(override?: string | null) {
   return (override && override.trim()) || BUSINESS.email;
