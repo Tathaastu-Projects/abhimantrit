@@ -10,12 +10,13 @@ import { ReadFromBlog } from "@/components/home/ReadFromBlog";
 import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
 import { IntentionNav } from "@/components/home/IntentionNav";
+import { HomeProductSection } from "@/components/home/HomeProductSection";
 import { RashiBracelets } from "@/components/home/RashiBracelets";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
 
 /**
  * Home order (Figma top):
- * Hero → Ticker → Trust → Intention → Shop by Category →
+ * Hero → Ticker → Trust → Bestsellers → Intention → Shop by Category →
  * About → Loved by Customers →
  * Read From Our Blog → FAQ
  *
@@ -29,6 +30,10 @@ export default async function HomePage() {
   const home = await getHomeContent({ fresh: true });
   const intentionProducts = home.intentionProducts || {};
   const rashiProducts = home.rashiProducts || [];
+  const bestsellers =
+    home.carousels?.bestsellers?.length
+      ? home.carousels.bestsellers
+      : home.carousels?.featured || home.latestProducts || [];
   const latestProducts =
     home.latestProducts?.length
       ? home.latestProducts
@@ -39,6 +44,7 @@ export default async function HomePage() {
       <HomeBanners banners={home.banners || []} managed={home.homeSliderManaged} />
       <HeroTicker phrases={home.heroTicker} />
       <HomeTrustBar />
+      <HomeProductSection title="Best Sellers" products={bestsellers} />
       <IntentionNav products={intentionProducts} />
       <RashiBracelets products={rashiProducts} />
       <ShopByCategory tiles={home.categoryTiles} />
