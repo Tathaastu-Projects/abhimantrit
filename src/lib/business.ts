@@ -17,7 +17,11 @@ export const BUSINESS = {
     "Abhimantrit is a subsidiary of Thrive Tech Land Private Limited and operates within its group of companies, offering astrology, spiritual guidance, and holistic healing services through its platform.",
   email: "care@tathasstu.com",
   phone: "+91-9756303737",
-  addressLines: ["201, 2nd Floor, Stellar 1423", "Noida-142"],
+  addressLines: [
+    "Office no -201, Plot no 3, Stellar 1423",
+    "Sector 142, Noida, Gautambuddha Nagar",
+    "Uttar Pradesh, 201305",
+  ],
   hours: "Mon–Sat, 10:00 AM – 6:00 PM IST",
   certifications: ["✅ X-Ray & Lab-Certified", "📦 Free-Insured Worldwide Shipping"],
 } as const;
