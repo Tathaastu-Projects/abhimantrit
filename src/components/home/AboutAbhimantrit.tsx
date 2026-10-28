@@ -295,7 +295,7 @@ function StageMedia({
       loop
       muted
       playsInline
-      preload={base ? "auto" : "metadata"}
+      preload={base && playing ? "auto" : "metadata"}
       className={className}
     />
   );

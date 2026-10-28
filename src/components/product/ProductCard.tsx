@@ -112,6 +112,8 @@ export function ProductCard({
             src={imgSrc}
             alt={img.alt || product.title}
             className="product-card__img"
+            loading="lazy"
+            decoding="async"
             onError={() => setImgSrc("/placeholder-product.svg")}
           />
         </Link>

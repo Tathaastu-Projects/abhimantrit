@@ -63,7 +63,7 @@ async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): P
     ...init,
     headers,
     ...(isServer && method === "GET" && !auth?.fresh
-      ? { next: { revalidate: 20 } }
+      ? { next: { revalidate: 60 } }
       : { cache: "no-store" }),
   });
 

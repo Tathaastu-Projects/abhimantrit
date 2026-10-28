@@ -20,16 +20,16 @@ export function HomeProductSection({
 
   return (
     <section className="bestsellers-section w-full bg-[#f7f4ef]">
-      <div className="w-full px-4 py-14 sm:px-6 md:px-8 md:py-16 lg:px-10">
-        <div className="mb-10 flex flex-col gap-4 md:mb-12 md:flex-row md:items-end md:justify-between">
+      <div className="w-full px-4 pb-10 pt-5 sm:px-6 md:px-8 md:pb-12 md:pt-6 lg:px-10">
+        <div className="mb-7 flex flex-col gap-3 md:mb-8 md:flex-row md:items-end md:justify-between">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pink">
               Most loved
             </p>
-            <h2 className="mt-2 font-display text-3xl text-ink md:text-4xl lg:text-[2.75rem]">
+            <h2 className="mt-1.5 font-display text-3xl text-ink md:text-4xl lg:text-[2.5rem]">
               {title}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft md:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-ink-soft md:text-base">
               Handpicked sacred pieces chosen for authenticity, beauty, and everyday wear.
             </p>
           </div>

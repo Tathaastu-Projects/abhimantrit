@@ -65,11 +65,13 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
             ) : video ? (
               <video
                 src={video}
+                poster={image || undefined}
                 className="h-full w-full object-cover"
                 autoPlay
                 muted
                 loop
                 playsInline
+                preload="metadata"
                 controls
               />
             ) : (

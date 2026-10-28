@@ -9,6 +9,7 @@ import { Testimonials } from "@/components/home/Testimonials";
 import { ReadFromBlog } from "@/components/home/ReadFromBlog";
 import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
+import { FiveStepRitual } from "@/components/home/FiveStepRitual";
 import { IntentionNav } from "@/components/home/IntentionNav";
 import { HomeProductSection } from "@/components/home/HomeProductSection";
 import { RashiBracelets } from "@/components/home/RashiBracelets";
@@ -16,8 +17,8 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 
 /**
  * Home order (Figma top):
- * Hero → Ticker → Trust → Bestsellers → Intention → Shop by Category →
- * About → Loved by Customers →
+ * Hero → Ticker → Trust → Five-step ritual → Bestsellers → Intention →
+ * Shop by Category → About → Loved by Customers →
  * Read From Our Blog → FAQ
  *
  * One backend call — home payload already includes products for
@@ -26,8 +27,8 @@ import { FaqAccordion } from "@/components/home/FaqAccordion";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  // Always fetch fresh home payload so new Rashi products appear immediately
-  const home = await getHomeContent({ fresh: true });
+  // Use short Next revalidate cache (backend also caches home JSON ~60s)
+  const home = await getHomeContent();
   const intentionProducts = home.intentionProducts || {};
   const rashiProducts = home.rashiProducts || [];
   const bestsellers =
@@ -44,6 +45,7 @@ export default async function HomePage() {
       <HomeBanners banners={home.banners || []} managed={home.homeSliderManaged} />
       <HeroTicker phrases={home.heroTicker} />
       <HomeTrustBar />
+      <FiveStepRitual />
       <HomeProductSection title="Best Sellers" products={bestsellers} />
       <IntentionNav products={intentionProducts} />
       <RashiBracelets products={rashiProducts} />
