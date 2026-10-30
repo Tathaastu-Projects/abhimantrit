@@ -98,19 +98,19 @@ export function ProductDetail({
           <span className="text-ink">{product.title}</span>
         </nav>
 
-        <div className="grid w-full items-start gap-4 lg:grid-cols-2 lg:gap-6 lg:items-center xl:gap-8">
-          {/* Gallery — full image, no zoom/crop; fits inside compact one-view frame */}
-          <div className="min-w-0 w-full">
-            <div className="flex h-[min(52vh,420px)] w-full items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] sm:h-[min(56vh,460px)]">
+        <div className="grid w-full items-start gap-4 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-6 lg:items-center xl:gap-8">
+          {/* Gallery — frame hugs image (no blank side bars), full image, no zoom */}
+          <div className="mx-auto w-fit max-w-full lg:mx-0">
+            <div className="w-fit max-w-full overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resolveImageUrl(activeImage)}
                 alt={product.title}
-                className="max-h-full max-w-full object-contain object-center"
+                className="block h-auto max-h-[min(52vh,420px)] w-auto max-w-full object-contain sm:max-h-[min(56vh,460px)]"
               />
             </div>
             {images.length > 1 ? (
-              <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1">
+              <div className="mt-2.5 flex max-w-full gap-2 overflow-x-auto pb-1">
                 {images.slice(0, 8).map((img) => (
                   <button
                     key={img.url}
@@ -135,7 +135,7 @@ export function ProductDetail({
             ) : null}
           </div>
 
-          {/* Buy box */}
+          {/* Buy box takes remaining width */}
           <div className="flex min-w-0 w-full flex-col justify-center">
             <div className="flex flex-wrap gap-1.5">
               {product.isBestSeller ? (
