@@ -162,7 +162,8 @@ function SiteHeaderShell({
               href="https://tathasstu.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary hidden whitespace-nowrap px-3 py-2 text-[10px] tracking-[0.06em] sm:inline-flex md:px-4 md:text-[11px]"
+              className="hidden items-center justify-center whitespace-nowrap rounded-full bg-forest px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.04em] text-white shadow-sm transition hover:bg-forest-deep sm:inline-flex md:px-3 md:py-1.5 md:text-[10px]"
+              style={{ color: "#ffffff" }}
             >
               Book A Consultation
             </a>
@@ -241,7 +242,8 @@ function SiteHeaderShell({
             href="https://tathasstu.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-primary mt-3 w-full sm:hidden"
+            className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-forest px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-white shadow-sm transition hover:bg-forest-deep sm:hidden"
+            style={{ color: "#ffffff" }}
             onClick={() => setOpen(false)}
           >
             Book A Consultation
