@@ -55,7 +55,7 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
   if (!list.length) return null;
 
   return (
-    <section id="blog" className="w-full bg-white py-14 md:py-16">
+    <section id="blog" className="w-full bg-white py-8 md:py-10">
       <div className="container-pad mx-auto max-w-3xl text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-pink md:text-xs">
           Learn
@@ -68,7 +68,7 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
         </p>
       </div>
 
-      <div className="container-pad mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+      <div className="container-pad mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {list.map((post) => (
           <Link
             key={post.slug}
@@ -103,11 +103,8 @@ export function ReadFromBlog({ posts }: { posts?: StoreBlogPost[] }) {
         ))}
       </div>
 
-      <div className="mt-10 flex justify-center">
-        <Link
-          href="/blog"
-          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-forest px-8 text-sm font-semibold text-white transition hover:bg-forest-deep"
-        >
+      <div className="mt-6 flex justify-center">
+        <Link href="/blog" className="btn btn-primary min-w-[180px] px-10">
           View all
         </Link>
       </div>

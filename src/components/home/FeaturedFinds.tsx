@@ -44,7 +44,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
   const videoEmbed = getEmbedUrl(video);
 
   return (
-    <section id="featured-finds" className="w-full bg-[#f6f1ea] py-14 md:py-16">
+    <section id="featured-finds" className="w-full bg-[#f6f1ea] py-8 md:py-10">
       <div className="mx-auto w-full max-w-5xl px-5 md:px-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#9a9590]">
           {eyebrow}
@@ -53,7 +53,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
           {title}
         </h2>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 md:gap-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:gap-4">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-[#e7e1d8] sm:aspect-[5/4]">
             {videoEmbed ? (
               <iframe
@@ -103,12 +103,8 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
           {points.join("  |  ")}
         </div>
 
-        <div className="mt-6 flex justify-center">
-          <Link
-            href={ctaHref}
-            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-forest px-10 py-3.5 text-sm font-semibold uppercase tracking-[0.16em] !text-white"
-            style={{ color: "#ffffff" }}
-          >
+        <div className="mt-5 flex justify-center">
+          <Link href={ctaHref} className="btn btn-primary min-w-[180px] px-10">
             {ctaLabel}
           </Link>
         </div>

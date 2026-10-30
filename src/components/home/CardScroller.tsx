@@ -74,7 +74,7 @@ export function CardScroller({ children, className }: { children: ReactNode; cla
   }
 
   return (
-    <div className="relative mt-6">
+    <div className="relative mt-4">
       <div ref={scroller} className={className}>
         {children}
       </div>
@@ -108,8 +108,7 @@ function Arrow({
       type="button"
       aria-label={label}
       onClick={onClick}
-      style={{ color: "#0f3d2e", backgroundColor: "#ffffff" }}
-      className={`absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 shadow-[0_8px_20px_rgba(28,28,28,0.16)] transition hover:!bg-[#0f3d2e] hover:!text-white ${className}`}
+      className={`absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep ${className}`}
     >
       <svg
         width="22"

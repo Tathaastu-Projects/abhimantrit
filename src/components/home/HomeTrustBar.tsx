@@ -25,14 +25,14 @@ const TRUST_ITEMS = [
   },
 ] as const;
 
-/** Figma value strip — pink icon tiles + uppercase labels */
+/** Figma value strip — brand-green icon tiles + uppercase labels */
 export function HomeTrustBar() {
   return (
     <section className="bg-[#fff8f9]">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-6 pt-8 pb-3 sm:grid-cols-2 md:grid-cols-4 md:gap-8 md:px-10 md:pt-9 md:pb-4 lg:px-14">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-5 px-6 pt-5 pb-2 sm:grid-cols-2 md:grid-cols-4 md:gap-6 md:px-10 md:pt-6 md:pb-3 lg:px-14">
         {TRUST_ITEMS.map((item) => (
           <div key={item.id} className="flex items-start gap-3.5">
-            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[var(--pink)] text-white shadow-sm">
+            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-forest text-white shadow-sm">
               <TrustIcon name={item.icon} />
             </span>
             <div className="min-w-0 pt-0.5">

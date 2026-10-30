@@ -44,7 +44,7 @@ export function ExpertGuidance({ imageUrl }: Props) {
             </p>
             <Link
               href="/contact"
-              className="mt-10 inline-flex min-h-[3.15rem] items-center justify-center rounded-full bg-pink px-9 text-[0.95rem] font-semibold text-white shadow-[0_10px_24px_rgba(231,70,96,0.28)] transition hover:bg-pink-deep"
+              className="btn btn-primary mt-10 min-h-[3.15rem] px-9"
             >
               Book Your Consultation
             </Link>

@@ -101,7 +101,7 @@ export function RashiBracelets({ products }: { products: StoreProduct[] }) {
 
   // Always show the 12-sign strip (even if some signs have no product yet)
   return (
-    <section id="rashi-bracelets" className="w-full bg-[#fbf8f4] pt-4 pb-12 md:pt-6 md:pb-16">
+    <section id="rashi-bracelets" className="w-full bg-[#fbf8f4] pt-3 pb-6 md:pt-4 md:pb-8">
       <div className="px-5 md:px-8 xl:px-10">
         <h2 className="font-display text-[1.7rem] font-semibold tracking-[-0.02em] text-[#1c1c1c] md:text-[2rem]">
           Rashi Bracelets Collection
@@ -133,7 +133,7 @@ function RashiCard({
 
   if (!product) {
     return (
-      <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
+      <article className="flex w-[calc(50%-0.5rem)] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.9rem)] lg:w-[calc(20%-1rem)]">
         <div className="flex items-center gap-2.5 px-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
@@ -162,10 +162,7 @@ function RashiCard({
         </Link>
 
         <div className="card-hover__cta mt-auto pt-2">
-          <Link
-            href={shopHref}
-            className="block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
-          >
+          <Link href={shopHref} className="btn btn-primary w-full text-center">
             View Collection
           </Link>
         </div>
@@ -204,7 +201,7 @@ function RashiCard({
   }
 
   return (
-    <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[270px]">
+    <article className="flex w-[calc(50%-0.5rem)] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.9rem)] lg:w-[calc(20%-1rem)]">
       <div className="flex items-center gap-2.5 px-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
@@ -267,10 +264,7 @@ function RashiCard({
 
       <div className="card-hover__cta mt-auto pt-2">
         {inCart ? (
-          <Link
-            href="/cart"
-            className="block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
-          >
+          <Link href="/cart" className="btn btn-primary w-full text-center">
             In cart
           </Link>
         ) : (
@@ -278,7 +272,7 @@ function RashiCard({
             type="button"
             onClick={add}
             disabled={stock <= 0}
-            className="w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-stone-300"
+            className="btn btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
           >
             {stock <= 0 ? "Out of stock" : "Add To Cart"}
           </button>

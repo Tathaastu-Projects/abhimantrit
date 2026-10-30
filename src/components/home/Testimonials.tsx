@@ -37,17 +37,17 @@ export function Testimonials({ items }: { items?: Testimonial[] }) {
   const showArrows = cards.length > 1;
 
   return (
-    <section id="testimonials" data-testimonials className="w-full bg-white py-14 md:py-16">
+    <section id="testimonials" data-testimonials className="w-full bg-white py-8 md:py-10">
       <h2 className="text-center font-display text-[2rem] font-medium tracking-[-0.02em] text-[#1c1c1c] md:text-[2.4rem]">
         Testimonials
       </h2>
-      <div className="relative mx-auto mt-8 max-w-[1100px] px-12 md:px-16">
+      <div className="relative mx-auto mt-5 max-w-[1100px] px-12 md:mt-6 md:px-16">
         {showArrows ? (
           <button
             type="button"
             data-testimonials-prev
             aria-label="Previous review"
-            className="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#ececec] text-[#4a4a4a] shadow-sm"
+            className="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep"
           >
             <Arrow direction="left" />
           </button>
@@ -64,7 +64,7 @@ export function Testimonials({ items }: { items?: Testimonial[] }) {
             type="button"
             data-testimonials-next
             aria-label="Next review"
-            className="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#ececec] text-[#4a4a4a] shadow-sm"
+            className="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep"
           >
             <Arrow direction="right" />
           </button>

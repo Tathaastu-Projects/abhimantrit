@@ -3,8 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { resolveBannerUrl } from "@/lib/format";
 
-const DEFAULT_INTRO =
-  "Abhimantrit brings together authentic Rudraksha, crystals, and spiritual essentials, thoughtfully chosen for their astrological and spiritual significance. Each piece is carefully checked for authenticity and quality, then energised through traditional Vedic rituals with care and intention.";
+const ELEVATE_POINTS = [
+  "Thoughtfully Sourced",
+  "Cleansed Carefully",
+  "Energised Intentionally",
+  "Delivered to Unlock Your Destiny",
+] as const;
 
 export type AboutFeature = {
   id: string;
@@ -100,7 +104,6 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
       playbackUrl: custom?.playbackUrl || "",
     };
   });
-  const intro = source?.intro || DEFAULT_INTRO;
   const [activeId, setActiveId] = useState("");
 
   const baseVideo = mediaVideo(source);
@@ -108,22 +111,19 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
 
   return (
     <section id="about" className="about-swap w-full overflow-hidden bg-[#f7f1e8]">
-      <div className="grid items-stretch md:grid-cols-2">
-        <div className="relative z-10 order-2 px-5 py-8 md:order-1 md:px-7 md:py-12 xl:px-8 xl:py-14">
+      <div className="mx-auto grid items-stretch md:h-[min(70vh,480px)] md:grid-cols-2">
+        <div className="relative z-10 order-2 flex flex-col justify-center px-5 py-5 md:order-1 md:overflow-y-auto md:px-6 md:py-5 xl:px-8">
           <div onMouseEnter={() => setActiveId("")}>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#9a9590] md:text-xs">
-              About
-            </p>
-            <h2 className="mt-2.5 font-display text-[2rem] font-semibold tracking-[-0.02em] text-forest md:text-4xl lg:text-[2.55rem]">
-              ABHIMANTRIT
+            <h2 className="font-display text-[1.35rem] font-semibold tracking-[-0.02em] text-forest md:text-[1.55rem] lg:text-[1.7rem] lg:leading-[1.2]">
+              How Abhimantrit Elevates Your Life
             </h2>
-            <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.75]">
-              {intro}
+            <p className="mt-2 max-w-xl text-[12px] font-medium leading-relaxed text-[#5c5752] md:text-[13px]">
+              {ELEVATE_POINTS.join(" · ")}
             </p>
           </div>
 
           <ul
-            className="mt-6 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]"
+            className="mt-3 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]"
             onMouseLeave={() => setActiveId("")}
           >
             {features.map((item) => {
@@ -132,7 +132,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                 <li
                   key={item.id}
                   data-about={item.id}
-                  className={`about-point flex cursor-pointer items-center gap-4 py-4 transition-all duration-300 md:gap-5 md:py-5 ${
+                  className={`about-point flex cursor-pointer items-center gap-3 py-2 transition-all duration-300 md:gap-3.5 md:py-2.5 ${
                     selected ? "is-active" : ""
                   }`}
                   tabIndex={0}
@@ -141,7 +141,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                   onFocus={() => setActiveId(item.id)}
                 >
                   <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white ${
                       selected ? "bg-forest" : "bg-forest/70"
                     }`}
                     aria-hidden
@@ -150,14 +150,14 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`font-display text-[0.95rem] md:text-base ${
+                      className={`font-display text-[0.85rem] md:text-[0.9rem] ${
                         selected ? "font-semibold text-forest" : "font-medium text-[#5c5752]"
                       }`}
                     >
                       {item.title}
                     </p>
                     <p
-                      className={`about-point__copy overflow-hidden text-xs leading-relaxed text-[#3f3c39] transition-all duration-300 md:text-[13px] ${
+                      className={`about-point__copy overflow-hidden text-[11px] leading-snug text-[#3f3c39] transition-all duration-300 md:text-xs ${
                         selected ? "is-open" : ""
                       }`}
                     >
@@ -173,7 +173,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
           </ul>
         </div>
 
-        <div className="about-stage relative z-0 order-1 min-h-[220px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-full">
+        <div className="about-stage relative z-0 order-1 min-h-[180px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-0 md:h-full">
           {/* Base Media (Video or Image) from MongoDB */}
           {baseVideo ? (
             <StageMedia
@@ -303,7 +303,7 @@ function StageMedia({
 
 function ChevronIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M9 6l6 6-6 6"
         stroke="currentColor"
@@ -318,7 +318,7 @@ function ChevronIcon() {
 function FeatureIcon({ name }: { name: AboutFeature["icon"] }) {
   if (name === "badge") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path
           d="M12 3l2.2 2.4 3.1-.4 1 3 2.8 1.5-1.5 2.8.4 3.1-3 1-1.5 2.8-2.8-1.5-3.1.4-1-3-2.8-1.5 1.5-2.8-.4-3.1 3-1L12 3z"
           stroke="currentColor"
@@ -336,7 +336,7 @@ function FeatureIcon({ name }: { name: AboutFeature["icon"] }) {
   }
   if (name === "ritual") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path d="M12 3v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         <path d="M9 15c0 2.2 1.3 4 3 4s3-1.8 3-4H9z" stroke="currentColor" strokeWidth="1.6" />
         <path
@@ -350,7 +350,7 @@ function FeatureIcon({ name }: { name: AboutFeature["icon"] }) {
   }
   if (name === "check") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
         <circle cx="12" cy="12" r="7.5" stroke="currentColor" strokeWidth="1.6" />
         <path
           d="M8.8 12.2l2.2 2.2 4.2-4.4"
@@ -362,7 +362,7 @@ function FeatureIcon({ name }: { name: AboutFeature["icon"] }) {
     );
   }
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M12 4.5l1.6 3.6 3.9.4-2.9 2.6.9 3.8L12 13.2 8.5 14.9l.9-3.8-2.9-2.6 3.9-.4L12 4.5z"
         stroke="currentColor"

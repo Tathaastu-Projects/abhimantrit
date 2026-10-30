@@ -31,7 +31,7 @@ export function ProductCarousel({
           {subtitle ? <p className="mt-2 max-w-xl text-ink-soft">{subtitle}</p> : null}
         </div>
         {href ? (
-          <Link href={href} className="text-sm font-semibold text-pink hover:underline">
+          <Link href={href} className="btn btn-primary px-5 py-2 text-xs">
             View all
           </Link>
         ) : null}

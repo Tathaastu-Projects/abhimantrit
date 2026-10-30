@@ -343,12 +343,11 @@ export type ScreenToSpaceItem = {
   overlayTag?: string;
   videoUrl?: string;
   imageUrl?: string;
-  productTitle: string;
-  productPrice: number;
-  productImage?: string;
-  productSlug?: string;
-  buttonText?: string;
-  dotsCount?: number;
+  /** Shop category tab slug — click navigates to `/shop/{categorySlug}` */
+  categorySlug?: string;
+  categoryLabel?: string;
+  /** Canonical path e.g. `/shop/rudraksha` */
+  categoryHref?: string;
   isActive?: boolean;
 };
 

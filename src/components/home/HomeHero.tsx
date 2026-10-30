@@ -223,7 +223,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
           <button
             type="button"
             onClick={onPrev}
-            className="absolute left-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:left-5"
+            className="absolute left-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep md:left-5"
             aria-label="Previous banner"
           >
             <ArrowIcon direction="left" />
@@ -231,7 +231,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
           <button
             type="button"
             onClick={onNext}
-            className="absolute right-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-forest shadow-md transition hover:bg-white md:right-5"
+            className="absolute right-3 top-1/2 z-[60] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep md:right-5"
             aria-label="Next banner"
           >
             <ArrowIcon direction="right" />

@@ -84,18 +84,11 @@ export function ProductCard({
         Out of stock
       </button>
     ) : inCart ? (
-      <Link
-        href="/cart"
-        className={cn("btn w-full text-center", tone === "premium" ? "btn-premium" : "btn-primary")}
-      >
+      <Link href="/cart" className="btn btn-primary w-full text-center">
         In cart
       </Link>
     ) : (
-      <button
-        type="button"
-        onClick={quickAdd}
-        className={cn("btn w-full", tone === "premium" ? "btn-premium" : "btn-primary")}
-      >
+      <button type="button" onClick={quickAdd} className="btn btn-primary w-full">
         Add To Cart
       </button>
     );

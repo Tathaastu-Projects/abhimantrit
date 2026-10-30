@@ -40,13 +40,13 @@ export function FaqAccordion({
       ? faqs.map((f) => ({ q: f.question, a: f.answer }))
       : DEFAULT_FAQS;
   return (
-    <section id="faq" className="w-full bg-white py-14 md:py-20">
+    <section id="faq" className="w-full bg-white py-8 md:py-10">
       <div className="mx-auto w-full max-w-3xl px-6 sm:px-12 md:px-16 lg:px-20">
         <h2 className="text-center font-display text-3xl font-medium tracking-wide text-ink md:text-4xl">
           FAQs
         </h2>
 
-        <div className="mt-8 space-y-3 md:mt-10">
+        <div className="mt-5 space-y-3 md:mt-6">
           {items.map((item, idx) => (
             <details
               key={item.q}

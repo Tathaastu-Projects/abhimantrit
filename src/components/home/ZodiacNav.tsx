@@ -107,7 +107,7 @@ export function ZodiacNav() {
       <div className="container-pad mt-5 flex justify-center">
         <div className="relative h-1.5 w-40 overflow-hidden rounded-full bg-[#e8e4df] md:w-52">
           <span
-            className="absolute top-0 h-full w-[28%] rounded-full bg-pink transition-[left] duration-150 ease-out"
+            className="absolute top-0 h-full w-[28%] rounded-full bg-forest transition-[left] duration-150 ease-out"
             style={{ left: `${progress * 72}%` }}
           />
         </div>

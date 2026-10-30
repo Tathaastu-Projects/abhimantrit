@@ -37,7 +37,6 @@ const MAIN_NAV: NavItem[] = [
   { id: "tumbles", label: "Tumbles", href: "/shop/tumbles" },
   { id: "crystal-trees", label: "Crystal Trees", href: "/shop/crystal-trees" },
   { id: "pyramids", label: "Pyramids", href: "/shop/pyramids" },
-  { id: "loose-stones", label: "Loose Stones", href: "/shop/loose-stones" },
   { id: "mala", label: "Mala", href: "/shop/mala" },
   { id: "photo-frames", label: "Photo Frames", href: "/shop/photo-frames" },
 ];
@@ -51,7 +50,6 @@ function useActiveNavId() {
   if (pathname === "/shop/tumbles") return "tumbles";
   if (pathname === "/shop/crystal-trees") return "crystal-trees";
   if (pathname === "/shop/pyramids") return "pyramids";
-  if (pathname === "/shop/loose-stones") return "loose-stones";
   if (pathname === "/shop/mala") return "mala";
   if (pathname === "/shop/photo-frames") return "photo-frames";
 
@@ -107,14 +105,14 @@ function SiteHeaderShell({
   return (
     <header className="sticky top-0 z-50 bg-white">
       {/* Top utility bar — managed from Admin → Home Page → Top header bar */}
-      <div className="hidden border-b border-[var(--border)] bg-[#f5f5f3] px-4 py-1.5 sm:block md:px-6 lg:px-8">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 text-[11px] text-ink-soft md:text-xs">
+      <div className="hidden border-b border-forest-deep bg-forest px-4 py-1.5 sm:block md:px-6 lg:px-8">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 text-[11px] text-white md:text-xs">
           <span aria-hidden />
-          <p className="text-center tracking-wide text-forest">
+          <p className="text-center tracking-wide text-white">
             {barItems.map((phrase, index) => (
               <span key={`${index}-${phrase}`}>
                 {index > 0 ? (
-                  <span className="mx-2 text-forest/40" aria-hidden>
+                  <span className="mx-2 text-white/50" aria-hidden>
                     |
                   </span>
                 ) : null}
@@ -122,30 +120,30 @@ function SiteHeaderShell({
               </span>
             ))}
           </p>
-          <div className="flex shrink-0 items-center justify-end gap-3 whitespace-nowrap tracking-wide">
-            <Link href="/account" className="hover:text-forest">
+          <div className="flex shrink-0 items-center justify-end gap-3 whitespace-nowrap tracking-wide text-white">
+            <Link href="/account" className="hover:text-white/80">
               Account
             </Link>
-            <span className="text-ink/25" aria-hidden>
+            <span className="text-white/40" aria-hidden>
               |
             </span>
-            <Link href="/#faq" className="hover:text-forest">
+            <Link href="/#faq" className="hover:text-white/80">
               Help
             </Link>
-            <span className="text-ink/25" aria-hidden>
+            <span className="text-white/40" aria-hidden>
               |
             </span>
-            <Link href="/contact" className="hover:text-forest">
+            <Link href="/contact" className="hover:text-white/80">
               Contact Us
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Main header row */}
+      {/* Main header row — search left, logo center, actions right */}
       <div className="border-b border-[var(--border)]">
-        <div className="flex w-full items-center justify-between gap-3 px-3 py-2.5 sm:px-4 md:gap-5 md:px-6 md:py-3 lg:px-8">
-          <div className="flex min-w-0 items-center gap-2">
+        <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-4 md:gap-4 md:px-6 md:py-3 lg:px-8">
+          <div className="flex min-w-0 items-center justify-start gap-2">
             <button
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] text-ink lg:hidden"
@@ -154,33 +152,40 @@ function SiteHeaderShell({
             >
               <MenuIcon />
             </button>
-            <Link href="/" className="shrink-0" aria-label="Abhimantrit home">
-              {logoSrc ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={logoSrc}
-                  alt="Abhimantrit"
-                  width={160}
-                  height={48}
-                  fetchPriority="high"
-                  decoding="async"
-                  className="h-9 w-auto max-w-[10rem] object-contain object-left sm:h-10 md:h-12"
-                />
-              ) : (
-                <span className="font-display text-lg font-semibold tracking-tight text-forest sm:text-xl">
-                  Abhimantrit
-                </span>
-              )}
-            </Link>
-          </div>
-
-          <div className="hidden max-w-md flex-1 md:block lg:max-w-xl">
             <SearchBox
+              iconOnly
               placeholder="Search for products, rituals, or remedies..."
-              className="max-w-none"
+              className="hidden sm:block"
               inputClassName="w-full rounded-full border border-[var(--border)] bg-[#f7f3ec] py-2 pl-9 pr-3 text-xs outline-none placeholder:text-ink-soft/80 focus:border-forest/40 focus:ring-2 focus:ring-forest/10"
             />
+            <a
+              href="https://tathasstu.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary hidden whitespace-nowrap px-3 py-2 text-[10px] tracking-[0.06em] sm:inline-flex md:px-4 md:text-[11px]"
+            >
+              Book A Consultation
+            </a>
           </div>
+
+          <Link href="/" className="shrink-0 justify-self-center" aria-label="Abhimantrit home">
+            {logoSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoSrc}
+                alt="Abhimantrit"
+                width={160}
+                height={48}
+                fetchPriority="high"
+                decoding="async"
+                className="h-9 w-auto max-w-[10rem] object-contain sm:h-10 md:h-12"
+              />
+            ) : (
+              <span className="font-display text-lg font-semibold tracking-tight text-forest sm:text-xl">
+                Abhimantrit
+              </span>
+            )}
+          </Link>
 
           <div className="flex items-center justify-end gap-2 sm:gap-2.5">
             <Link href="/account" className="header-icon-btn hidden sm:inline-flex" aria-label="Account">
@@ -232,6 +237,15 @@ function SiteHeaderShell({
       {open ? (
         <div className="border-b border-[var(--border)] bg-white px-4 py-4 lg:hidden">
           <SearchBox placeholder="Search for products, rituals, or remedies..." />
+          <a
+            href="https://tathasstu.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary mt-3 w-full sm:hidden"
+            onClick={() => setOpen(false)}
+          >
+            Book A Consultation
+          </a>
           <div className="mt-4 grid gap-1">
             {MAIN_NAV.map((item) => {
               const active = activeId === item.id;

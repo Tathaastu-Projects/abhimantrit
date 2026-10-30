@@ -6,31 +6,40 @@ import { useRouter } from "next/navigation";
 import { searchSuggest } from "@/lib/api";
 import { primaryImage, formatINR } from "@/lib/format";
 import type { StoreProduct } from "@/types/product";
+import { cn } from "@/lib/cn";
 
 type Props = {
   placeholder?: string;
   className?: string;
   inputClassName?: string;
+  /** Show only the search icon until clicked/expanded */
+  iconOnly?: boolean;
 };
 
 export function SearchBox({
   placeholder = "Search products…",
   className,
   inputClassName,
+  iconOnly = false,
 }: Props) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<StoreProduct[]>([]);
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(!iconOnly);
   const boxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!boxRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        if (iconOnly && !q.trim()) setExpanded(false);
+      }
     };
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+  }, [iconOnly, q]);
 
   useEffect(() => {
     if (!q.trim()) {
@@ -45,8 +54,36 @@ export function SearchBox({
     return () => clearTimeout(t);
   }, [q]);
 
+  useEffect(() => {
+    if (expanded && iconOnly) {
+      inputRef.current?.focus();
+    }
+  }, [expanded, iconOnly]);
+
+  if (iconOnly && !expanded) {
+    return (
+      <div ref={boxRef} className={cn("relative", className)}>
+        <button
+          type="button"
+          className="header-icon-btn"
+          aria-label="Open search"
+          onClick={() => setExpanded(true)}
+        >
+          <SearchIcon />
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div ref={boxRef} className={className ? `relative w-full ${className}` : "relative w-full max-w-md"}>
+    <div
+      ref={boxRef}
+      className={cn(
+        "relative",
+        iconOnly ? "w-[min(18rem,70vw)] sm:w-72" : "w-full max-w-md",
+        className,
+      )}
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -57,15 +94,22 @@ export function SearchBox({
         className="relative"
       >
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M20 20l-3.2-3.2" strokeLinecap="round" />
-          </svg>
+          <SearchIcon />
         </span>
         <input
+          ref={inputRef}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => hits.length && setOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              setOpen(false);
+              if (iconOnly && !q.trim()) {
+                setExpanded(false);
+                inputRef.current?.blur();
+              }
+            }
+          }}
           placeholder={placeholder}
           className={
             inputClassName ||
@@ -109,5 +153,14 @@ export function SearchBox({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.2-3.2" strokeLinecap="round" />
+    </svg>
   );
 }

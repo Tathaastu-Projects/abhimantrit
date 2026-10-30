@@ -46,7 +46,7 @@ export function BlogTeasers({ posts }: { posts: StoreBlogPost[] }) {
     <section className="container-pad py-10 md:py-14">
       <div className="mb-6 flex items-end justify-between gap-4">
         <h2 className="font-display text-3xl md:text-4xl">From the journal</h2>
-        <Link href="/blog" className="text-sm font-semibold text-pink hover:underline">
+        <Link href="/blog" className="btn btn-primary px-5 py-2 text-xs">
           View all
         </Link>
       </div>

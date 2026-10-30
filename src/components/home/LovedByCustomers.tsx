@@ -143,7 +143,7 @@ export function LovedByCustomers() {
         {Array.from({ length: 5 }).map((_, i) => (
           <span key={`l-${i}`} className="h-1.5 w-1.5 rounded-full bg-[#d4d0cb]" />
         ))}
-        <span className="mx-1 h-1.5 w-9 rounded-full bg-pink md:w-11" />
+        <span className="mx-1 h-1.5 w-9 rounded-full bg-forest md:w-11" />
         {Array.from({ length: 5 }).map((_, i) => (
           <span key={`r-${i}`} className="h-1.5 w-1.5 rounded-full bg-[#d4d0cb]" />
         ))}

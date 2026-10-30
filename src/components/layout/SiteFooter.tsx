@@ -105,9 +105,6 @@ export function SiteFooter({ support }: Props) {
               <Link href="/shop/pyramids">Pyramids</Link>
             </li>
             <li>
-              <Link href="/shop/loose-stones">Loose Stones</Link>
-            </li>
-            <li>
               <Link href="/shop/mala">Mala</Link>
             </li>
             <li>

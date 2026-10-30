@@ -186,32 +186,42 @@ a {
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  border: 1px solid transparent;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease, color 180ms ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
 }
 
-.btn-primary {
+.btn-primary,
+.btn-premium {
   background: var(--forest);
-  color: #fff;
+  color: #f7f3ec;
+  box-shadow: 0 8px 20px rgba(15, 61, 46, 0.18);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-premium:hover {
   background: var(--forest-deep);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(15, 61, 46, 0.28);
 }
 
 .btn-ghost {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--border);
-  text-transform: none;
-  font-weight: 600;
+  background: var(--forest);
+  color: #f7f3ec;
+  border-color: var(--forest);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 20px rgba(15, 61, 46, 0.18);
 }
 
 .btn-ghost:hover {
-  background: var(--mist);
+  background: var(--forest-deep);
+  border-color: var(--forest-deep);
+  color: #fff;
 }
 
 .surface {
@@ -307,23 +317,7 @@ a {
   padding-top: 0.9rem;
 }
 
-.btn-premium {
-  background: transparent;
-  color: var(--forest);
-  border: 1px solid rgba(15, 61, 46, 0.22);
-  border-radius: 999px;
-  box-shadow: none;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-weight: 600;
-}
-
-.btn-premium:hover {
-  background: var(--pink);
-  border-color: var(--pink);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(231, 70, 96, 0.28);
-}
+/* .btn-premium shares solid forest style with .btn-primary (defined above) */
 
 /* Forced equal square image on every card (padding trick = reliable across browsers) */
 .product-card__media {
@@ -673,7 +667,7 @@ a {
   inset: 0;
   height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   opacity: 0;
   pointer-events: none;
@@ -681,7 +675,7 @@ a {
 }
 
 .about-stage__img--base {
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   opacity: 1;
 }
@@ -760,8 +754,8 @@ a {
 .about-point:hover .about-point__copy,
 .about-point:focus-visible .about-point__copy,
 .about-point__copy.is-open {
-  margin-top: 0.25rem;
-  max-height: 6rem;
+  margin-top: 0.15rem;
+  max-height: 3.5rem;
   opacity: 1;
 }
 

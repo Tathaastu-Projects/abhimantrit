@@ -99,7 +99,7 @@ export function SacredEssentials({ categories }: { categories?: HomeCategoryCard
               <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-ink-soft md:text-xs">
                 {category.description}
               </p>
-              <span className="mt-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink text-white transition group-hover:bg-pink-deep">
+              <span className="mt-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-forest text-[#f7f3ec] transition group-hover:bg-forest-deep">
                 <ArrowIcon />
               </span>
             </div>

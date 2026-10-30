@@ -68,10 +68,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
         {off > 0 ? <span className="text-sm font-bold text-gold">{off}% OFF</span> : null}
       </p>
       {inCart ? (
-        <Link
-          href="/cart"
-          className="card-hover__cta mt-auto pt-2 block w-full rounded-xl bg-forest py-2.5 text-center text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep"
-        >
+        <Link href="/cart" className="card-hover__cta mt-auto pt-2 btn btn-primary w-full text-center">
           In cart
         </Link>
       ) : (
@@ -79,7 +76,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
           type="button"
           onClick={add}
           disabled={stock <= 0}
-          className="card-hover__cta mt-auto pt-2 w-full rounded-xl bg-forest py-2.5 text-sm font-semibold tracking-wide text-white transition hover:bg-forest-deep disabled:cursor-not-allowed disabled:bg-[#c8c8c8]"
+          className="card-hover__cta mt-auto pt-2 btn btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
         >
           {stock <= 0 ? "Out of stock" : "Add To Cart"}
         </button>
@@ -107,11 +104,7 @@ export function LatestProducts({ products }: { products: StoreProduct[] }) {
         ))}
       </CardScroller>
       <div className="mt-8 flex justify-center">
-        <Link
-          href="/shop?sort=newest"
-          className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-forest px-8 text-sm font-semibold transition hover:bg-forest-deep"
-          style={{ color: "#ffffff" }}
-        >
+        <Link href="/shop?sort=newest" className="btn btn-primary min-w-[180px] px-10">
           View all
         </Link>
       </div>
