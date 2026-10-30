@@ -85,7 +85,7 @@ export function ProductDetail({
 
   return (
     <div className="w-full bg-white">
-      <div className="w-full px-4 py-4 sm:px-6 md:px-8 md:py-5 lg:px-10">
+      <div className="w-full px-3 py-4 sm:px-4 md:px-5 md:py-5 lg:px-6 xl:px-8">
         <nav className="mb-3 truncate text-[12px] text-ink-soft">
           <Link href="/" className="transition hover:text-forest">
             Home
@@ -98,15 +98,15 @@ export function ProductDetail({
           <span className="text-ink">{product.title}</span>
         </nav>
 
-        <div className="grid items-start gap-5 lg:grid-cols-2 lg:gap-8 lg:items-center xl:gap-10">
-          {/* Gallery */}
-          <div className="min-w-0">
-            <div className="flex max-h-[min(48vh,380px)] items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] lg:max-h-[min(56vh,440px)]">
+        <div className="grid w-full items-start gap-4 lg:grid-cols-2 lg:gap-6 lg:items-center xl:gap-8">
+          {/* Gallery — full image, no zoom/crop; fits inside compact one-view frame */}
+          <div className="min-w-0 w-full">
+            <div className="flex h-[min(52vh,420px)] w-full items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] sm:h-[min(56vh,460px)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resolveImageUrl(activeImage)}
                 alt={product.title}
-                className="block max-h-[min(48vh,380px)] w-full object-contain object-center lg:max-h-[min(56vh,440px)]"
+                className="max-h-full max-w-full object-contain object-center"
               />
             </div>
             {images.length > 1 ? (
@@ -117,7 +117,7 @@ export function ProductDetail({
                     type="button"
                     onClick={() => setActiveImage(img.url)}
                     className={cn(
-                      "h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#f6f3ee] ring-2 transition",
+                      "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f6f3ee] ring-2 transition sm:h-16 sm:w-16",
                       activeImage === img.url
                         ? "ring-forest"
                         : "ring-transparent hover:ring-black/10",
@@ -127,7 +127,7 @@ export function ProductDetail({
                     <img
                       src={resolveImageUrl(img.url)}
                       alt={img.alt || product.title}
-                      className="block h-full w-full object-contain object-center"
+                      className="max-h-full max-w-full object-contain object-center"
                     />
                   </button>
                 ))}
@@ -136,7 +136,7 @@ export function ProductDetail({
           </div>
 
           {/* Buy box */}
-          <div className="min-w-0">
+          <div className="flex min-w-0 w-full flex-col justify-center">
             <div className="flex flex-wrap gap-1.5">
               {product.isBestSeller ? (
                 <span className="rounded-full bg-forest px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
