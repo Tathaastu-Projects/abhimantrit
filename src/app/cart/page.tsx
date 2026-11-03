@@ -102,7 +102,9 @@ export default function CartPage() {
             <span className="text-ink-soft">Subtotal</span>
             <span className="font-semibold">{formatINR(subtotal())}</span>
           </div>
-          <p className="mt-2 text-xs text-ink-soft">Shipping calculated at checkout. COD available.</p>
+          <p className="mt-2 text-xs text-ink-soft">
+            Shipping calculated at checkout. COD and online (Easebuzz) available.
+          </p>
           <Link href="/checkout" className="btn btn-primary mt-6 w-full">
             Proceed to checkout
           </Link>

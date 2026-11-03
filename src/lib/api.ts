@@ -420,6 +420,141 @@ export async function cancelUnpaidOrder(storeOrderId: string) {
   );
 }
 
+/* ─── Easebuzz (hosted checkout via backend) ─── */
+
+export type PaymentConfig = {
+  gateway: string;
+  isConfigured: boolean;
+  isDemo: boolean;
+  environment: string;
+  iframe?: boolean;
+  currency?: string;
+  supportedModes?: string[];
+};
+
+export type EasebuzzInitiateData = {
+  gateway: string;
+  isDemo: boolean;
+  orderId: string;
+  orderNumber: string;
+  paymentId?: string;
+  txnid: string;
+  amount: string;
+  paymentUrl?: string;
+  actionUrl?: string;
+  accessKey?: string;
+  iframe?: boolean;
+  env?: string;
+  message?: string;
+  demoConfirmPath?: string;
+  surl?: string;
+  furl?: string;
+};
+
+export type EasebuzzVerifyResult = {
+  success: boolean;
+  verified: boolean;
+  status: string;
+  txnid?: string;
+  amount?: string;
+  easepayid?: string;
+  isDemo?: boolean;
+  orderId?: string;
+  orderNumber?: string;
+  message?: string;
+  order?: {
+    id: string;
+    orderNumber: string;
+    status: string;
+    paymentMethod?: string;
+    paymentStatus?: string;
+    pricing?: { subtotal?: number; discount?: number; shipping?: number; total?: number };
+    customer?: Record<string, unknown>;
+    items?: unknown[];
+    createdAt?: string;
+  };
+};
+
+export async function getPaymentConfig(): Promise<PaymentConfig | null> {
+  try {
+    const res = await apiFetch<ApiResult<PaymentConfig>>("/api/payment/config");
+    return res.data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function initiateEasebuzzPayment(payload: {
+  orderId?: string;
+  storeOrderId?: string;
+  orderNumber?: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  productinfo?: string;
+}) {
+  return apiFetch<ApiResult<EasebuzzInitiateData>>("/api/payment/easebuzz/initiate", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function confirmEasebuzzDemo(payload: {
+  orderId?: string;
+  storeOrderId?: string;
+  orderNumber?: string;
+  txnid?: string;
+}) {
+  return apiFetch<EasebuzzVerifyResult>("/api/payment/easebuzz/confirm-demo", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Verify after Easebuzz return. Accepts 400 bodies with verified:false
+ * so the payment page can show failure UI instead of a thrown Error.
+ */
+export async function verifyEasebuzzPayment(
+  payload: Record<string, string>,
+): Promise<EasebuzzVerifyResult> {
+  const base = API_BASE || getApiBaseUrl();
+  const res = await fetch(`${base}/api/payment/easebuzz/verify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  let body: EasebuzzVerifyResult | null = null;
+  try {
+    body = (await res.json()) as EasebuzzVerifyResult;
+  } catch {
+    body = null;
+  }
+
+  if (body && typeof body === "object" && "verified" in body) {
+    return body;
+  }
+
+  if (!res.ok) {
+    throw new Error(
+      body && typeof body === "object" && "message" in body && body.message
+        ? String(body.message)
+        : `Payment verify failed (${res.status})`,
+    );
+  }
+
+  return (
+    body || {
+      success: false,
+      verified: false,
+      status: "failure",
+      message: "Empty verify response",
+    }
+  );
+}
+
 export type StoreOrderResult = {
   id: string;
   orderNumber: string;

@@ -19,7 +19,8 @@ export default async function OrderSuccessPage({ searchParams }: Props) {
         <p className="mt-4 text-ink-soft">Your COD request was received.</p>
       )}
       <p className="mx-auto mt-3 max-w-md text-sm text-ink-soft">
-        We’ll confirm by phone/email. You can track status anytime with your order number and phone.
+        We’ll confirm by phone/email. Online payments are verified via Easebuzz before the order is
+        marked paid. You can track status anytime with your order number and phone.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link

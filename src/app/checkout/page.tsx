@@ -7,34 +7,18 @@ import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
 import {
   cancelUnpaidOrder,
-  createRazorpayOrder,
+  confirmEasebuzzDemo,
   createStoreOrder,
+  getPaymentConfig,
+  initiateEasebuzzPayment,
   validateCoupon,
-  verifyRazorpayPayment,
+  type PaymentConfig,
 } from "@/lib/api";
 import { formatINR } from "@/lib/format";
 import type { CouponValidation } from "@/types/product";
 
 const fieldClass =
   "w-full rounded-[0.9rem] border border-[var(--border)] bg-white/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-temple/30";
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
-
-async function loadRazorpayScript() {
-  if (typeof window === "undefined") return false;
-  if (window.Razorpay) return true;
-  return new Promise<boolean>((resolve) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -50,8 +34,13 @@ export default function CheckoutPage() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<CouponValidation | null>(null);
   const [couponMsg, setCouponMsg] = useState("");
+  const [payConfig, setPayConfig] = useState<PaymentConfig | null>(null);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    getPaymentConfig().then(setPayConfig).catch(() => setPayConfig(null));
+  }, []);
 
   const subtotal = mounted ? subtotalFn() : 0;
   const discount = coupon?.discount || 0;
@@ -88,54 +77,32 @@ export default function CheckoutPage() {
     }
   }
 
-  async function finishOnlinePayment(storeOrderId: string, amount: number, orderNumber: string) {
-    const rz = await createRazorpayOrder(amount, orderNumber);
-    const pay = rz.data;
+  /**
+   * Easebuzz flow:
+   * 1) initiate with orderId
+   * 2) demo → confirm-demo then success page
+   * 3) live → redirect to paymentUrl (return hits /payment)
+   */
+  async function startEasebuzz(orderId: string, orderNumber: string) {
+    const payRes = await initiateEasebuzzPayment({ orderId });
+    const pay = payRes.data;
 
-    if (pay.mode === "mock") {
-      await verifyRazorpayPayment({
-        razorpay_order_id: pay.id,
-        razorpay_payment_id: `pay_dev_${Date.now()}`,
-        razorpay_signature: "dev_mock_signature",
-        storeOrderId,
-      });
+    if (pay.isDemo) {
+      const confirmed = await confirmEasebuzzDemo({ orderId });
+      clear();
+      const number =
+        confirmed.orderNumber || confirmed.order?.orderNumber || orderNumber;
+      router.push(`/order/success?orderNumber=${encodeURIComponent(number)}`);
       return;
     }
 
-    const ok = await loadRazorpayScript();
-    if (!ok || !window.Razorpay) {
-      throw new Error("Could not load Razorpay checkout");
+    const url = pay.paymentUrl || pay.actionUrl;
+    if (!url) {
+      throw new Error("Payment URL missing from Easebuzz initiate response");
     }
 
-    await new Promise<void>((resolve, reject) => {
-      const rzp = new window.Razorpay!({
-        key: pay.keyId,
-        amount: pay.amount,
-        currency: pay.currency || "INR",
-        name: "Tathaastu",
-        description: `Order ${orderNumber}`,
-        order_id: pay.id,
-        handler: async (response: {
-          razorpay_order_id: string;
-          razorpay_payment_id: string;
-          razorpay_signature: string;
-        }) => {
-          try {
-            await verifyRazorpayPayment({
-              ...response,
-              storeOrderId,
-            });
-            resolve();
-          } catch (e) {
-            reject(e);
-          }
-        },
-        modal: {
-          ondismiss: () => reject(new Error("Payment cancelled")),
-        },
-      });
-      rzp.open();
-    });
+    // Cart cleared after return/verify; keep items if user abandons gateway
+    window.location.href = url;
   }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -174,8 +141,10 @@ export default function CheckoutPage() {
 
       const order = res.data;
       createdOrderId = order.id;
+
       if (paymentMethod === "online") {
-        await finishOnlinePayment(order.id, order.pricing?.total || total, order.orderNumber);
+        await startEasebuzz(order.id, order.orderNumber);
+        return;
       }
 
       clear();
@@ -189,16 +158,19 @@ export default function CheckoutPage() {
         }
       }
       setError(err instanceof Error ? err.message : "Checkout failed");
-    } finally {
       setLoading(false);
     }
   }
+
+  const onlineLabel = payConfig?.isDemo
+    ? "Pay online (Easebuzz demo — no live keys)"
+    : "Pay online (Easebuzz — UPI / Cards / NetBanking)";
 
   return (
     <div className="container-pad py-10 md:py-14">
       <h1 className="font-display text-4xl">Checkout</h1>
       <p className="mt-2 text-ink-soft">
-        Pay with Cash on Delivery or online (Razorpay). Coupons: try <code>WELCOME10</code> or{" "}
+        Pay with Cash on Delivery or online via Easebuzz. Coupons: try <code>WELCOME10</code> or{" "}
         <code>FLAT200</code>.
       </p>
 
@@ -257,15 +229,23 @@ export default function CheckoutPage() {
                 />
                 Cash on Delivery (COD)
               </label>
-              <label className="flex items-center gap-3">
+              <label className="flex items-start gap-3">
                 <input
                   type="radio"
                   name="pay"
                   checked={paymentMethod === "online"}
                   onChange={() => setPaymentMethod("online")}
-                  className="accent-temple"
+                  className="mt-0.5 accent-temple"
                 />
-                Pay online (Razorpay / UPI / Cards)
+                <span>
+                  {onlineLabel}
+                  {payConfig?.environment ? (
+                    <span className="mt-1 block text-xs text-ink-soft">
+                      Gateway: {payConfig.gateway || "easebuzz"} · env: {payConfig.environment}
+                      {payConfig.isDemo ? " · demo mode" : ""}
+                    </span>
+                  ) : null}
+                </span>
               </label>
             </div>
           </section>
@@ -321,7 +301,9 @@ export default function CheckoutPage() {
             className="btn btn-primary mt-6 w-full disabled:opacity-60"
           >
             {loading
-              ? "Processing…"
+              ? paymentMethod === "online"
+                ? "Starting payment…"
+                : "Processing…"
               : paymentMethod === "cod"
                 ? "Place COD order"
                 : "Pay & place order"}
