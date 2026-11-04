@@ -131,11 +131,17 @@ export default function CheckoutPage() {
           throw new Error("Payment token missing. Please try checkout again.");
         }
         const pay = await initiateEasebuzzPayment(order.id, paymentToken, phoneDigits);
+        const paymentUrl = pay?.data?.paymentUrl;
+        if (!paymentUrl) {
+          throw new Error("Payment link was not created. Please try again.");
+        }
+        // Only clear cart after we have a real Easebuzz redirect URL
         clear();
-        window.location.href = pay.data.paymentUrl;
+        window.location.assign(paymentUrl);
         return;
       }
 
+      // COD only — never use this path for online payment
       clear();
       router.push(`/order/success?orderNumber=${encodeURIComponent(order.orderNumber || "")}`);
     } catch (err) {
@@ -145,8 +151,12 @@ export default function CheckoutPage() {
         } catch {
           /* best-effort stock restore */
         }
+        setError(
+          `${err instanceof Error ? err.message : "Online payment failed"}. Your online order was not completed (not COD). Please try Pay online again.`,
+        );
+      } else {
+        setError(err instanceof Error ? err.message : "Checkout failed");
       }
-      setError(err instanceof Error ? err.message : "Checkout failed");
     } finally {
       setLoading(false);
     }

@@ -16,8 +16,6 @@ import type {
   WishlistItem,
 } from "@/types/product";
 
-const API_BASE = getApiBaseUrlOrEmpty();
-
 type ApiResult<T> = {
   success: boolean;
   data: T;
@@ -49,7 +47,7 @@ function toQuery(params?: Record<string, string | number | boolean | undefined |
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): Promise<T> {
-  const base = API_BASE || getApiBaseUrl();
+  const base = getApiBaseUrlOrEmpty() || getApiBaseUrl();
   const isServer = typeof window === "undefined";
   const method = init?.method || "GET";
   const headers: Record<string, string> = {
@@ -59,13 +57,23 @@ async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): P
   if (auth?.token) headers.Authorization = `Bearer ${auth.token}`;
   if (auth?.guestId) headers["X-Guest-Id"] = auth.guestId;
 
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers,
-    ...(isServer && method === "GET" && !auth?.fresh
-      ? { next: { revalidate: 60 } }
-      : { cache: "no-store" }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${base}${path}`, {
+      ...init,
+      headers,
+      ...(isServer && method === "GET" && !auth?.fresh
+        ? { next: { revalidate: 60 } }
+        : { cache: "no-store" }),
+    });
+  } catch (err) {
+    const raw = err instanceof Error ? err.message : "Network error";
+    throw new Error(
+      /failed to fetch|networkerror|load failed/i.test(raw)
+        ? "Cannot reach payment server. Please refresh and try again."
+        : raw,
+    );
+  }
 
   let body: unknown = null;
   try {
@@ -86,7 +94,7 @@ async function apiFetch<T>(path: string, init?: RequestInit, auth?: AuthOpts): P
 }
 
 export function getApiBase() {
-  return API_BASE || getApiBaseUrl();
+  return getApiBaseUrlOrEmpty() || getApiBaseUrl();
 }
 
 export async function getStoreMeta(opts?: { fresh?: boolean }): Promise<StoreMeta | null> {

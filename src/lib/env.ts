@@ -1,9 +1,16 @@
 /**
  * Runtime config — ports/URLs come only from env (`.env`).
  * Never hardcode localhost ports here.
+ *
+ * Browser: use same-origin "" so Next rewrites /api/store/* → backend
+ * (prevents cross-origin "Failed to fetch" on checkout / Easebuzz initiate).
+ * Server (SSR): call backend absolute URL from NEXT_PUBLIC_API_URL.
  */
 
 export function getApiBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    return "";
+  }
   const url = process.env.NEXT_PUBLIC_API_URL?.trim();
   if (!url) {
     throw new Error(
@@ -14,6 +21,9 @@ export function getApiBaseUrl(): string {
 }
 
 export function getApiBaseUrlOrEmpty(): string {
+  if (typeof window !== "undefined") {
+    return "";
+  }
   const url = process.env.NEXT_PUBLIC_API_URL?.trim();
   return url ? url.replace(/\/$/, "") : "";
 }

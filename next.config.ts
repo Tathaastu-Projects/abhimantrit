@@ -59,9 +59,9 @@ const nextConfig: NextConfig = {
         destination: `${base}/uploads/:path*`,
       },
       {
-        // Same-origin proxy so the /3d iframe can load admin price overrides
-        source: "/api/store/3d-prices",
-        destination: `${base}/api/store/3d-prices`,
+        // Browser calls same-origin /api/store/* (avoids CORS "Failed to fetch" on checkout/pay)
+        source: "/api/store/:path*",
+        destination: `${base}/api/store/:path*`,
       },
     ];
   },
