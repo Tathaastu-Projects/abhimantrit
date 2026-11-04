@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { StoreProduct } from "@/types/product";
-import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
+import { discountPercent, formatINR, hoverLines, primaryImage, productHref, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
@@ -101,7 +101,7 @@ function IntentionCard({
       </div>
 
       <div className="card-hover relative mt-3 overflow-hidden rounded-xl bg-[#f6f3ee]">
-        <Link href={`/product/${product.slug}`} className="block">
+        <Link href={productHref(product)} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={resolveImageUrl(img.url)}
@@ -129,7 +129,7 @@ function IntentionCard({
       </div>
 
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="mt-1 line-clamp-2 px-1 text-[13px] font-medium leading-snug text-[#1c1c1c]"
       >
         {product.title}

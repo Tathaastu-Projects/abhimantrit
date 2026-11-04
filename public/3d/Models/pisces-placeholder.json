@@ -1,0 +1,44 @@
+{
+  "name": "Pisces",
+  "title": "Pisces",
+  "description": "Illustrative layout · Photograph unavailable. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "",
+  "components": {
+    "black": {
+      "name": "Black zodiac barrel",
+      "description": "Glossy black body with gold face artwork.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 1,
+      "size": "illustrative"
+    },
+    "neutral": {
+      "name": "Unverified beads",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 22,
+      "size": "illustrative"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹1,349",
+  "originalPrice": "₹1,899",
+  "offer": "29% off",
+  "details": {
+    "components": [],
+    "appearance": null,
+    "sourcePhoto": null,
+    "charm": {
+      "shape": "barrel",
+      "position": "front center",
+      "body": "black",
+      "artwork": "gold sign emblem",
+      "inscription": "Pisces",
+      "status": "specified_by_brief"
+    }
+  },
+  "id": "pisces-placeholder",
+  "modelFile": "pisces-placeholder.glb",
+  "kind": "bracelet",
+  "placeholder": true
+}

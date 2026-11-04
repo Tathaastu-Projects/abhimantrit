@@ -1,0 +1,52 @@
+{
+  "name": "5 Mukhi Nepal",
+  "title": "5 Mukhi Nepal",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Rust-brown seed with pitted radial lobes and a star-like central depression.",
+  "components": {
+    "seed": {
+      "name": "5 Mukhi Nepal",
+      "description": "Displace the surface into irregular branching folds with darker recessed grooves.",
+      "placement": "5 Mukhi Nepal",
+      "count": 1,
+      "size": "seed"
+    }
+  },
+  "category": "Rudraksha",
+  "buyLabel": "Order Energized Rudraksha",
+  "price": "₹749",
+  "originalPrice": "₹999",
+  "offer": "25% off",
+  "details": {
+    "components": [
+      {
+        "material": "seed",
+        "role": "seed",
+        "label": "5 Mukhi Nepal",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": null,
+        "indices": [],
+        "labelAnchorIndex": null,
+        "look": "Rust-brown seed with pitted radial lobes and a star-like central depression.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "seed",
+          "shape": "lobed_seed",
+          "badgeCount": 1
+        }
+      }
+    ],
+    "appearance": "Rust-brown seed with pitted radial lobes and a star-like central depression.",
+    "mukhiFromFilename": 5,
+    "originFromFilename": "Nepal",
+    "sourcePhoto": "5Mukhi- Nepali.png",
+    "charm": {
+      "status": "not_applicable"
+    }
+  },
+  "id": "5-mukhi-nepal",
+  "modelFile": "5-mukhi-nepal.glb",
+  "kind": "single_seed",
+  "placeholder": false
+}

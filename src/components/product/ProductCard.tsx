@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
-import { hoverLines, primaryImage } from "@/lib/format";
+import { hoverLines, primaryImage, productHref, productUrlKey } from "@/lib/format";
 import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/cn";
 
-function useInCart(productId: string) {
-  return useCartStore((s) => s.items.some((i) => i.productId === productId));
+function useCartLine(productId: string) {
+  return useCartStore((s) => s.items.find((i) => i.productId === productId) || null);
 }
 
 function DetailIcon() {
@@ -42,6 +42,50 @@ function StarRow({ avg, count }: { avg?: number; count?: number }) {
   );
 }
 
+function QtyStepper({
+  qty,
+  maxQty,
+  onMinus,
+  onPlus,
+  className,
+}: {
+  qty: number;
+  maxQty: number;
+  onMinus: (event: React.MouseEvent) => void;
+  onPlus: (event: React.MouseEvent) => void;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "btn btn-primary flex w-full items-center justify-between gap-1 px-1.5",
+        className,
+      )}
+      role="group"
+      aria-label="Cart quantity"
+    >
+      <button
+        type="button"
+        onClick={onMinus}
+        className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-white/15"
+        aria-label="Decrease quantity"
+      >
+        −
+      </button>
+      <span className="min-w-[1.5rem] text-center text-sm font-semibold tabular-nums">{qty}</span>
+      <button
+        type="button"
+        onClick={onPlus}
+        disabled={qty >= maxQty}
+        className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+        aria-label="Increase quantity"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
 export function ProductCard({
   product,
   tone = "default",
@@ -50,7 +94,10 @@ export function ProductCard({
   tone?: "default" | "premium";
 }) {
   const addItem = useCartStore((s) => s.addItem);
-  const inCart = useInCart(product._id);
+  const updateQty = useCartStore((s) => s.updateQty);
+  const cartLine = useCartLine(product._id);
+  const inCart = Boolean(cartLine);
+  const qty = cartLine?.qty || 0;
   const img = primaryImage(product.images);
   const [imgSrc, setImgSrc] = useState(img.url);
   const sale = product.effectiveSalePrice ?? product.salePrice;
@@ -58,15 +105,17 @@ export function ProductCard({
   const discount = product.effectiveDiscountPercent ?? product.discountPercent;
   const stock = product.effectiveStock ?? product.totalStock ?? product.quantity;
   const activeVariants = (product.variants || []).filter((v) => v.isActive);
+  const variant = activeVariants[0];
+  const variantId = cartLine?.variantId ?? variant?._id ?? null;
+  const maxQty = cartLine?.maxQty ?? variant?.quantity ?? stock ?? 99;
 
   function quickAdd(event: React.MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
     if (stock <= 0 || inCart) return;
-    const variant = activeVariants[0];
     addItem({
       productId: product._id,
-      slug: product.slug,
+      slug: productUrlKey(product) || product.slug,
       title: product.title,
       image: img.url,
       variantId: variant?._id || null,
@@ -78,15 +127,24 @@ export function ProductCard({
     });
   }
 
+  function bumpQty(event: React.MouseEvent, next: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    updateQty(product._id, variantId, next);
+  }
+
   const cta =
     stock <= 0 ? (
       <button type="button" disabled className="btn w-full cursor-not-allowed bg-stone-200 text-ink-soft">
         Out of stock
       </button>
     ) : inCart ? (
-      <Link href="/cart" className="btn btn-primary w-full text-center">
-        In cart
-      </Link>
+      <QtyStepper
+        qty={qty}
+        maxQty={maxQty}
+        onMinus={(e) => bumpQty(e, qty - 1)}
+        onPlus={(e) => bumpQty(e, qty + 1)}
+      />
     ) : (
       <button type="button" onClick={quickAdd} className="btn btn-primary w-full">
         Add To Cart
@@ -94,12 +152,12 @@ export function ProductCard({
     );
 
   const details = hoverLines(product);
-  const bagLabel = inCart ? "In cart" : stock <= 0 ? "Out of stock" : "Add to bag";
+  const bagLabel = stock <= 0 ? "Out of stock" : "Add to bag";
 
   return (
     <article className={cn("product-card", tone === "premium" && "product-card--premium")}>
       <div className="product-card__media">
-        <Link href={`/product/${product.slug}`} className="absolute inset-0 z-[1]">
+        <Link href={productHref(product)} className="absolute inset-0 z-[1]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imgSrc}
@@ -137,9 +195,33 @@ export function ProductCard({
           </aside>
         ) : null}
         {inCart ? (
-          <Link href="/cart" className="product-card__bag" style={{ color: "#ffffff" }}>
-            {bagLabel}
-          </Link>
+          <div
+            className="product-card__bag product-card__bag--qty z-[2]"
+            style={{ color: "#ffffff" }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <button
+              type="button"
+              aria-label="Decrease quantity"
+              className="px-1 text-base leading-none"
+              onClick={(e) => bumpQty(e, qty - 1)}
+            >
+              −
+            </button>
+            <span className="min-w-[1.25rem] text-center text-xs font-semibold tabular-nums">{qty}</span>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              className="px-1 text-base leading-none disabled:opacity-40"
+              disabled={qty >= maxQty}
+              onClick={(e) => bumpQty(e, qty + 1)}
+            >
+              +
+            </button>
+          </div>
         ) : (
           <button
             type="button"
@@ -154,7 +236,7 @@ export function ProductCard({
       </div>
 
       <div className="product-card__body">
-        <Link href={`/product/${product.slug}`} className="product-card__title">
+        <Link href={productHref(product)} className="product-card__title">
           {product.title}
         </Link>
         <div className="product-card__meta">

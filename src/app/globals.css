@@ -245,6 +245,32 @@ a {
   }
 }
 
+/* Slow bounce for "Scroll down" — Y only so horizontal center stays exact */
+@keyframes home-video-scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+.home-video-hero__scroll {
+  animation: home-video-scroll-bounce 2.4s ease-in-out infinite;
+}
+
+.home-video-hero__brand {
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-video-hero__scroll {
+    animation: none;
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: 200% 0;
@@ -595,6 +621,68 @@ a {
   transform: translateY(-1px);
 }
 
+/* Hide native video chrome on homepage ambient / hero loops */
+.home-bg-video::-webkit-media-controls,
+.home-bg-video::-webkit-media-controls-enclosure,
+.home-bg-video::-webkit-media-controls-panel,
+.home-bg-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Transparent header over full-screen home video */
+.header-icon-btn--on-video {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow: none;
+  backdrop-filter: blur(6px);
+}
+
+.header-icon-btn--on-video:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.65);
+  color: #fff;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Space between full-screen video hero and image banners */
+/* Trust cards sit between video and banners — keep banner gap tight */
+.home-after-video {
+  padding-top: 0;
+}
+
+/* 3D explorer iframe — tall enough for filters + stage + price CTA */
+.remedies-3d-frame {
+  width: 100%;
+  height: 720px;
+  min-height: 720px;
+  border: 0;
+}
+
+@media (max-width: 900px) {
+  .remedies-3d-frame {
+    height: 640px;
+    min-height: 640px;
+  }
+}
+
+@media (max-width: 640px) {
+  .remedies-3d-frame {
+    height: 580px;
+    min-height: 580px;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-after-video {
+    padding-top: 0;
+  }
+}
+
 .header-icon-btn--cart {
   background: var(--forest);
   border-color: var(--forest);
@@ -667,7 +755,7 @@ a {
   inset: 0;
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   opacity: 0;
   pointer-events: none;
@@ -675,7 +763,7 @@ a {
 }
 
 .about-stage__img--base {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   opacity: 1;
 }

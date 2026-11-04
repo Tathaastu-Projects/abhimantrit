@@ -281,6 +281,8 @@ export type StoreMeta = {
   seo?: Record<string, PageSeo>;
   /** Top utility header bar phrases (Admin → Home Page → Top header bar) */
   headerBar?: string[];
+  /** Storefront video playback speed (Admin → Home Page → Video speed) */
+  videoSpeed?: { preset?: string; rate?: number };
 };
 
 export type CollectionDetail = {
@@ -358,9 +360,21 @@ export type ScreenToSpaceSection = {
   items?: ScreenToSpaceItem[];
 };
 
+export type HomeHeroVideo = {
+  enabled?: boolean;
+  videoUrl?: string;
+  posterUrl?: string;
+  headline?: string;
+  subheadline?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
 export type HomeContent = {
   banners: StoreBanner[];
   homeSliderManaged?: boolean;
+  /** Full-screen looping background video (Admin → Home Page → Hero video) */
+  homeHeroVideo?: HomeHeroVideo;
   categoryTiles?: CategoryTile[];
   featuredFinds?: {
     eyebrow?: string;
@@ -402,6 +416,15 @@ export type HomeContent = {
   /** One sample product per intention for Shop By Intention */
   intentionProducts?: Record<string, StoreProduct>;
   rashiProducts?: StoreProduct[];
+  /** Per-sign logos for Rashi Bracelets Collection (Admin → Home Page → Rashi bracelet logos) */
+  rashiLogos?: {
+    id: string;
+    name: string;
+    english: string;
+    hindi?: string;
+    logo?: string;
+    effectiveLogo?: string;
+  }[];
   /** Dark green auto-scroll strip under hero (Admin → Home Page → Hero ticker) */
   heroTicker?: string[];
   latestProducts?: StoreProduct[];

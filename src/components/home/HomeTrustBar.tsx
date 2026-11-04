@@ -25,14 +25,17 @@ const TRUST_ITEMS = [
   },
 ] as const;
 
-/** Figma value strip — brand-green icon tiles + uppercase labels */
+/** Trust cards — shown directly under the video hero, before image banners */
 export function HomeTrustBar() {
   return (
-    <section className="bg-[#fff8f9]">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-5 px-6 pt-5 pb-2 sm:grid-cols-2 md:grid-cols-4 md:gap-6 md:px-10 md:pt-6 md:pb-3 lg:px-14">
+    <section className="bg-[#f7f1e8]" aria-label="Why Abhimantrit">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-3 px-4 py-5 sm:grid-cols-2 sm:gap-4 sm:px-6 md:grid-cols-4 md:px-8 md:py-5 lg:px-10">
         {TRUST_ITEMS.map((item) => (
-          <div key={item.id} className="flex items-start gap-3.5">
-            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-forest text-white shadow-sm">
+          <article
+            key={item.id}
+            className="flex items-start gap-3.5 rounded-2xl border border-black/[0.04] bg-white px-4 py-4 shadow-[0_8px_24px_rgba(20,30,25,0.05)]"
+          >
+            <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-forest text-white shadow-sm">
               <TrustIcon name={item.icon} />
             </span>
             <div className="min-w-0 pt-0.5">
@@ -41,7 +44,7 @@ export function HomeTrustBar() {
               </p>
               <p className="mt-1 text-[12px] leading-snug text-ink-soft">{item.description}</p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>

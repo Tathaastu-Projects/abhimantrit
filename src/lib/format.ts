@@ -9,6 +9,40 @@ export function formatINR(amount: number | undefined | null): string {
   }).format(value);
 }
 
+function slugifyPath(value: string | undefined | null): string {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+/**
+ * Public product URL segment.
+ * Prefer SKU when present; otherwise slug; otherwise product name (title).
+ */
+export function productUrlKey(
+  product: { slug?: string; sku?: string; title?: string } | null | undefined,
+): string {
+  const sku = slugifyPath(product?.sku);
+  if (sku) return sku;
+
+  const slug = String(product?.slug || "")
+    .trim()
+    .replace(/^\/+/, "");
+  if (slug) return slug;
+
+  return slugifyPath(product?.title);
+}
+
+export function productHref(
+  product: { slug?: string; sku?: string; title?: string } | null | undefined,
+): string {
+  const key = productUrlKey(product);
+  return key ? `/product/${key}` : "/shop";
+}
+
 export function discountPercent(mrp: number, salePrice: number): number {
   if (!mrp || mrp <= salePrice) return 0;
   return Math.round(((mrp - salePrice) / mrp) * 100);

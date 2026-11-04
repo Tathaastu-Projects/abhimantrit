@@ -1,6 +1,6 @@
 /**
- * Public business identity for storefront + payment gateway reviews (Razorpay, etc.).
- * Keep brand/legal names aligned with your Razorpay KYC application.
+ * Public business identity for storefront + payment gateway reviews (Easebuzz, etc.).
+ * Keep brand/legal names aligned with your Easebuzz KYC application.
  */
 export const BUSINESS = {
   /** Short brand name */

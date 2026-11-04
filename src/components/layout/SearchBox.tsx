@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { searchSuggest } from "@/lib/api";
-import { primaryImage, formatINR } from "@/lib/format";
+import { primaryImage, formatINR, productHref } from "@/lib/format";
 import type { StoreProduct } from "@/types/product";
 import { cn } from "@/lib/cn";
 
@@ -12,6 +12,8 @@ type Props = {
   placeholder?: string;
   className?: string;
   inputClassName?: string;
+  /** Extra classes for the collapsed icon-only button */
+  iconButtonClassName?: string;
   /** Show only the search icon until clicked/expanded */
   iconOnly?: boolean;
 };
@@ -20,6 +22,7 @@ export function SearchBox({
   placeholder = "Search products…",
   className,
   inputClassName,
+  iconButtonClassName,
   iconOnly = false,
 }: Props) {
   const router = useRouter();
@@ -65,7 +68,7 @@ export function SearchBox({
       <div ref={boxRef} className={cn("relative", className)}>
         <button
           type="button"
-          className="header-icon-btn"
+          className={cn("header-icon-btn", iconButtonClassName)}
           aria-label="Open search"
           onClick={() => setExpanded(true)}
         >
@@ -127,7 +130,7 @@ export function SearchBox({
             return (
               <Link
                 key={p._id}
-                href={`/product/${p.slug}`}
+                href={productHref(p)}
                 className="flex items-center gap-3 px-3 py-2.5 hover:bg-stone-100/70"
                 onClick={() => setOpen(false)}
               >

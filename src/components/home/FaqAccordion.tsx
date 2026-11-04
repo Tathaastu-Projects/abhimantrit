@@ -29,7 +29,7 @@ const DEFAULT_FAQS = [
   },
 ];
 
-/** Figma FAQ — numbered pink-border cards, +/- toggle */
+/** FAQ accordion — numbered gold badges, forest text, + / × toggle */
 export function FaqAccordion({
   faqs,
 }: {
@@ -39,37 +39,66 @@ export function FaqAccordion({
     faqs && faqs.length
       ? faqs.map((f) => ({ q: f.question, a: f.answer }))
       : DEFAULT_FAQS;
+
   return (
-    <section id="faq" className="w-full bg-white py-8 md:py-10">
-      <div className="mx-auto w-full max-w-3xl px-6 sm:px-12 md:px-16 lg:px-20">
+    <section id="faq" className="w-full bg-[#f7f3ec] py-10 md:py-12">
+      <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 md:px-10">
         <h2 className="text-center font-display text-3xl font-medium tracking-wide text-ink md:text-4xl">
           FAQs
         </h2>
 
-        <div className="mt-5 space-y-3 md:mt-6">
-          {items.map((item, idx) => (
-            <details
-              key={item.q}
-              name="home-faq"
-              className="group bg-[#f2f2f2] px-4 py-3.5 sm:px-5 md:px-6 md:py-4"
-            >
-              <summary className="flex cursor-pointer list-none items-center gap-4 text-left marker:content-none [&::-webkit-details-marker]:hidden">
-                <span className="min-w-0 flex-1 text-sm leading-snug text-[#3a3a3a] md:text-[15px]">
-                  Q{idx + 1}: {item.q}
-                </span>
-                <span className="shrink-0 text-xl leading-none text-[#333]" aria-hidden>
-                  <span className="group-open:hidden">+</span>
-                  <span className="hidden group-open:inline">−</span>
-                </span>
-              </summary>
+        <div className="mt-6 space-y-3.5 md:mt-8 md:space-y-4">
+          {items.map((item, idx) => {
+            const num = String(idx + 1).padStart(2, "0");
+            return (
+              <details
+                key={item.q}
+                name="home-faq"
+                className="group rounded-2xl border border-transparent bg-white px-4 py-3.5 shadow-[0_6px_18px_rgba(28,28,28,0.06)] open:border-[#c9a227]/70] open:shadow-[0_10px_28px_rgba(15,61,46,0.1)] sm:px-5 md:rounded-[1.25rem] md:px-6 md:py-4"
+              >
+                <summary className="flex cursor-pointer list-none items-center gap-3 text-left marker:content-none sm:gap-4 [&::-webkit-details-marker]:hidden">
+                  <span
+                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#d4b56a] text-[12px] font-semibold tabular-nums text-[#0f3d2e] sm:h-9 sm:w-9 sm:text-[13px]"
+                    aria-hidden
+                  >
+                    {num}
+                  </span>
+                  <span className="min-w-0 flex-1 text-[14px] font-semibold leading-snug text-[#0f3d2e] sm:text-[15px] md:text-base">
+                    {item.q}
+                  </span>
+                  <span
+                    className="relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e8f0ec] text-[#0f3d2e] transition group-open:bg-[#0f3d2e] group-open:text-white sm:h-9 sm:w-9"
+                    aria-hidden
+                  >
+                    <PlusIcon className="h-3.5 w-3.5 group-open:hidden sm:h-4 sm:w-4" />
+                    <CloseIcon className="hidden h-3.5 w-3.5 group-open:block sm:h-4 sm:w-4" />
+                  </span>
+                </summary>
 
-              <p className="mt-3 pr-8 text-sm leading-relaxed text-[#5c5752] md:text-[0.95rem] md:leading-[1.7]">
-                {item.a}
-              </p>
-            </details>
-          ))}
+                <p className="mt-3 pl-11 pr-10 text-sm leading-relaxed text-[#3a4540] sm:pl-[3.25rem] md:mt-3.5 md:text-[0.95rem] md:leading-[1.7]">
+                  {item.a}
+                </p>
+              </details>
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+function PlusIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+      <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+    </svg>
   );
 }

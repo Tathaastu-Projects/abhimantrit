@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import type { StoreProduct } from "@/types/product";
-import { discountPercent, formatINR, hoverLines, primaryImage, resolveImageUrl } from "@/lib/format";
+import { discountPercent, formatINR, hoverLines, primaryImage, productHref, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 import { CardScroller } from "@/components/home/CardScroller";
 
@@ -96,8 +96,23 @@ function pickOnePerSign(products: StoreProduct[]) {
   return chosen;
 }
 
-export function RashiBracelets({ products }: { products: StoreProduct[] }) {
+export type RashiLogoItem = {
+  id: string;
+  logo?: string;
+  effectiveLogo?: string;
+};
+
+export function RashiBracelets({
+  products,
+  logos,
+}: {
+  products: StoreProduct[];
+  logos?: RashiLogoItem[];
+}) {
   const bySign = pickOnePerSign(products || []);
+  const logoById = new Map(
+    (logos || []).map((item) => [item.id, item.logo || item.effectiveLogo || ""]),
+  );
 
   // Always show the 12-sign strip (even if some signs have no product yet)
   return (
@@ -110,7 +125,12 @@ export function RashiBracelets({ products }: { products: StoreProduct[] }) {
 
       <CardScroller className="flex gap-4 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-5 md:px-8 xl:px-10 [&::-webkit-scrollbar]:hidden">
         {SIGNS.map((sign) => (
-          <RashiCard key={sign.slug} sign={sign} product={bySign.get(sign.slug) || null} />
+          <RashiCard
+            key={sign.slug}
+            sign={sign}
+            product={bySign.get(sign.slug) || null}
+            logoSrc={logoById.get(sign.slug) || ""}
+          />
         ))}
       </CardScroller>
     </section>
@@ -120,23 +140,34 @@ export function RashiBracelets({ products }: { products: StoreProduct[] }) {
 function RashiCard({
   sign,
   product,
+  logoSrc,
 }: {
   sign: (typeof SIGNS)[number];
   product: StoreProduct | null;
+  logoSrc?: string;
 }) {
   const addItem = useCartStore((s) => s.addItem);
   const inCart = useCartStore((s) =>
     product ? s.items.some((i) => i.productId === product._id) : false,
   );
   const shopHref = `/shop?zodiac=${encodeURIComponent(sign.english)}`;
-  const zodiacIcon = resolveImageUrl(`/uploads/zodiac/${sign.slug}-cut.webp`);
+  const zodiacIcon = resolveImageUrl(
+    logoSrc || `/uploads/zodiac/${sign.slug}-cut.webp`,
+  );
 
   if (!product) {
     return (
       <article className="flex w-[calc(50%-0.5rem)] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.9rem)] lg:w-[calc(20%-1rem)]">
         <div className="flex items-center gap-2.5 px-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
+          <img
+            src={zodiacIcon}
+            alt=""
+            className="h-9 w-9 object-contain"
+            onError={(event) => {
+              event.currentTarget.style.visibility = "hidden";
+            }}
+          />
           <div className="min-w-0">
             <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">
               {sign.name} ({sign.english})
@@ -151,6 +182,9 @@ function RashiCard({
             src={zodiacIcon}
             alt={`${sign.name} (${sign.english})`}
             className="block aspect-square w-full object-contain object-center p-8"
+            onError={(event) => {
+              event.currentTarget.style.visibility = "hidden";
+            }}
           />
         </Link>
 
@@ -204,7 +238,14 @@ function RashiCard({
     <article className="flex w-[calc(50%-0.5rem)] shrink-0 flex-col rounded-2xl border border-black/[0.06] bg-white p-3 shadow-[0_8px_24px_rgba(28,28,28,0.05)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.9rem)] lg:w-[calc(20%-1rem)]">
       <div className="flex items-center gap-2.5 px-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={zodiacIcon} alt="" className="h-9 w-9 object-contain" />
+        <img
+          src={zodiacIcon}
+          alt=""
+          className="h-9 w-9 object-contain"
+          onError={(event) => {
+            event.currentTarget.style.visibility = "hidden";
+          }}
+        />
         <div className="min-w-0">
           <p className="truncate font-display text-[0.95rem] font-semibold text-[#1c1c1c]">
             {sign.name} ({sign.english})
@@ -214,7 +255,7 @@ function RashiCard({
       </div>
 
       <div className="card-hover relative mt-3 overflow-hidden rounded-xl bg-[#f6f3ee]">
-        <Link href={`/product/${product.slug}`} className="block">
+        <Link href={productHref(product)} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={resolveImageUrl(img.url)}
@@ -248,7 +289,7 @@ function RashiCard({
       ) : null}
 
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="mt-1 line-clamp-2 px-1 text-[13px] font-medium leading-snug text-[#1c1c1c]"
       >
         {product.title}

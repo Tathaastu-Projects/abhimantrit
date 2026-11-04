@@ -1,0 +1,66 @@
+{
+  "name": "Money Magnet Pyramid",
+  "title": "Money Magnet Pyramid",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+  "components": {
+    "resin": {
+      "name": "Clear shell",
+      "description": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+      "placement": "Money Magnet Pyramid",
+      "count": 1,
+      "size": "layer"
+    },
+    "scarlet": {
+      "name": "Red granules",
+      "description": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+      "placement": "Money Magnet Pyramid",
+      "count": 147,
+      "size": "layer"
+    },
+    "chips": {
+      "name": "Dark chips",
+      "description": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+      "placement": "Money Magnet Pyramid",
+      "count": 173,
+      "size": "layer"
+    },
+    "ivory": {
+      "name": "Spiral discs",
+      "description": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+      "placement": "Money Magnet Pyramid",
+      "count": 24,
+      "size": "layer"
+    },
+    "gold": {
+      "name": "Gold-tone spacer",
+      "description": "Fine ridges around a narrow disc.",
+      "placement": "Money Magnet Pyramid",
+      "count": 10,
+      "size": "layer"
+    }
+  },
+  "category": "Vastu",
+  "buyLabel": "Order Energized Pyramid",
+  "price": "₹2,199",
+  "originalPrice": "₹3,499",
+  "offer": "37% off",
+  "details": {
+    "components": [],
+    "appearance": "Two views show a clear square pyramid enclosing a black chip base, white discs with spirals, a red textured band and a stepped gold-colored cone near the apex.",
+    "sourcePhoto": "Money Magnet Pyramid.png",
+    "charm": {
+      "status": "not_applicable"
+    },
+    "modelLayersBaseToApex": [
+      "dark irregular metallic-looking chips",
+      "white spiral discs around perimeter",
+      "red seed-like granules",
+      "stepped golden cone"
+    ]
+  },
+  "id": "money-magnet-pyramid",
+  "modelFile": "money-magnet-pyramid.glb",
+  "kind": "pyramid",
+  "placeholder": false
+}

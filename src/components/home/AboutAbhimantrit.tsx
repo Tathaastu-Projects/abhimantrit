@@ -88,7 +88,7 @@ const FEATURES: AboutFeature[] = [
   },
 ];
 
-/** About Abhimantrit — text and list on the left, image/video on the right. Hover a point to swap the image. */
+/** About Abhimantrit — heading on top, compact list + smaller media below. Hover a point to swap media. */
 export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
   const source = about;
 
@@ -108,22 +108,29 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
 
   const baseVideo = mediaVideo(source);
   const baseImg = mediaImage(source);
+  const hasMedia = Boolean(baseVideo || baseImg || features.some((f) => mediaVideo(f) || mediaImage(f)));
 
   return (
     <section id="about" className="about-swap w-full overflow-hidden bg-[#f7f1e8]">
-      <div className="mx-auto grid items-stretch md:h-[min(70vh,480px)] md:grid-cols-2">
-        <div className="relative z-10 order-2 flex flex-col justify-center px-5 py-5 md:order-1 md:overflow-y-auto md:px-6 md:py-5 xl:px-8">
-          <div onMouseEnter={() => setActiveId("")}>
-            <h2 className="font-display text-[1.35rem] font-semibold tracking-[-0.02em] text-forest md:text-[1.55rem] lg:text-[1.7rem] lg:leading-[1.2]">
-              How Abhimantrit Elevates Your Life
-            </h2>
-            <p className="mt-2 max-w-xl text-[12px] font-medium leading-relaxed text-[#5c5752] md:text-[13px]">
-              {ELEVATE_POINTS.join(" · ")}
-            </p>
-          </div>
+      <div className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10 lg:px-10">
+        {/* Heading + text on top */}
+        <div className="max-w-3xl" onMouseEnter={() => setActiveId("")}>
+          <h2 className="font-display text-[1.55rem] font-semibold tracking-[-0.02em] text-forest md:text-[1.85rem] lg:text-[2.05rem] lg:leading-[1.2]">
+            How Abhimantrit Elevates Your Life
+          </h2>
+          <p className="mt-2.5 max-w-2xl text-[12px] font-medium leading-relaxed text-[#5c5752] md:text-[13.5px]">
+            {ELEVATE_POINTS.join(" · ")}
+          </p>
+        </div>
 
+        {/* Features + compact media */}
+        <div
+          className={`mt-6 grid items-start gap-6 md:mt-8 md:gap-8 ${
+            hasMedia ? "md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]" : ""
+          }`}
+        >
           <ul
-            className="mt-3 divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]"
+            className="divide-y divide-[#e4dcd0] border-y border-[#e4dcd0]"
             onMouseLeave={() => setActiveId("")}
           >
             {features.map((item) => {
@@ -132,7 +139,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                 <li
                   key={item.id}
                   data-about={item.id}
-                  className={`about-point flex cursor-pointer items-center gap-3 py-2 transition-all duration-300 md:gap-3.5 md:py-2.5 ${
+                  className={`about-point flex cursor-pointer items-center gap-3 py-2.5 transition-all duration-300 md:gap-3.5 md:py-3 ${
                     selected ? "is-active" : ""
                   }`}
                   tabIndex={0}
@@ -150,7 +157,7 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`font-display text-[0.85rem] md:text-[0.9rem] ${
+                      className={`font-display text-[0.85rem] md:text-[0.95rem] ${
                         selected ? "font-semibold text-forest" : "font-medium text-[#5c5752]"
                       }`}
                     >
@@ -171,55 +178,51 @@ export function AboutAbhimantrit({ about }: { about?: AboutSection | null }) {
               );
             })}
           </ul>
-        </div>
 
-        <div className="about-stage relative z-0 order-1 min-h-[180px] overflow-hidden bg-[#f7f1e8] md:order-2 md:min-h-0 md:h-full">
-          {/* Base Media (Video or Image) from MongoDB */}
-          {baseVideo ? (
-            <StageMedia
-              video={baseVideo}
-              poster={posterUrl(source)}
-              base
-              playing={!activeId}
-            />
-          ) : baseImg ? (
-            <StageImage
-              src={baseImg}
-              alt="About Abhimantrit"
-              base
-            />
-          ) : null}
-
-          {/* Feature Hover Media (Image or Video) from MongoDB */}
-          {features.map((item) => {
-            const video = mediaVideo(item);
-            const image = mediaImage(item);
-            const isHovered = item.id === activeId;
-            if (video) {
-              return (
+          {hasMedia ? (
+            <div className="about-stage relative mx-auto w-full max-w-[380px] overflow-hidden rounded-2xl bg-[#efe6d8] aspect-[4/3] md:mx-0 md:max-w-none md:aspect-[5/4] md:max-h-[280px]">
+              {baseVideo ? (
                 <StageMedia
-                  key={item.id}
-                  aboutId={item.id}
-                  video={video}
-                  poster={image || posterUrl(item)}
-                  active={isHovered}
-                  playing={isHovered}
+                  video={baseVideo}
+                  poster={posterUrl(source)}
+                  base
+                  playing={!activeId}
                 />
-              );
-            }
-            if (image) {
-              return (
-                <StageImage
-                  key={item.id}
-                  aboutId={item.id}
-                  src={image}
-                  alt={item.title}
-                  active={isHovered}
-                />
-              );
-            }
-            return null;
-          })}
+              ) : baseImg ? (
+                <StageImage src={baseImg} alt="About Abhimantrit" base />
+              ) : null}
+
+              {features.map((item) => {
+                const video = mediaVideo(item);
+                const image = mediaImage(item);
+                const isHovered = item.id === activeId;
+                if (video) {
+                  return (
+                    <StageMedia
+                      key={item.id}
+                      aboutId={item.id}
+                      video={video}
+                      poster={image || posterUrl(item)}
+                      active={isHovered}
+                      playing={isHovered}
+                    />
+                  );
+                }
+                if (image) {
+                  return (
+                    <StageImage
+                      key={item.id}
+                      aboutId={item.id}
+                      src={image}
+                      alt={item.title}
+                      active={isHovered}
+                    />
+                  );
+                }
+                return null;
+              })}
+            </div>
+          ) : null}
         </div>
       </div>
     </section>

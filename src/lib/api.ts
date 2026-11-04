@@ -143,6 +143,7 @@ export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeCo
       ...data,
       banners: data.banners || [],
       homeSliderManaged: Boolean(data.homeSliderManaged),
+      homeHeroVideo: data.homeHeroVideo,
       categoryTiles: data.categoryTiles || [],
       aboutSection: data.aboutSection,
       featuredFinds: data.featuredFinds,
@@ -150,6 +151,7 @@ export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeCo
       latestBlogs: data.latestBlogs || [],
       intentionProducts: data.intentionProducts || {},
       rashiProducts: data.rashiProducts || [],
+      rashiLogos: data.rashiLogos || [],
       heroTicker: data.heroTicker || [],
       latestProducts: data.latestProducts || data.carousels?.newArrivals || [],
       carousels: {
@@ -247,11 +249,20 @@ export async function getCollection(
 
 export async function getProductBySlug(slug: string): Promise<StoreProduct | null> {
   try {
-    const res = await apiFetch<ApiResult<StoreProduct>>(`/api/store/products/${slug}`);
+    // Always fresh — slug/SKU can change when admin updates the product
+    const res = await apiFetch<ApiResult<StoreProduct>>(
+      `/api/store/products/${encodeURIComponent(slug)}`,
+      undefined,
+      { fresh: true },
+    );
     return res.data;
   } catch {
     try {
-      const legacy = await apiFetch<ApiResult<StoreProduct>>(`/api/products/public/${slug}`);
+      const legacy = await apiFetch<ApiResult<StoreProduct>>(
+        `/api/products/public/${encodeURIComponent(slug)}`,
+        undefined,
+        { fresh: true },
+      );
       return legacy.data;
     } catch {
       return null;
@@ -382,40 +393,37 @@ export async function validateCoupon(code: string, subtotal: number) {
   });
 }
 
-export async function createRazorpayOrder(amount: number, receipt?: string) {
+export async function initiateEasebuzzPayment(
+  storeOrderId: string,
+  paymentToken: string,
+  phone?: string,
+) {
   return apiFetch<
     ApiResult<{
-      id: string;
-      amount: number;
-      currency: string;
-      receipt: string;
-      keyId: string;
-      mode: "mock" | "live";
+      paymentUrl: string;
+      accessKey: string;
+      txnid: string;
+      amount: string;
+      env: "test" | "prod";
+      orderNumber: string;
+      storeOrderId: string;
     }>
-  >("/api/store/payments/razorpay/create-order", {
+  >("/api/store/payments/easebuzz/initiate", {
     method: "POST",
-    body: JSON.stringify({ amount, receipt }),
+    body: JSON.stringify({ storeOrderId, paymentToken, phone }),
   });
 }
 
-export async function verifyRazorpayPayment(payload: {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  storeOrderId?: string;
-}) {
-  return apiFetch<ApiResult<unknown>>("/api/store/payments/razorpay/verify", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
-
-export async function cancelUnpaidOrder(storeOrderId: string) {
+export async function cancelUnpaidOrder(
+  storeOrderId: string,
+  paymentToken: string,
+  phone?: string,
+) {
   return apiFetch<ApiResult<{ orderNumber: string; status: string }>>(
     "/api/store/payments/cancel-unpaid",
     {
       method: "POST",
-      body: JSON.stringify({ storeOrderId }),
+      body: JSON.stringify({ storeOrderId, paymentToken, phone }),
     },
   );
 }
@@ -426,6 +434,8 @@ export type StoreOrderResult = {
   status: string;
   paymentMethod: string;
   paymentStatus: string;
+  /** Short-lived HMAC token required for initiate / cancel online payment */
+  paymentToken?: string;
   pricing: {
     subtotal: number;
     shipping?: number;

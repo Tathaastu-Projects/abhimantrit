@@ -1,0 +1,165 @@
+{
+  "name": "Leo",
+  "title": "Leo",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+  "components": {
+    "black": {
+      "name": "Leo barrel",
+      "description": "Glossy black body with gold face artwork.",
+      "placement": "Positions in assembly order: 1.",
+      "count": 1,
+      "size": "≈12 mm"
+    },
+    "yellow": {
+      "name": "Citrine-like stone",
+      "description": "Vary clear honey and pale straw tones with sparse internal fractures.",
+      "placement": "Positions in assembly order: 2, 3, 23, 24.",
+      "count": 4,
+      "size": "≈8 mm"
+    },
+    "gold": {
+      "name": "Ridged gold-tone spacer",
+      "description": "Fine ridges around a narrow disc.",
+      "placement": "Positions in assembly order: 4, 22.",
+      "count": 2,
+      "size": "≈7 mm"
+    },
+    "eye": {
+      "name": "Tiger’s eye-like stone",
+      "description": "Curve narrow amber highlight bands through dark brown.",
+      "placement": "Positions in assembly order: 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21.",
+      "count": 17,
+      "size": "≈8 mm"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹1,899",
+  "originalPrice": "₹2,999",
+  "offer": "37% off",
+  "details": {
+    "components": [
+      {
+        "material": "black",
+        "role": "charm",
+        "label": "Leo barrel",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": {
+          "diameter": 8,
+          "axialLength": 12
+        },
+        "indices": [
+          0
+        ],
+        "labelAnchorIndex": 0,
+        "look": "Glossy black body with gold face artwork.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "black",
+          "shape": "barrel",
+          "badgeCount": 1
+        }
+      },
+      {
+        "material": "yellow",
+        "role": "bead",
+        "label": "Citrine-like stone",
+        "count": 4,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          1,
+          2,
+          22,
+          23
+        ],
+        "labelAnchorIndex": 1,
+        "look": "Vary clear honey and pale straw tones with sparse internal fractures.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "yellow",
+          "shape": "sphere",
+          "badgeCount": 4
+        }
+      },
+      {
+        "material": "gold",
+        "role": "spacer",
+        "label": "Gold-tone spacer",
+        "count": 2,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8,
+          "axialLength": 1.6
+        },
+        "indices": [
+          3,
+          21
+        ],
+        "labelAnchorIndex": 3,
+        "look": "Fine ridges around a narrow disc.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "gold",
+          "shape": "ridged_disc",
+          "badgeCount": 2
+        }
+      },
+      {
+        "material": "eye",
+        "role": "bead",
+        "label": "Tiger’s eye-like stone",
+        "count": 17,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "labelAnchorIndex": 4,
+        "look": "Curve narrow amber highlight bands through dark brown.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "eye",
+          "shape": "sphere",
+          "badgeCount": 17
+        }
+      }
+    ],
+    "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+    "sourcePhoto": "Leo-1.png",
+    "charm": {
+      "shape": "barrel",
+      "position": "front center",
+      "body": "black",
+      "artwork": "gold lion head",
+      "inscription": "Leo",
+      "status": "visible"
+    }
+  },
+  "id": "leo",
+  "modelFile": "leo.glb",
+  "kind": "bracelet",
+  "placeholder": false
+}

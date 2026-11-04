@@ -1,0 +1,52 @@
+{
+  "name": "6 Mukhi Indonesia",
+  "title": "6 Mukhi Indonesia",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Honey-brown seed with knobby ridges radiating around a large dark opening.",
+  "components": {
+    "seed": {
+      "name": "6 Mukhi Indonesia",
+      "description": "Displace the surface into irregular branching folds with darker recessed grooves.",
+      "placement": "6 Mukhi Indonesia",
+      "count": 1,
+      "size": "seed"
+    }
+  },
+  "category": "Rudraksha",
+  "buyLabel": "Order Energized Rudraksha",
+  "price": "₹1,049",
+  "originalPrice": "₹1,599",
+  "offer": "34% off",
+  "details": {
+    "components": [
+      {
+        "material": "seed",
+        "role": "seed",
+        "label": "6 Mukhi Indonesia",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": null,
+        "indices": [],
+        "labelAnchorIndex": null,
+        "look": "Honey-brown seed with knobby ridges radiating around a large dark opening.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "seed",
+          "shape": "lobed_seed",
+          "badgeCount": 1
+        }
+      }
+    ],
+    "appearance": "Honey-brown seed with knobby ridges radiating around a large dark opening.",
+    "mukhiFromFilename": 6,
+    "originFromFilename": "Indonesia",
+    "sourcePhoto": "6 Mukhi- Indonesia.png",
+    "charm": {
+      "status": "not_applicable"
+    }
+  },
+  "id": "6-mukhi-indonesia",
+  "modelFile": "6-mukhi-indonesia.glb",
+  "kind": "single_seed",
+  "placeholder": false
+}

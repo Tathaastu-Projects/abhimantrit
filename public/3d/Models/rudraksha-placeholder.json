@@ -1,0 +1,32 @@
+{
+  "name": "Rudraksha",
+  "title": "Rudraksha",
+  "description": "Illustrative layout · Photograph unavailable. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "",
+  "components": {
+    "seed": {
+      "name": "Rudraksha seed",
+      "description": "Displace the surface into irregular branching folds with darker recessed grooves.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 22,
+      "size": "illustrative"
+    }
+  },
+  "category": "Rudraksha",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹999",
+  "originalPrice": "₹1,499",
+  "offer": "33% off",
+  "details": {
+    "components": [],
+    "appearance": null,
+    "sourcePhoto": null,
+    "charm": {
+      "status": "unknown"
+    }
+  },
+  "id": "rudraksha-placeholder",
+  "modelFile": "rudraksha-placeholder.glb",
+  "kind": "bracelet",
+  "placeholder": true
+}

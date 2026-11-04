@@ -7,34 +7,15 @@ import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
 import {
   cancelUnpaidOrder,
-  createRazorpayOrder,
   createStoreOrder,
+  initiateEasebuzzPayment,
   validateCoupon,
-  verifyRazorpayPayment,
 } from "@/lib/api";
 import { formatINR } from "@/lib/format";
 import type { CouponValidation } from "@/types/product";
 
 const fieldClass =
   "w-full rounded-[0.9rem] border border-[var(--border)] bg-white/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-temple/30";
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
-
-async function loadRazorpayScript() {
-  if (typeof window === "undefined") return false;
-  if (window.Razorpay) return true;
-  return new Promise<boolean>((resolve) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -88,69 +69,30 @@ export default function CheckoutPage() {
     }
   }
 
-  async function finishOnlinePayment(storeOrderId: string, amount: number, orderNumber: string) {
-    const rz = await createRazorpayOrder(amount, orderNumber);
-    const pay = rz.data;
-
-    if (pay.mode === "mock") {
-      await verifyRazorpayPayment({
-        razorpay_order_id: pay.id,
-        razorpay_payment_id: `pay_dev_${Date.now()}`,
-        razorpay_signature: "dev_mock_signature",
-        storeOrderId,
-      });
-      return;
-    }
-
-    const ok = await loadRazorpayScript();
-    if (!ok || !window.Razorpay) {
-      throw new Error("Could not load Razorpay checkout");
-    }
-
-    await new Promise<void>((resolve, reject) => {
-      const rzp = new window.Razorpay!({
-        key: pay.keyId,
-        amount: pay.amount,
-        currency: pay.currency || "INR",
-        name: "Tathaastu",
-        description: `Order ${orderNumber}`,
-        order_id: pay.id,
-        handler: async (response: {
-          razorpay_order_id: string;
-          razorpay_payment_id: string;
-          razorpay_signature: string;
-        }) => {
-          try {
-            await verifyRazorpayPayment({
-              ...response,
-              storeOrderId,
-            });
-            resolve();
-          } catch (e) {
-            reject(e);
-          }
-        },
-        modal: {
-          ondismiss: () => reject(new Error("Payment cancelled")),
-        },
-      });
-      rzp.open();
-    });
-  }
-
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
     const fd = new FormData(e.currentTarget);
     let createdOrderId: string | null = null;
+    let paymentToken = "";
+    let phoneDigits = "";
     try {
+      phoneDigits = String(fd.get("phone") || customer?.phone || "").replace(/\D/g, "").slice(-10);
+      if (phoneDigits.length !== 10) {
+        throw new Error("Enter a valid 10-digit mobile number");
+      }
+      const email = String(fd.get("email") || customer?.email || "").trim().toLowerCase();
+      if (!email || !email.includes("@")) {
+        throw new Error("Enter a valid email address");
+      }
+
       const res = await createStoreOrder(
         {
           customer: {
             name: String(fd.get("name") || customer?.name || ""),
-            email: String(fd.get("email") || customer?.email || ""),
-            phone: String(fd.get("phone") || customer?.phone || ""),
+            email,
+            phone: phoneDigits,
           },
           shippingAddress: {
             line1: String(fd.get("line1") || ""),
@@ -174,16 +116,24 @@ export default function CheckoutPage() {
 
       const order = res.data;
       createdOrderId = order.id;
+      paymentToken = order.paymentToken || "";
+
       if (paymentMethod === "online") {
-        await finishOnlinePayment(order.id, order.pricing?.total || total, order.orderNumber);
+        if (!paymentToken) {
+          throw new Error("Payment token missing. Please try checkout again.");
+        }
+        const pay = await initiateEasebuzzPayment(order.id, paymentToken, phoneDigits);
+        clear();
+        window.location.href = pay.data.paymentUrl;
+        return;
       }
 
       clear();
       router.push(`/order/success?orderNumber=${encodeURIComponent(order.orderNumber || "")}`);
     } catch (err) {
-      if (paymentMethod === "online" && createdOrderId) {
+      if (paymentMethod === "online" && createdOrderId && paymentToken) {
         try {
-          await cancelUnpaidOrder(createdOrderId);
+          await cancelUnpaidOrder(createdOrderId, paymentToken, phoneDigits);
         } catch {
           /* best-effort stock restore */
         }
@@ -198,7 +148,7 @@ export default function CheckoutPage() {
     <div className="container-pad py-10 md:py-14">
       <h1 className="font-display text-4xl">Checkout</h1>
       <p className="mt-2 text-ink-soft">
-        Pay with Cash on Delivery or online (Razorpay). Coupons: try <code>WELCOME10</code> or{" "}
+        Pay with Cash on Delivery or online (Easebuzz). Coupons: try <code>WELCOME10</code> or{" "}
         <code>FLAT200</code>.
       </p>
 
@@ -265,7 +215,7 @@ export default function CheckoutPage() {
                   onChange={() => setPaymentMethod("online")}
                   className="accent-temple"
                 />
-                Pay online (Razorpay / UPI / Cards)
+                Pay online (Easebuzz — UPI / Cards / Netbanking)
               </label>
             </div>
           </section>

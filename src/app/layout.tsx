@@ -3,6 +3,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { CartSync } from "@/components/cart/CartSync";
+import { ApplyVideoSpeed } from "@/components/layout/ApplyVideoSpeed";
 import { getStoreMenu, getStoreMeta } from "@/lib/api";
 import { resolveBannerUrl } from "@/lib/format";
 import { buildPageMetadata } from "@/lib/seo";
@@ -41,6 +42,7 @@ export default async function RootLayout({
           headerBar={meta?.headerBar}
         />
         <CartSync />
+        <ApplyVideoSpeed rate={Number(meta?.videoSpeed?.rate) || 1} />
         <main className="flex-1">{children}</main>
         <SiteFooter support={meta?.support} />
       </body>

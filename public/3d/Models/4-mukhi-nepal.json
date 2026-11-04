@@ -1,0 +1,52 @@
+{
+  "name": "4 Mukhi Nepal",
+  "title": "4 Mukhi Nepal",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Compact brown seed with deep branching fissures and ridges converging on a small central opening.",
+  "components": {
+    "seed": {
+      "name": "4 Mukhi Nepal",
+      "description": "Displace the surface into irregular branching folds with darker recessed grooves.",
+      "placement": "4 Mukhi Nepal",
+      "count": 1,
+      "size": "seed"
+    }
+  },
+  "category": "Rudraksha",
+  "buyLabel": "Order Energized Rudraksha",
+  "price": "₹899",
+  "originalPrice": "₹1,299",
+  "offer": "31% off",
+  "details": {
+    "components": [
+      {
+        "material": "seed",
+        "role": "seed",
+        "label": "4 Mukhi Nepal",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": null,
+        "indices": [],
+        "labelAnchorIndex": null,
+        "look": "Compact brown seed with deep branching fissures and ridges converging on a small central opening.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "seed",
+          "shape": "lobed_seed",
+          "badgeCount": 1
+        }
+      }
+    ],
+    "appearance": "Compact brown seed with deep branching fissures and ridges converging on a small central opening.",
+    "mukhiFromFilename": 4,
+    "originFromFilename": "Nepal",
+    "sourcePhoto": "4Mukhi- Nepali.png",
+    "charm": {
+      "status": "not_applicable"
+    }
+  },
+  "id": "4-mukhi-nepal",
+  "modelFile": "4-mukhi-nepal.glb",
+  "kind": "single_seed",
+  "placeholder": false
+}

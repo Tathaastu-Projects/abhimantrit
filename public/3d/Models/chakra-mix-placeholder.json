@@ -1,0 +1,74 @@
+{
+  "name": "Chakra mix",
+  "title": "Chakra mix",
+  "description": "Illustrative layout · Photograph unavailable. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "",
+  "components": {
+    "0": {
+      "name": "Red bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "1": {
+      "name": "Orange bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "2": {
+      "name": "Yellow bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "3": {
+      "name": "Green bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "4": {
+      "name": "Blue bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "5": {
+      "name": "Indigo bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    },
+    "6": {
+      "name": "Violet bead",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 3,
+      "size": "illustrative"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹1,199",
+  "originalPrice": "₹1,799",
+  "offer": "33% off",
+  "details": {
+    "components": [],
+    "appearance": null,
+    "sourcePhoto": null,
+    "charm": {
+      "status": "unknown"
+    }
+  },
+  "id": "chakra-mix-placeholder",
+  "modelFile": "chakra-mix-placeholder.glb",
+  "kind": "bracelet",
+  "placeholder": true
+}

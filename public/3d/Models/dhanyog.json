@@ -1,0 +1,247 @@
+{
+  "name": "Dhanyog",
+  "title": "Dhan Yog Prosperity Bracelet",
+  "description": "24 beads in seven types, rebuilt in 3D from your photo. Click or tap a label, a bead or a thumbnail for details, and drag to turn the bracelet.",
+  "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+  "components": {
+    "pyrite": {
+      "name": "Pyrite",
+      "description": "Metallic grey-gold with a brassy sheen.",
+      "placement": "The three large beads across the top of the ring, framed by gold spacers.",
+      "surfaceDetail": "Dark brassy surface with irregular lighter metallic patches.",
+      "count": 3,
+      "size": "≈9 mm"
+    },
+    "tiger": {
+      "name": "Tiger's eye",
+      "description": "Silky gold and brown banding.",
+      "placement": "Three beads on the right side, between two gold spacers.",
+      "surfaceDetail": "Curve narrow amber highlight bands through dark brown.",
+      "count": 3,
+      "size": "≈8 mm"
+    },
+    "aventurine": {
+      "name": "Green aventurine",
+      "description": "Soft translucent green with fine sparkle.",
+      "placement": "Three beads on the lower right.",
+      "surfaceDetail": "Diffuse moss-green clouds and fine pale speckles.",
+      "count": 3,
+      "size": "≈8 mm"
+    },
+    "sunstone": {
+      "name": "Sunstone & moonstone",
+      "description": "Cream to peach with orange flecks.",
+      "placement": "Three beads along the bottom, from peach through orange to cream.",
+      "surfaceDetail": "Cream to translucent peach with irregular orange wisps.",
+      "count": 3,
+      "size": "≈8 mm"
+    },
+    "quartz": {
+      "name": "Clear quartz",
+      "description": "Colourless and glassy.",
+      "placement": "Three beads on the lower left.",
+      "surfaceDetail": "Clear colorless body with visible cord through the bore.",
+      "count": 3,
+      "size": "≈8 mm"
+    },
+    "jade": {
+      "name": "Green jade",
+      "description": "Deep green with a waxy polish.",
+      "placement": "Three beads on the left side.",
+      "surfaceDetail": "Dark leafy mottling with glossy highlights.",
+      "count": 3,
+      "size": "≈8 mm"
+    },
+    "spacer": {
+      "name": "Gold spacers",
+      "description": "Polished metal beads.",
+      "placement": "Six beads, one in front of each set of three.",
+      "surfaceDetail": "Polished reflective warm metallic sphere.",
+      "count": 6,
+      "size": "≈8.5 mm"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "eyebrow": "Kubera & Lakshmi Wealth Matrix",
+  "price": "₹2,499",
+  "originalPrice": "₹4,999",
+  "offer": "50% off",
+  "details": {
+    "components": [
+      {
+        "material": "peach",
+        "role": "bead",
+        "label": "Peach inclusion stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          0,
+          1,
+          23
+        ],
+        "labelAnchorIndex": 0,
+        "look": "Cream to translucent peach with irregular orange wisps.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "peach",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      },
+      {
+        "material": "brass",
+        "role": "bead",
+        "label": "Brass-tone separator bead",
+        "count": 6,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22
+        ],
+        "labelAnchorIndex": 2,
+        "look": "Polished reflective warm metallic sphere.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "brass",
+          "shape": "sphere",
+          "badgeCount": 6
+        }
+      },
+      {
+        "material": "clear",
+        "role": "bead",
+        "label": "Clear quartz-like stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          3,
+          4,
+          5
+        ],
+        "labelAnchorIndex": 3,
+        "look": "Clear colorless body with visible cord through the bore.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "clear",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      },
+      {
+        "material": "jade",
+        "role": "bead",
+        "label": "Deep green stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          7,
+          8,
+          9
+        ],
+        "labelAnchorIndex": 7,
+        "look": "Dark leafy mottling with glossy highlights.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "jade",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      },
+      {
+        "material": "pyrite",
+        "role": "bead",
+        "label": "Pyrite-like stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          11,
+          12,
+          13
+        ],
+        "labelAnchorIndex": 11,
+        "look": "Dark brassy surface with irregular lighter metallic patches.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "pyrite",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      },
+      {
+        "material": "eye",
+        "role": "bead",
+        "label": "Tiger’s eye-like stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          15,
+          16,
+          17
+        ],
+        "labelAnchorIndex": 15,
+        "look": "Curve narrow amber highlight bands through dark brown.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "eye",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      },
+      {
+        "material": "green",
+        "role": "bead",
+        "label": "Green aventurine-like stone",
+        "count": 3,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          19,
+          20,
+          21
+        ],
+        "labelAnchorIndex": 19,
+        "look": "Diffuse moss-green clouds and fine pale speckles.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "green",
+          "shape": "sphere",
+          "badgeCount": 3
+        }
+      }
+    ],
+    "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+    "sourcePhoto": "Dhanyog.png",
+    "charm": {
+      "status": "none_visible"
+    }
+  },
+  "id": "dhanyog",
+  "modelFile": "dhanyog.glb",
+  "kind": "bracelet",
+  "placeholder": false
+}

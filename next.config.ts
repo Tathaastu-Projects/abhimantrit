@@ -58,6 +58,11 @@ const nextConfig: NextConfig = {
         source: "/uploads/:path*",
         destination: `${base}/uploads/:path*`,
       },
+      {
+        // Same-origin proxy so the /3d iframe can load admin price overrides
+        source: "/api/store/3d-prices",
+        destination: `${base}/api/store/3d-prices`,
+      },
     ];
   },
 };

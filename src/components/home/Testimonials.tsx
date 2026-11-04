@@ -1,4 +1,6 @@
-import Script from "next/script";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { resolveBannerUrl } from "@/lib/format";
 
 export type Testimonial = {
@@ -31,46 +33,120 @@ function videoSrc(url?: string) {
   return resolveBannerUrl(url);
 }
 
+function useVisibleCount() {
+  const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setCount(mq.matches ? 2 : 1);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  return count;
+}
+
 export function Testimonials({ items }: { items?: Testimonial[] }) {
   const cards = (items || []).filter((item) => item.quote && item.name);
+  const visible = useVisibleCount();
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  const maxIndex = Math.max(0, cards.length - visible);
+  const canSlide = maxIndex > 0;
+
+  useEffect(() => {
+    setIndex((current) => Math.min(current, maxIndex));
+  }, [maxIndex]);
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    const track = trackRef.current;
+    if (!frame || !track) return;
+
+    const applySizes = () => {
+      const width = frame.clientWidth;
+      if (!width) return;
+      const styles = window.getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+      const slideWidth = (width - gap * (visible - 1)) / visible;
+      const slides = track.querySelectorAll<HTMLElement>("[data-testimonials-slide]");
+      slides.forEach((slide) => {
+        slide.style.flex = `0 0 ${slideWidth}px`;
+        slide.style.width = `${slideWidth}px`;
+        slide.style.minWidth = `${slideWidth}px`;
+      });
+      track.style.transform = `translateX(-${index * (slideWidth + gap)}px)`;
+    };
+
+    applySizes();
+    window.addEventListener("resize", applySizes);
+    return () => window.removeEventListener("resize", applySizes);
+  }, [index, visible, cards.length]);
+
+  useEffect(() => {
+    if (!canSlide || paused) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current >= maxIndex ? 0 : current + 1));
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [canSlide, paused, maxIndex]);
+
   if (!cards.length) return null;
-  const showArrows = cards.length > 1;
+
+  const goPrev = () => {
+    setIndex((current) => (current <= 0 ? maxIndex : current - 1));
+  };
+
+  const goNext = () => {
+    setIndex((current) => (current >= maxIndex ? 0 : current + 1));
+  };
 
   return (
-    <section id="testimonials" data-testimonials className="w-full bg-white py-8 md:py-10">
+    <section
+      id="testimonials"
+      className="w-full bg-white py-8 md:py-10"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <h2 className="text-center font-display text-[2rem] font-medium tracking-[-0.02em] text-[#1c1c1c] md:text-[2.4rem]">
         Testimonials
       </h2>
-      <div className="relative mx-auto mt-5 max-w-[1100px] px-12 md:mt-6 md:px-16">
-        {showArrows ? (
+      <div className="relative mx-auto mt-5 max-w-[1200px] px-12 md:mt-6 md:px-16">
+        {canSlide ? (
           <button
             type="button"
-            data-testimonials-prev
             aria-label="Previous review"
+            onClick={goPrev}
             className="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep"
           >
             <Arrow direction="left" />
           </button>
         ) : null}
-        <div data-testimonials-frame className="overflow-hidden">
-          <div data-testimonials-track className="flex">
+        <div ref={frameRef} className="overflow-hidden">
+          <div
+            ref={trackRef}
+            className="flex gap-4 transition-transform duration-700 ease-out md:gap-5"
+          >
             {cards.map((item, cardIndex) => (
               <ReviewCard key={`${item.name}-${cardIndex}`} item={item} />
             ))}
           </div>
         </div>
-        {showArrows ? (
+        {canSlide ? (
           <button
             type="button"
-            data-testimonials-next
             aria-label="Next review"
+            onClick={goNext}
             className="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest bg-forest text-white shadow-[0_8px_20px_rgba(15,61,46,0.28)] transition hover:bg-forest-deep"
           >
             <Arrow direction="right" />
           </button>
         ) : null}
       </div>
-      {showArrows ? <Script src="/testimonials-slider.js?v=1" strategy="afterInteractive" /> : null}
     </section>
   );
 }
@@ -80,15 +156,20 @@ function ReviewCard({ item }: { item: Testimonial }) {
   const video = item.playbackUrl ? resolveBannerUrl(item.playbackUrl) : videoSrc(item.videoUrl);
 
   return (
-    <article data-testimonials-slide className="grid h-[300px] w-full min-w-full shrink-0 overflow-hidden bg-[#f3f3f3] md:grid-cols-[1.15fr_0.85fr]">
-      <div className="flex min-h-0 flex-col justify-center overflow-hidden px-6 py-5 md:px-10">
-        <div className="flex gap-1 text-[#e0b100]" aria-label="5 stars">
+    <article
+      data-testimonials-slide
+      className="grid h-[280px] w-full min-w-full shrink-0 overflow-hidden rounded-2xl border border-black/[0.05] bg-[#f6f3ee] md:h-[300px] md:min-w-0 md:grid-cols-[1.1fr_0.9fr]"
+    >
+      <div className="flex min-h-0 flex-col justify-center overflow-hidden px-5 py-5 md:px-6">
+        <div className="flex gap-0.5 text-[#e0b100]" aria-label="5 stars">
           {Array.from({ length: 5 }).map((_, star) => (
             <Star key={star} />
           ))}
         </div>
-        <p className="mt-3 line-clamp-4 max-w-xl whitespace-pre-line text-sm leading-6 text-[#3a3a3a]">{item.quote}</p>
-        <p className="mt-4 text-sm text-[#1c1c1c]">{item.name}</p>
+        <p className="mt-3 line-clamp-5 whitespace-pre-line text-[13px] leading-6 text-[#3a3a3a] md:line-clamp-6">
+          {item.quote}
+        </p>
+        <p className="mt-4 text-sm font-semibold text-[#1c1c1c]">{item.name}</p>
       </div>
       <div className="relative min-h-0 overflow-hidden bg-[#d9d9d9]">
         {video ? (
@@ -112,7 +193,7 @@ function ReviewCard({ item }: { item: Testimonial }) {
 
 function Star() {
   return (
-    <svg viewBox="0 0 20 20" className="h-5 w-5 fill-current" aria-hidden>
+    <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current md:h-5 md:w-5" aria-hidden>
       <path d="M10 1.6 12.4 7l5.9.6-4.5 3.9 1.4 5.8L10 14.6 4.8 17.3l1.4-5.8L1.7 7.6 7.6 7 10 1.6Z" />
     </svg>
   );

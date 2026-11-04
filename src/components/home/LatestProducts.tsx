@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, type MouseEvent } from "react";
 import type { StoreProduct } from "@/types/product";
-import { discountPercent, formatINR, hoverLines, primaryImage } from "@/lib/format";
+import { discountPercent, formatINR, hoverLines, primaryImage, productHref } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
@@ -42,7 +42,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
   return (
     <article className="flex w-[250px] shrink-0 flex-col rounded-2xl border border-[#ececec] bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] sm:w-[270px]">
       <div className="card-hover relative overflow-hidden rounded-xl bg-[#f7f7f7]">
-        <Link href={`/product/${product.slug}`} className="block">
+        <Link href={productHref(product)} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imgSrc}
@@ -57,7 +57,7 @@ function ProductTile({ product }: { product: StoreProduct }) {
         <BagButton label={bagLabel} onClick={add} disabled={stock <= 0 || inCart} />
       </div>
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="mt-3 line-clamp-2 min-h-[2.6rem] text-sm font-medium leading-snug text-[#1c1c1c]"
       >
         {product.title}

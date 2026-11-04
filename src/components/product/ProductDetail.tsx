@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import type { StoreProduct } from "@/types/product";
 import { PriceBlock } from "@/components/product/PriceBlock";
-import { resolveImageUrl } from "@/lib/format";
+import { productHref, productUrlKey, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { WishlistButton } from "@/components/product/WishlistButton";
@@ -25,22 +26,35 @@ export function ProductDetail({
   related: StoreProduct[];
 }) {
   const addItem = useCartStore((s) => s.addItem);
+  const updateQty = useCartStore((s) => s.updateQty);
+  const router = useRouter();
+  const pathname = usePathname();
   const activeVariants = useMemo(
     () => (product.variants || []).filter((v) => v.isActive),
     [product.variants],
   );
   const [variantId, setVariantId] = useState<string | undefined>(activeVariants[0]?._id);
-  const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState("");
 
+  // Keep address bar on SKU URL even if user opened an old title link
+  useEffect(() => {
+    const want = productHref(product);
+    if (!want || !pathname) return;
+    if (pathname.replace(/\/$/, "") !== want.replace(/\/$/, "")) {
+      router.replace(want);
+    }
+  }, [pathname, product, router]);
+
   const selected = activeVariants.find((v) => v._id === variantId);
-  const inCart = useCartStore((s) =>
-    s.items.some(
+  const cartLine = useCartStore((s) =>
+    s.items.find(
       (i) =>
         i.productId === product._id &&
         (i.variantId || null) === (selected?._id || null),
-    ),
+    ) || null,
   );
+  const inCart = Boolean(cartLine);
+  const cartQty = cartLine?.qty || 0;
   const images = product.images?.length
     ? product.images
     : [{ url: "/placeholder-product.svg", alt: product.title, isPrimary: true }];
@@ -69,14 +83,14 @@ export function ProductDetail({
     }
     addItem({
       productId: product._id,
-      slug: product.slug,
+      slug: productUrlKey(product) || product.slug,
       title: product.title,
       image: resolveImageUrl(activeImage),
       variantId: selected?._id || null,
       variantLabel: selected?.label,
       unitSalePrice: sale,
       unitMrp: mrp,
-      qty,
+      qty: 1,
       maxQty: stock,
     });
     setMsg(goCheckout ? "Redirecting…" : "Added to cart");
@@ -158,6 +172,11 @@ export function ProductDetail({
             <h1 className="mt-2 font-display text-[1.45rem] leading-[1.2] tracking-tight text-ink md:text-[1.75rem] xl:text-[1.9rem]">
               {product.title}
             </h1>
+            {product.sku ? (
+              <p className="mt-1 text-xs font-medium tracking-wide text-ink-soft">
+                SKU: <span className="font-mono text-ink">{product.sku}</span>
+              </p>
+            ) : null}
 
             {(product.ratingCount || 0) > 0 ? (
               <p className="mt-1.5 flex items-center gap-2 text-xs text-ink-soft">
@@ -220,25 +239,33 @@ export function ProductDetail({
             </p>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              {!inCart ? (
-                <div className="flex h-10 items-center rounded-full border border-[var(--border)] bg-white">
-                  <button type="button" className="h-full px-3 text-base" onClick={() => setQty((q) => Math.max(1, q - 1))}>
-                    −
-                  </button>
-                  <span className="min-w-8 text-center text-sm font-semibold">{qty}</span>
+              {inCart ? (
+                <div
+                  className="btn btn-primary flex h-10 min-w-[148px] items-center justify-between gap-1 px-2"
+                  role="group"
+                  aria-label="Cart quantity"
+                >
                   <button
                     type="button"
-                    className="h-full px-3 text-base"
-                    onClick={() => setQty((q) => Math.min(stock || 99, q + 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-base leading-none transition hover:bg-white/15"
+                    aria-label="Decrease quantity"
+                    onClick={() => updateQty(product._id, selected?._id || null, cartQty - 1)}
+                  >
+                    −
+                  </button>
+                  <span className="min-w-[1.5rem] text-center text-sm font-semibold tabular-nums">
+                    {cartQty}
+                  </span>
+                  <button
+                    type="button"
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-base leading-none transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Increase quantity"
+                    disabled={cartQty >= (cartLine?.maxQty ?? stock ?? 99)}
+                    onClick={() => updateQty(product._id, selected?._id || null, cartQty + 1)}
                   >
                     +
                   </button>
                 </div>
-              ) : null}
-              {inCart ? (
-                <Link href="/cart" className="btn btn-primary h-10 min-w-[140px] px-5 text-center text-xs leading-10">
-                  In cart — View bag
-                </Link>
               ) : (
                 <button
                   type="button"

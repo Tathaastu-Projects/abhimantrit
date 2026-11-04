@@ -123,13 +123,13 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
     <section
       id="home-hero"
       data-count={realCount}
-      className="relative h-[500px] w-full overflow-hidden bg-[#efe6d8]"
+      className="relative w-full overflow-hidden bg-[#efe6d8]"
       aria-roledescription="carousel"
       aria-label="Home banners"
     >
       <div
         data-hero-track
-        className="flex h-full w-full"
+        className="flex w-full items-stretch"
         style={{
           transform: `translate3d(-${index * 100}%, 0, 0)`,
           transition: animating ? `transform ${MOVE_MS}ms ease-in-out` : "none",
@@ -150,7 +150,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
             <Link
               key={`${slide.src}-${i}`}
               href={bannerHref}
-              className="relative block h-[500px] w-full min-w-full max-w-full shrink-0 grow-0 basis-full group focus:outline-none cursor-pointer"
+              className="relative block w-full min-w-full max-w-full shrink-0 grow-0 basis-full group focus:outline-none cursor-pointer"
               aria-hidden={isClone ? true : undefined}
               tabIndex={isClone ? -1 : undefined}
             >
@@ -164,7 +164,7 @@ function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 decoding="async"
                 fetchPriority={i === 1 ? "high" : "low"}
                 loading={i === 1 ? "eager" : "lazy"}
-                className="absolute inset-0 h-full w-full object-fill"
+                className="block h-auto w-full object-contain"
               />
 
               {hasText ? (

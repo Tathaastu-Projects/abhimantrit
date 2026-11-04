@@ -74,7 +74,7 @@ Warm stone + temple green + soft brass. Tokens in `src/app/globals.css`. Notes i
 - [x] Wishlist
 - [x] Reviews
 - [x] Coupons
-- [x] Razorpay (mock without keys; live with env keys on backend)
+- [x] Easebuzz online payments (test/live keys on backend)
 - [x] Richer track-order timeline UI
 - [ ] Recommendation quiz
 

@@ -1,0 +1,167 @@
+{
+  "name": "Aries",
+  "title": "Aries",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+  "components": {
+    "black": {
+      "name": "Aries barrel",
+      "description": "Glossy black body with gold face artwork.",
+      "placement": "Positions in assembly order: 1.",
+      "count": 1,
+      "size": "≈12 mm"
+    },
+    "eye": {
+      "name": "Tiger’s eye-like stone",
+      "description": "Curve narrow amber highlight bands through dark brown.",
+      "placement": "Positions in assembly order: 2, 3, 25, 26.",
+      "count": 4,
+      "size": "≈8 mm"
+    },
+    "silver": {
+      "name": "Silver-tone spacer",
+      "description": "Smooth rounded disc with dark recessed edge.",
+      "placement": "Positions in assembly order: 4, 5, 23, 24.",
+      "count": 4,
+      "size": "≈8 mm"
+    },
+    "red": {
+      "name": "Red speckled stone",
+      "description": "Scatter charcoal flecks and irregular dark clouds over brick red.",
+      "placement": "Positions in assembly order: 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22.",
+      "count": 17,
+      "size": "≈8 mm"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹1,499",
+  "originalPrice": "₹1,999",
+  "offer": "25% off",
+  "details": {
+    "components": [
+      {
+        "material": "black",
+        "role": "charm",
+        "label": "Aries barrel",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": {
+          "diameter": 8,
+          "axialLength": 12
+        },
+        "indices": [
+          0
+        ],
+        "labelAnchorIndex": 0,
+        "look": "Glossy black body with gold face artwork.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "black",
+          "shape": "barrel",
+          "badgeCount": 1
+        }
+      },
+      {
+        "material": "eye",
+        "role": "bead",
+        "label": "Tiger’s eye-like stone",
+        "count": 4,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          1,
+          2,
+          24,
+          25
+        ],
+        "labelAnchorIndex": 1,
+        "look": "Curve narrow amber highlight bands through dark brown.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "eye",
+          "shape": "sphere",
+          "badgeCount": 4
+        }
+      },
+      {
+        "material": "silver",
+        "role": "spacer",
+        "label": "Silver-tone spacer",
+        "count": 4,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8,
+          "axialLength": 1.6
+        },
+        "indices": [
+          3,
+          4,
+          22,
+          23
+        ],
+        "labelAnchorIndex": 3,
+        "look": "Smooth rounded disc with dark recessed edge.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "silver",
+          "shape": "ridged_disc",
+          "badgeCount": 4
+        }
+      },
+      {
+        "material": "red",
+        "role": "bead",
+        "label": "Red speckled stone",
+        "count": 17,
+        "countStatus": "visual_estimate",
+        "previewDimensionsMm": {
+          "diameter": 8
+        },
+        "indices": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "labelAnchorIndex": 5,
+        "look": "Scatter charcoal flecks and irregular dark clouds over brick red.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "red",
+          "shape": "sphere",
+          "badgeCount": 17
+        }
+      }
+    ],
+    "appearance": "Polished round beads. See ordered components for the visible color pattern.",
+    "sourcePhoto": "Aries-1.png",
+    "charm": {
+      "shape": "barrel",
+      "position": "front center",
+      "body": "black",
+      "artwork": "gold ram head",
+      "inscription": "Aries",
+      "status": "visible"
+    }
+  },
+  "id": "aries",
+  "modelFile": "aries.glb",
+  "kind": "bracelet",
+  "placeholder": false
+}

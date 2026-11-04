@@ -1,0 +1,44 @@
+{
+  "name": "Libra",
+  "title": "Libra",
+  "description": "Illustrative layout · Photograph unavailable. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "",
+  "components": {
+    "black": {
+      "name": "Black zodiac barrel",
+      "description": "Glossy black body with gold face artwork.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 1,
+      "size": "illustrative"
+    },
+    "neutral": {
+      "name": "Unverified beads",
+      "description": "Illustrative material.",
+      "placement": "The arrangement is a placeholder.",
+      "count": 22,
+      "size": "illustrative"
+    }
+  },
+  "category": "Gemstones",
+  "buyLabel": "Order Energized Bracelet",
+  "price": "₹1,549",
+  "originalPrice": "₹2,199",
+  "offer": "30% off",
+  "details": {
+    "components": [],
+    "appearance": null,
+    "sourcePhoto": null,
+    "charm": {
+      "shape": "barrel",
+      "position": "front center",
+      "body": "black",
+      "artwork": "gold sign emblem",
+      "inscription": "Libra",
+      "status": "specified_by_brief"
+    }
+  },
+  "id": "libra-placeholder",
+  "modelFile": "libra-placeholder.glb",
+  "kind": "bracelet",
+  "placeholder": true
+}

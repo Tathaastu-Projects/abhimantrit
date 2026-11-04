@@ -1,0 +1,52 @@
+{
+  "name": "4 Mukhi Indonesia",
+  "title": "4 Mukhi Indonesia",
+  "description": "Photo-based 3D model. Click or tap a label, a component or a thumbnail for details, and drag to rotate.",
+  "appearance": "Warm tan, broadly rounded lobes and a prominent dark circular opening.",
+  "components": {
+    "seed": {
+      "name": "4 Mukhi Indonesia",
+      "description": "Displace the surface into irregular branching folds with darker recessed grooves.",
+      "placement": "4 Mukhi Indonesia",
+      "count": 1,
+      "size": "seed"
+    }
+  },
+  "category": "Rudraksha",
+  "buyLabel": "Order Energized Rudraksha",
+  "price": "₹599",
+  "originalPrice": "₹799",
+  "offer": "25% off",
+  "details": {
+    "components": [
+      {
+        "material": "seed",
+        "role": "seed",
+        "label": "4 Mukhi Indonesia",
+        "count": 1,
+        "countStatus": "observed",
+        "previewDimensionsMm": null,
+        "indices": [],
+        "labelAnchorIndex": null,
+        "look": "Warm tan, broadly rounded lobes and a prominent dark circular opening.",
+        "thumbnail": {
+          "mode": "render_component",
+          "material": "seed",
+          "shape": "lobed_seed",
+          "badgeCount": 1
+        }
+      }
+    ],
+    "appearance": "Warm tan, broadly rounded lobes and a prominent dark circular opening.",
+    "mukhiFromFilename": 4,
+    "originFromFilename": "Indonesia",
+    "sourcePhoto": "4 Mukhi- Indonesia.png",
+    "charm": {
+      "status": "not_applicable"
+    }
+  },
+  "id": "4-mukhi-indonesia",
+  "modelFile": "4-mukhi-indonesia.glb",
+  "kind": "single_seed",
+  "placeholder": false
+}
