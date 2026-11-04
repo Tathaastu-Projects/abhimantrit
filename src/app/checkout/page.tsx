@@ -58,14 +58,21 @@ export default function CheckoutPage() {
   }
 
   async function applyCoupon() {
+    const code = couponInput.trim();
+    // Coupon is optional — empty field just clears any previous coupon.
+    if (!code) {
+      setCoupon(null);
+      setCouponMsg("");
+      return;
+    }
     setCouponMsg("");
     try {
-      const res = await validateCoupon(couponInput.trim(), subtotal);
+      const res = await validateCoupon(code, subtotal);
       setCoupon(res.data);
       setCouponMsg(res.data.description || "Coupon applied");
     } catch (err) {
       setCoupon(null);
-      setCouponMsg(err instanceof Error ? err.message : "Invalid coupon");
+      setCouponMsg(err instanceof Error ? err.message : "Invalid coupon code");
     }
   }
 
@@ -108,7 +115,8 @@ export default function CheckoutPage() {
             quantity: i.qty,
           })),
           paymentMethod,
-          couponCode: coupon?.code,
+          // Only send when a valid coupon was applied (never required)
+          ...(coupon?.code ? { couponCode: coupon.code } : {}),
           notes: String(fd.get("notes") || ""),
         },
         { token },
@@ -148,8 +156,7 @@ export default function CheckoutPage() {
     <div className="container-pad py-10 md:py-14">
       <h1 className="font-display text-4xl">Checkout</h1>
       <p className="mt-2 text-ink-soft">
-        Pay with Cash on Delivery or online (Easebuzz). Coupons: try <code>WELCOME10</code> or{" "}
-        <code>FLAT200</code>.
+        Pay with Cash on Delivery or online (Easebuzz). Coupon code is optional.
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_0.7fr]">
@@ -251,18 +258,32 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="mt-4 flex gap-2">
-            <input
-              value={couponInput}
-              onChange={(e) => setCouponInput(e.target.value)}
-              placeholder="Coupon code"
-              className={fieldClass}
-            />
-            <button type="button" onClick={applyCoupon} className="btn btn-ghost shrink-0">
-              Apply
-            </button>
+          <div className="mt-4">
+            <label className="mb-1.5 block text-xs font-medium text-ink-soft">
+              Coupon code <span className="font-normal">(optional)</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={couponInput}
+                onChange={(e) => {
+                  setCouponInput(e.target.value);
+                  if (!e.target.value.trim()) {
+                    setCoupon(null);
+                    setCouponMsg("");
+                  }
+                }}
+                placeholder="Have a code? Enter here"
+                autoComplete="off"
+                className={fieldClass}
+              />
+              <button type="button" onClick={applyCoupon} className="btn btn-ghost shrink-0">
+                Apply
+              </button>
+            </div>
           </div>
-          {couponMsg ? <p className="mt-2 text-xs text-ink-soft">{couponMsg}</p> : null}
+          {couponMsg ? (
+            <p className={`mt-2 text-xs ${coupon ? "text-temple" : "text-sale"}`}>{couponMsg}</p>
+          ) : null}
 
           {error ? <p className="mt-3 text-sm text-sale">{error}</p> : null}
           <button
