@@ -78,6 +78,7 @@ export default function CheckoutPage() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (loading) return; // prevent double-click → duplicate initiate / 502
     setLoading(true);
     setError("");
     const fd = new FormData(e.currentTarget);
