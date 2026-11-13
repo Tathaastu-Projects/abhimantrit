@@ -10,6 +10,7 @@ import { useCartStore } from "@/lib/cart-store";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { FaqAccordion } from "@/components/home/FaqAccordion";
 import { cn } from "@/lib/cn";
 
 const TRUST = [
@@ -25,6 +26,9 @@ export function ProductDetail({
   product: StoreProduct;
   related: StoreProduct[];
 }) {
+  const productFaqs = (product.faqs || []).filter(
+    (f) => String(f?.question || "").trim() && String(f?.answer || "").trim(),
+  );
   const addItem = useCartStore((s) => s.addItem);
   const updateQty = useCartStore((s) => s.updateQty);
   const router = useRouter();
@@ -112,26 +116,27 @@ export function ProductDetail({
           <span className="text-ink">{product.title}</span>
         </nav>
 
-        <div className="grid w-full items-start gap-4 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-6 lg:items-center xl:gap-8">
-          {/* Gallery — frame hugs image (no blank side bars), full image, no zoom */}
-          <div className="mx-auto w-fit max-w-full lg:mx-0">
-            <div className="w-fit max-w-full overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04]">
+        <div className="grid w-full items-start gap-5 md:gap-6 lg:grid-cols-2 lg:gap-8 xl:gap-10">
+          {/* Gallery: main image + thumbnails on its right (between image and details) */}
+          <div className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
+            <div className="flex min-h-0 min-w-0 flex-1 aspect-[4/5] max-h-[min(68vh,560px)] items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] sm:aspect-square lg:max-h-[min(72vh,580px)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resolveImageUrl(activeImage)}
                 alt={product.title}
-                className="block h-auto max-h-[min(52vh,420px)] w-auto max-w-full object-contain sm:max-h-[min(56vh,460px)]"
+                className="max-h-full max-w-full object-contain object-center"
               />
             </div>
+
             {images.length > 1 ? (
-              <div className="mt-2.5 flex max-w-full gap-2 overflow-x-auto pb-1">
+              <div className="flex max-h-[min(68vh,560px)] w-[4.25rem] shrink-0 flex-col gap-2 overflow-y-auto sm:w-[4.75rem] sm:gap-2.5 lg:max-h-[min(72vh,580px)]">
                 {images.slice(0, 8).map((img) => (
                   <button
                     key={img.url}
                     type="button"
                     onClick={() => setActiveImage(img.url)}
                     className={cn(
-                      "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f6f3ee] ring-2 transition sm:h-16 sm:w-16",
+                      "flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f6f3ee] ring-2 transition",
                       activeImage === img.url
                         ? "ring-forest"
                         : "ring-transparent hover:ring-black/10",
@@ -149,8 +154,8 @@ export function ProductDetail({
             ) : null}
           </div>
 
-          {/* Buy box takes remaining width */}
-          <div className="flex min-w-0 w-full flex-col justify-center">
+          {/* Buy box — right column */}
+          <div className="flex min-w-0 w-full flex-col lg:pt-1">
             <div className="flex flex-wrap gap-1.5">
               {product.isBestSeller ? (
                 <span className="rounded-full bg-forest px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
@@ -323,18 +328,20 @@ export function ProductDetail({
 
         {product.description ? (
           <section className="mt-8 border-t border-[var(--border)] pt-6 md:mt-10 md:pt-8">
-            <div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+            <div className="grid gap-5 lg:grid-cols-2 lg:gap-10 lg:items-start">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-forest">The story</p>
                 <h2 className="mt-1 font-display text-2xl text-ink md:text-3xl">About this piece</h2>
               </div>
-              <div className="max-w-3xl space-y-3 text-[14px] leading-relaxed text-ink-soft whitespace-pre-wrap md:text-[15px]">
+              <div className="space-y-3 text-[14px] leading-relaxed text-ink-soft whitespace-pre-wrap md:text-[15px]">
                 {product.description}
               </div>
             </div>
           </section>
         ) : null}
       </div>
+
+      {productFaqs.length ? <FaqAccordion faqs={productFaqs} /> : null}
 
       <ProductReviews
         slug={product.slug}

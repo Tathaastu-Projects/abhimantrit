@@ -34,21 +34,21 @@ export function SiteFooter({ support }: Props) {
   }
 
   return (
-    <footer className="mt-16 bg-forest text-white">
-      <div className="container-pad grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
+    <footer className="mt-0 bg-forest text-white">
+      <div className="container-pad grid gap-5 py-5 md:grid-cols-[1.2fr_1fr_1fr_1fr] md:gap-6 md:py-6">
         <div>
-          <p className="font-display text-3xl">{BUSINESS.displayName}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
+          <p className="font-display text-xl leading-tight md:text-2xl">{BUSINESS.displayName}</p>
+          <p className="mt-1.5 max-w-sm text-[12px] leading-snug text-white/75 md:text-[13px]">
             Sacred objects chosen with care — Rudraksha, gemstones, crystals and yantras for a
             calmer, clearer path. By {BUSINESS.founder}.
           </p>
-          <p className="mt-3 max-w-sm text-xs leading-relaxed text-white/60">
+          <p className="mt-1.5 max-w-sm text-[11px] leading-snug text-white/55">
             {BUSINESS.companyAbout}
           </p>
           {formReady ? (
             <form
               onSubmit={onSubmit}
-              className="mt-6 flex max-w-sm gap-2"
+              className="mt-3 flex max-w-sm gap-1.5"
               autoComplete="off"
               data-lpignore="true"
               data-1p-ignore="true"
@@ -67,25 +67,28 @@ export function SiteFooter({ support }: Props) {
                 data-1p-ignore="true"
                 data-bwignore="true"
                 data-form-type="other"
-                className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm outline-none placeholder:text-white/45 focus:border-brass-soft"
+                className="w-full rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-xs outline-none placeholder:text-white/45 focus:border-brass-soft"
               />
-              <button type="submit" className="btn btn-primary shrink-0">
+              <button
+                type="submit"
+                className="shrink-0 rounded-md bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-forest"
+              >
                 Join
               </button>
             </form>
           ) : (
-            <div className="mt-6 h-11 max-w-sm" aria-hidden />
+            <div className="mt-3 h-8 max-w-sm" aria-hidden />
           )}
           {status !== "idle" ? (
-            <p className={`mt-2 text-xs ${status === "ok" ? "text-brass-soft" : "text-red-300"}`}>
+            <p className={`mt-1.5 text-[11px] ${status === "ok" ? "text-brass-soft" : "text-red-300"}`}>
               {message}
             </p>
           ) : null}
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brass-soft">Shop</p>
-          <ul className="mt-4 space-y-2 text-sm text-white/80">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brass-soft">Shop</p>
+          <ul className="mt-2 space-y-1 text-[12px] leading-snug text-white/80 md:text-[13px]">
             <li>
               <Link href="/shop/crystal-bracelets">Crystal Bracelets</Link>
             </li>
@@ -114,8 +117,8 @@ export function SiteFooter({ support }: Props) {
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brass-soft">Policies</p>
-          <ul className="mt-4 space-y-2 text-sm text-white/80">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brass-soft">Policies</p>
+          <ul className="mt-2 space-y-1 text-[12px] leading-snug text-white/80 md:text-[13px]">
             <li>
               <Link href="/policies/terms">Terms &amp; Conditions</Link>
             </li>
@@ -135,8 +138,8 @@ export function SiteFooter({ support }: Props) {
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brass-soft">Company</p>
-          <ul className="mt-4 space-y-2 text-sm text-white/80">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brass-soft">Company</p>
+          <ul className="mt-2 space-y-1 text-[12px] leading-snug text-white/80 md:text-[13px]">
             <li>
               <Link href="/about">About Us</Link>
             </li>
@@ -152,15 +155,15 @@ export function SiteFooter({ support }: Props) {
               </li>
             ) : null}
             {BUSINESS.addressLines.map((line) => (
-              <li key={line} className="text-white/60">
+              <li key={line} className="text-white/55">
                 {line}
               </li>
             ))}
-            <li className="text-white/60">COD available · Lab certified</li>
+            <li className="text-white/55">COD available · Lab certified</li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
+      <div className="border-t border-white/10 py-2.5 text-center text-[10px] text-white/45 md:text-[11px]">
         {copyrightLine()}
       </div>
     </footer>

@@ -29,32 +29,41 @@ const DEFAULT_FAQS = [
   },
 ];
 
-/** FAQ accordion — numbered gold badges, forest text, + / × toggle */
+/** FAQ accordion — numbered gold badges, forest text, + / × toggle.
+ *  Pass faqs to show them. Omit / empty = hide section (except homepage which uses defaults).
+ */
 export function FaqAccordion({
   faqs,
+  allowDefaults = false,
 }: {
   faqs?: { question: string; answer: string }[];
+  /** Homepage only — fall back to built-in FAQs when admin list is empty */
+  allowDefaults?: boolean;
 }) {
   const items =
     faqs && faqs.length
       ? faqs.map((f) => ({ q: f.question, a: f.answer }))
-      : DEFAULT_FAQS;
+      : allowDefaults
+        ? DEFAULT_FAQS
+        : [];
+
+  if (!items.length) return null;
 
   return (
-    <section id="faq" className="w-full bg-[#f7f3ec] py-10 md:py-12">
-      <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 md:px-10">
+    <section id="faq" className="w-full bg-[#f7f3ec] pb-5 pt-8 md:pb-6 md:pt-10">
+      <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 md:px-10">
         <h2 className="text-center font-display text-3xl font-medium tracking-wide text-ink md:text-4xl">
           FAQs
         </h2>
 
-        <div className="mt-6 space-y-3.5 md:mt-8 md:space-y-4">
+        <div className="mt-5 grid grid-cols-1 gap-3.5 md:mt-6 md:grid-cols-2 md:gap-4 md:gap-x-5">
           {items.map((item, idx) => {
             const num = String(idx + 1).padStart(2, "0");
             return (
               <details
                 key={item.q}
                 name="home-faq"
-                className="group rounded-2xl border border-transparent bg-white px-4 py-3.5 shadow-[0_6px_18px_rgba(28,28,28,0.06)] open:border-[#c9a227]/70] open:shadow-[0_10px_28px_rgba(15,61,46,0.1)] sm:px-5 md:rounded-[1.25rem] md:px-6 md:py-4"
+                className="group h-fit rounded-2xl border border-transparent bg-white px-4 py-3.5 shadow-[0_6px_18px_rgba(28,28,28,0.06)] open:border-[#c9a227]/70] open:shadow-[0_10px_28px_rgba(15,61,46,0.1)] sm:px-5 md:rounded-[1.25rem] md:px-6 md:py-4"
               >
                 <summary className="flex cursor-pointer list-none items-center gap-3 text-left marker:content-none sm:gap-4 [&::-webkit-details-marker]:hidden">
                   <span

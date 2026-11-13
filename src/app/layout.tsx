@@ -43,7 +43,7 @@ export default async function RootLayout({
         />
         <CartSync />
         <ApplyVideoSpeed rate={Number(meta?.videoSpeed?.rate) || 1} />
-        <main className="flex-1">{children}</main>
+        <main>{children}</main>
         <SiteFooter support={meta?.support} />
       </body>
     </html>

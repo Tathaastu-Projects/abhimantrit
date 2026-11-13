@@ -37,9 +37,13 @@ export default async function HomePage() {
     home.carousels?.bestsellers?.length
       ? home.carousels.bestsellers
       : home.carousels?.featured || home.latestProducts || [];
+  const heroPoster = resolveBannerUrl(home.homeHeroVideo?.posterUrl || "");
 
   return (
     <>
+      {heroPoster ? (
+        <link rel="preload" as="image" href={heroPoster} fetchPriority="high" />
+      ) : null}
       <HomeVideoHero
         hero={home.homeHeroVideo}
         logoSrc={resolveBannerUrl(meta?.logoUrl) || ""}
@@ -59,7 +63,7 @@ export default async function HomePage() {
         <ScreenToSpace section={home.screenToSpace} />
         <Testimonials items={home.testimonials} />
         <ReadFromBlog posts={home.latestBlogs} />
-        <FaqAccordion faqs={home.faqs} />
+        <FaqAccordion faqs={home.faqs} allowDefaults />
       </div>
     </>
   );

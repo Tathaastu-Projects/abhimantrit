@@ -79,6 +79,8 @@ export type StoreProduct = {
   attributes?: ProductAttributes;
   seo?: { metaTitle?: string; metaDescription?: string };
   tags?: string[];
+  /** Product-detail FAQs (admin). Empty / missing → hide FAQ section. */
+  faqs?: { question: string; answer: string }[];
   weightCarat?: number;
   weightRatti?: number;
   ratingAvg?: number;
