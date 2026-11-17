@@ -62,7 +62,7 @@ export function FaqAccordion({
             return (
               <details
                 key={item.q}
-                name="home-faq"
+                name={allowDefaults ? "home-faq" : "product-faq"}
                 className="group h-fit rounded-2xl border border-transparent bg-white px-4 py-3.5 shadow-[0_6px_18px_rgba(28,28,28,0.06)] open:border-[#c9a227]/70] open:shadow-[0_10px_28px_rgba(15,61,46,0.1)] sm:px-5 md:rounded-[1.25rem] md:px-6 md:py-4"
               >
                 <summary className="flex cursor-pointer list-none items-center gap-3 text-left marker:content-none sm:gap-4 [&::-webkit-details-marker]:hidden">

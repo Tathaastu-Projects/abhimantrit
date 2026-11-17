@@ -122,6 +122,9 @@ export default function AccountPage() {
           <Link href="/track-order" className="btn btn-ghost">
             Track order
           </Link>
+          <Link href="/account/faqs" className="btn btn-ghost">
+            FAQs
+          </Link>
         </div>
       </div>
     );
