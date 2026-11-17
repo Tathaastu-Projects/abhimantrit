@@ -155,6 +155,7 @@ export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeCo
       categoryTiles: data.categoryTiles || [],
       aboutSection: data.aboutSection,
       featuredFinds: data.featuredFinds,
+      howAbhimantrit: data.howAbhimantrit,
       screenToSpace: data.screenToSpace,
       latestBlogs: data.latestBlogs || [],
       intentionProducts: data.intentionProducts || {},
@@ -257,19 +258,15 @@ export async function getCollection(
 
 export async function getProductBySlug(slug: string): Promise<StoreProduct | null> {
   try {
-    // Always fresh — slug/SKU can change when admin updates the product
+    // Short revalidate cache — admin edits appear within ~60s
     const res = await apiFetch<ApiResult<StoreProduct>>(
       `/api/store/products/${encodeURIComponent(slug)}`,
-      undefined,
-      { fresh: true },
     );
     return res.data;
   } catch {
     try {
       const legacy = await apiFetch<ApiResult<StoreProduct>>(
         `/api/products/public/${encodeURIComponent(slug)}`,
-        undefined,
-        { fresh: true },
       );
       return legacy.data;
     } catch {

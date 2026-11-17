@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { StoreProduct } from "@/types/product";
-import { hoverLines, primaryImage, productHref, productUrlKey } from "@/lib/format";
+import {
+  hoverLines,
+  primaryImage,
+  productHref,
+  productUrlKey,
+  resolveImageUrl,
+} from "@/lib/format";
 import { PriceBlock } from "@/components/product/PriceBlock";
 import { useCartStore } from "@/lib/cart-store";
 import { cn } from "@/lib/cn";
@@ -99,7 +105,11 @@ export function ProductCard({
   const inCart = Boolean(cartLine);
   const qty = cartLine?.qty || 0;
   const img = primaryImage(product.images);
+  const fullImg = resolveImageUrl(
+    product.images?.find((i) => i.isPrimary)?.url || product.images?.[0]?.url || "",
+  );
   const [imgSrc, setImgSrc] = useState(img.url);
+  const [triedFull, setTriedFull] = useState(false);
   const sale = product.effectiveSalePrice ?? product.salePrice;
   const mrp = product.effectiveMrp ?? product.mrp;
   const discount = product.effectiveDiscountPercent ?? product.discountPercent;
@@ -165,7 +175,14 @@ export function ProductCard({
             className="product-card__img"
             loading="lazy"
             decoding="async"
-            onError={() => setImgSrc("/placeholder-product.svg")}
+            onError={() => {
+              if (!triedFull && fullImg && imgSrc !== fullImg) {
+                setTriedFull(true);
+                setImgSrc(fullImg);
+                return;
+              }
+              setImgSrc("/placeholder-product.svg");
+            }}
           />
         </Link>
         <div className="product-card__badges">

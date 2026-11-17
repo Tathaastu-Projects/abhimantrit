@@ -18,7 +18,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [meta, menu] = await Promise.all([getStoreMeta({ fresh: true }), getStoreMenu()]);
+  const [meta, menu] = await Promise.all([getStoreMeta(), getStoreMenu()]);
 
   return (
     <html lang="en" className="h-full">

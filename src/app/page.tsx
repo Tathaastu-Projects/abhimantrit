@@ -11,6 +11,7 @@ import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
 import { IntentionNav } from "@/components/home/IntentionNav";
 import { Remedies3DExplorer } from "@/components/home/Remedies3DExplorer";
+import { HowAbhimantrit } from "@/components/home/HowAbhimantrit";
 import { HomeProductSection } from "@/components/home/HomeProductSection";
 import { RashiBracelets } from "@/components/home/RashiBracelets";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
@@ -25,10 +26,10 @@ import { resolveBannerUrl } from "@/lib/format";
  * One main backend call — home payload already includes products for
  * intention / rashi sections (fast navigation + less API load).
  */
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
-  // Use short Next revalidate cache (backend also caches home JSON ~60s)
+  // Short Next + backend cache — avoid force-dynamic so home can be cached
   const [home, meta] = await Promise.all([getHomeContent(), getStoreMeta()]);
   const intentionProducts = home.intentionProducts || {};
   const rashiProducts = home.rashiProducts || [];
@@ -56,6 +57,7 @@ export default async function HomePage() {
         <AboutAbhimantrit about={home.aboutSection} />
         <HomeProductSection title="Best Sellers" products={bestsellers} />
         <Remedies3DExplorer />
+        <HowAbhimantrit section={home.howAbhimantrit} />
         <IntentionNav products={intentionProducts} />
         <RashiBracelets products={rashiProducts} logos={rashiLogos} />
         <ShopByCategory tiles={home.categoryTiles} />

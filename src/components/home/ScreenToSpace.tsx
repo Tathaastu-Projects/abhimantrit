@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import type { ScreenToSpaceSection, ScreenToSpaceItem } from "@/types/product";
 import { resolveBannerUrl } from "@/lib/format";
+import { useNearViewport } from "@/hooks/useNearViewport";
 
 function ChevronLeftIcon() {
   return (
@@ -99,12 +100,20 @@ function categoryHref(item: ScreenToSpaceItem) {
 function ReelCard({ item }: { item: ScreenToSpaceItem }) {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { ref: nearRef, near } = useNearViewport<HTMLAnchorElement>("160px");
 
   const video = resolveBannerUrl(item.videoUrl);
   const image = resolveBannerUrl(item.imageUrl);
   const tab = resolveCategoryTab(item);
   const href = categoryHref(item);
   const label = tab?.label || item.categoryLabel || item.overlayTag || "Shop category";
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !near || !video) return;
+    el.muted = isMuted;
+    el.play().catch(() => {});
+  }, [near, video, isMuted]);
 
   const toggleSound = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -117,21 +126,22 @@ function ReelCard({ item }: { item: ScreenToSpaceItem }) {
 
   return (
     <Link
+      ref={nearRef}
       href={href}
       prefetch={false}
       aria-label={`Open ${label} category`}
       className="group relative block w-[250px] sm:w-[275px] md:w-[290px] shrink-0 aspect-[9/16] rounded-2xl overflow-hidden bg-stone-100 shadow-md border border-stone-200/50 select-none snap-start"
     >
-      {video ? (
+      {video && near ? (
         <video
           ref={videoRef}
           src={video}
-          poster={image}
+          poster={image || undefined}
           autoPlay
           muted={isMuted}
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           className="pointer-events-none h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       ) : image ? (
@@ -139,6 +149,8 @@ function ReelCard({ item }: { item: ScreenToSpaceItem }) {
         <img
           src={image}
           alt={label}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       ) : (

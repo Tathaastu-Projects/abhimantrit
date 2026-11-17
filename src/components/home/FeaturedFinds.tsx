@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { resolveBannerUrl } from "@/lib/format";
+import { useNearViewport } from "@/hooks/useNearViewport";
 
 export type FeaturedFindsContent = {
   eyebrow?: string;
@@ -38,6 +39,7 @@ function getEmbedUrl(url?: string): string | null {
 /** Karungali mala feature — silent looping video (no player chrome), photo on the right. */
 export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | null }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const { ref: sectionRef, near } = useNearViewport<HTMLElement>("180px");
   const eyebrow = featured?.eyebrow || "Featured finds";
   const title = featured?.title || "Everyday Vibe, Purposeful Intention";
   const points = featured?.points?.length
@@ -51,7 +53,7 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !video) return;
+    if (!el || !video || !near) return;
     el.muted = true;
     el.defaultMuted = true;
     el.playsInline = true;
@@ -67,10 +69,10 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [video]);
+  }, [video, near]);
 
   return (
-    <section id="featured-finds" className="w-full bg-[#f6f1ea] py-8 md:py-10">
+    <section ref={sectionRef} id="featured-finds" className="w-full bg-[#f6f1ea] py-8 md:py-10">
       <div className="mx-auto w-full max-w-5xl px-5 md:px-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#9a9590]">
           {eyebrow}
@@ -81,14 +83,14 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 md:gap-4">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-[#e7e1d8] sm:aspect-[5/4]">
-            {videoEmbed ? (
+            {near && videoEmbed ? (
               <iframe
                 src={videoEmbed}
                 className="pointer-events-none h-full w-full border-0 object-cover"
                 allow="autoplay; encrypted-media"
                 title="Featured video"
               />
-            ) : video ? (
+            ) : near && video ? (
               <video
                 ref={videoRef}
                 src={video}
@@ -98,10 +100,20 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="none"
                 controls={false}
                 disablePictureInPicture
                 disableRemotePlayback
+                aria-hidden
+              />
+            ) : image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={image}
+                alt=""
+                className="h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
                 aria-hidden
               />
             ) : (
@@ -118,6 +130,8 @@ export function FeaturedFinds({ featured }: { featured?: FeaturedFindsContent | 
                 src={image}
                 alt={featured?.imageLabel || "Karungali mala"}
                 className="h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center text-sm text-[#8a8580]">

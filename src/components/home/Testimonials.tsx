@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { resolveBannerUrl } from "@/lib/format";
+import { useNearViewport } from "@/hooks/useNearViewport";
 
 export type Testimonial = {
   quote: string;
@@ -154,9 +155,19 @@ export function Testimonials({ items }: { items?: Testimonial[] }) {
 function ReviewCard({ item }: { item: Testimonial }) {
   const photo = imageSrc(item.imageUrl);
   const video = item.playbackUrl ? resolveBannerUrl(item.playbackUrl) : videoSrc(item.videoUrl);
+  const { ref, near } = useNearViewport<HTMLElement>("140px");
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !near || !video) return;
+    el.muted = true;
+    el.play().catch(() => {});
+  }, [near, video]);
 
   return (
     <article
+      ref={ref}
       data-testimonials-slide
       className="grid h-[280px] w-full min-w-full shrink-0 overflow-hidden rounded-2xl border border-black/[0.05] bg-[#f6f3ee] md:h-[300px] md:min-w-0 md:grid-cols-[1.1fr_0.9fr]"
     >
@@ -172,19 +183,27 @@ function ReviewCard({ item }: { item: Testimonial }) {
         <p className="mt-4 text-sm font-semibold text-[#1c1c1c]">{item.name}</p>
       </div>
       <div className="relative min-h-0 overflow-hidden bg-[#d9d9d9]">
-        {video ? (
+        {video && near ? (
           <video
+            ref={videoRef}
             src={video}
             poster={photo || undefined}
             autoPlay
             loop
             muted
             playsInline
+            preload="none"
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={photo} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={photo}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : null}
       </div>
     </article>

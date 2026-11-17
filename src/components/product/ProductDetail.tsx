@@ -7,6 +7,7 @@ import type { StoreProduct } from "@/types/product";
 import { PriceBlock } from "@/components/product/PriceBlock";
 import { productHref, productUrlKey, resolveImageUrl } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
+import { requireCheckoutLogin } from "@/lib/requireCheckoutLogin";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { ProductReviews } from "@/components/product/ProductReviews";
@@ -79,6 +80,10 @@ export function ProductDetail({
     }
     if (outOfStock) {
       setMsg("This item is out of stock");
+      return;
+    }
+    if (goCheckout && !requireCheckoutLogin("/checkout")) {
+      setMsg("Please sign in to continue to checkout");
       return;
     }
     if (inCart) {

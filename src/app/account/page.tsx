@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getMe, getMyOrders, loginCustomer, registerCustomer } from "@/lib/api";
 import { useAuthStore } from "@/lib/auth-store";
 import { formatINR } from "@/lib/format";
@@ -9,7 +10,17 @@ import { formatINR } from "@/lib/format";
 const field =
   "w-full rounded-xl border border-[var(--border)] bg-white/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-temple/30";
 
-export default function AccountPage() {
+function safeNextPath(raw: string | null) {
+  if (!raw) return "";
+  const value = raw.trim();
+  if (!value.startsWith("/") || value.startsWith("//")) return "";
+  return value;
+}
+
+function AccountPageInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = safeNextPath(searchParams.get("next"));
   const { token, customer, setSession, clearSession } = useAuthStore();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [error, setError] = useState("");
@@ -24,13 +35,17 @@ export default function AccountPage() {
       try {
         const me = await getMe(token);
         setSession(token, me.data);
+        if (nextPath) {
+          router.replace(nextPath);
+          return;
+        }
         const o = await getMyOrders(token);
         setOrders(o.data || []);
       } catch {
         clearSession();
       }
     })();
-  }, [token, setSession, clearSession]);
+  }, [token, setSession, clearSession, nextPath, router]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,6 +58,10 @@ export default function AccountPage() {
           password: String(fd.get("password") || ""),
         });
         setSession(res.data.token, res.data.customer);
+        if (nextPath) {
+          router.replace(nextPath);
+          return;
+        }
       } else {
         const res = await registerCustomer({
           name: String(fd.get("name") || ""),
@@ -51,6 +70,10 @@ export default function AccountPage() {
           password: String(fd.get("password") || ""),
         });
         setSession(res.data.token, res.data.customer);
+        if (nextPath) {
+          router.replace(nextPath);
+          return;
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Auth failed");
@@ -133,7 +156,11 @@ export default function AccountPage() {
   return (
     <div className="container-pad max-w-md py-12">
       <h1 className="font-display text-4xl">{mode === "login" ? "Sign in" : "Create account"}</h1>
-      <p className="mt-2 text-ink-soft">Save wishlist and view order history.</p>
+      <p className="mt-2 text-ink-soft">
+        {nextPath === "/checkout"
+          ? "Sign in to continue to checkout."
+          : "Save wishlist and view order history."}
+      </p>
 
       <div className="mt-6 flex gap-2">
         <button
@@ -174,5 +201,19 @@ export default function AccountPage() {
         {error ? <p className="text-sm text-sale">{error}</p> : null}
       </form>
     </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container-pad py-16">
+          <div className="skeleton h-40" />
+        </div>
+      }
+    >
+      <AccountPageInner />
+    </Suspense>
   );
 }

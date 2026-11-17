@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { formatINR } from "@/lib/format";
+import { requireCheckoutLogin } from "@/lib/requireCheckoutLogin";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
@@ -32,6 +33,11 @@ export default function CartPage() {
         </Link>
       </div>
     );
+  }
+
+  function goCheckout() {
+    if (!requireCheckoutLogin("/checkout")) return;
+    window.location.href = "/checkout";
   }
 
   return (
@@ -103,9 +109,9 @@ export default function CartPage() {
             <span className="font-semibold">{formatINR(subtotal())}</span>
           </div>
           <p className="mt-2 text-xs text-ink-soft">Shipping calculated at checkout. COD available.</p>
-          <Link href="/checkout" className="btn btn-primary mt-6 w-full">
+          <button type="button" onClick={goCheckout} className="btn btn-primary mt-6 w-full">
             Proceed to checkout
-          </Link>
+          </button>
         </aside>
       </div>
     </div>

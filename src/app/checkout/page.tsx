@@ -12,6 +12,7 @@ import {
   validateCoupon,
 } from "@/lib/api";
 import { formatINR } from "@/lib/format";
+import { checkoutLoginHref } from "@/lib/requireCheckoutLogin";
 import type { CouponValidation } from "@/types/product";
 
 const fieldClass =
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
   const customer = useAuthStore((s) => s.customer);
   const token = useAuthStore((s) => s.token);
   const [mounted, setMounted] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
@@ -34,14 +36,48 @@ export default function CheckoutPage() {
 
   useEffect(() => setMounted(true), []);
 
+  useEffect(() => {
+    const finish = () => setAuthReady(true);
+    const persistApi = useAuthStore.persist;
+    if (persistApi?.hasHydrated?.()) {
+      finish();
+      return;
+    }
+    const unsub = persistApi?.onFinishHydration?.(finish);
+    // Fallback if persist API is unavailable
+    const t = window.setTimeout(finish, 50);
+    return () => {
+      window.clearTimeout(t);
+      if (typeof unsub === "function") unsub();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !authReady) return;
+    if (token && customer) return;
+    window.location.replace(checkoutLoginHref("/checkout"));
+  }, [mounted, authReady, token, customer]);
+
   const subtotal = mounted ? subtotalFn() : 0;
   const discount = coupon?.discount || 0;
   const total = Math.max(0, subtotal - discount);
 
-  if (!mounted) {
+  if (!mounted || !authReady) {
     return (
       <div className="container-pad py-16">
         <div className="skeleton h-48 w-full" />
+      </div>
+    );
+  }
+
+  if (!token || !customer) {
+    return (
+      <div className="container-pad py-20 text-center">
+        <h1 className="font-display text-4xl">Sign in required</h1>
+        <p className="mt-3 text-ink-soft">Please sign in before checkout.</p>
+        <Link href={checkoutLoginHref("/checkout")} className="btn btn-primary mt-8">
+          Sign in to continue
+        </Link>
       </div>
     );
   }

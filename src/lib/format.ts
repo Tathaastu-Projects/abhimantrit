@@ -110,12 +110,15 @@ export function resolveImageUrl(url?: string | null): string {
   return `${base}${url.startsWith("/") ? url : `/${url}`}`;
 }
 
-export function primaryImage(images?: { url: string; alt?: string; isPrimary?: boolean }[]) {
+export function primaryImage(
+  images?: { url: string; alt?: string; isPrimary?: boolean; thumbUrl?: string }[],
+) {
   if (!images?.length) {
     return { url: "/placeholder-product.svg", alt: "Product" };
   }
   const primary = images.find((img) => img.isPrimary) || images[0];
-  return { url: resolveImageUrl(primary.url), alt: primary.alt || "Product" };
+  const preferred = primary.thumbUrl || primary.url;
+  return { url: resolveImageUrl(preferred), alt: primary.alt || "Product" };
 }
 
 export function titleCase(value: string): string {

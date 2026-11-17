@@ -406,6 +406,12 @@ export type HomeContent = {
       playbackUrl?: string;
     }[];
   };
+  /** Four circular steps after 3D explorer (Admin → Home Page → How Abhimantrit) */
+  howAbhimantrit?: {
+    enabled?: boolean;
+    title?: string;
+    steps?: { id: string; title: string; image?: string }[];
+  };
   trustBadges?: { id: string; label: string; description?: string }[];
   intentions?: HomeIntention[];
   categories?: HomeCategoryCard[];

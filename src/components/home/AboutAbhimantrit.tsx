@@ -250,7 +250,8 @@ function StageImage({
       alt={alt || "About Abhimantrit"}
       data-about-image={aboutId}
       className={className}
-      loading="eager"
+      loading={base ? "eager" : "lazy"}
+      decoding="async"
     />
   );
 }
@@ -271,34 +272,32 @@ function StageMedia({
   playing?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  // Only attach src when this layer should play — avoids downloading every feature video.
+  const shouldLoad = Boolean(playing);
 
   useEffect(() => {
     const node = videoRef.current;
-    if (!node) return;
+    if (!node || !shouldLoad) return;
     node.muted = true;
     node.defaultMuted = true;
-    if (playing) {
-      const p = node.play();
-      if (p !== undefined) {
-        p.catch(() => {});
-      }
-    } else {
+    node.play().catch(() => {});
+    return () => {
       node.pause();
-    }
-  }, [playing]);
+    };
+  }, [shouldLoad, video]);
 
   const className = `about-stage__img${base ? " about-stage__img--base" : ""}${active ? " is-active" : ""}`;
   return (
     <video
       ref={videoRef}
       data-about-image={aboutId}
-      src={video}
+      src={shouldLoad ? video : undefined}
       poster={poster}
       autoPlay={playing}
       loop
       muted
       playsInline
-      preload={base && playing ? "auto" : "metadata"}
+      preload="none"
       className={className}
     />
   );

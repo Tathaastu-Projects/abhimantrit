@@ -167,7 +167,7 @@ export function HomeVideoHero({
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         controls={false}
         disablePictureInPicture
         disableRemotePlayback

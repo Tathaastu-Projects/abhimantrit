@@ -1,12 +1,17 @@
 "use client";
 
+import { useNearViewport } from "@/hooks/useNearViewport";
+
 /**
  * Embeds the 3D explorer (public/3d/index.html).
- * Sized to fit title + stage in one viewport without page scroll.
+ * Mounts the heavy iframe only when the section is near the viewport.
  */
 export function Remedies3DExplorer() {
+  const { ref, near } = useNearViewport<HTMLElement>("280px");
+
   return (
     <section
+      ref={ref}
       id="remedies-3d"
       className="remedies-3d-section flex w-full flex-col justify-center bg-[#f7f1e8]"
     >
@@ -26,15 +31,24 @@ export function Remedies3DExplorer() {
         </div>
 
         <div className="overflow-hidden rounded-[16px] border border-black/5 bg-[#12151a] shadow-[0_12px_32px_rgba(15,20,25,0.14)] md:rounded-[18px]">
-          <iframe
-            title="Abhimantrit 3D remedies explorer"
-            src="/3d/index.html"
-            className="remedies-3d-frame block w-full border-0 bg-[#12151a]"
-            loading="eager"
-            allow="fullscreen"
-            referrerPolicy="no-referrer"
-            scrolling="no"
-          />
+          {near ? (
+            <iframe
+              title="Abhimantrit 3D remedies explorer"
+              src="/3d/index.html"
+              className="remedies-3d-frame block w-full border-0 bg-[#12151a]"
+              loading="lazy"
+              allow="fullscreen"
+              referrerPolicy="no-referrer"
+              scrolling="no"
+            />
+          ) : (
+            <div
+              className="remedies-3d-frame flex w-full items-center justify-center bg-[#12151a] text-sm text-white/50"
+              aria-hidden
+            >
+              Loading 3D…
+            </div>
+          )}
         </div>
       </div>
     </section>
