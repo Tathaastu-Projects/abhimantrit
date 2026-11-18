@@ -108,8 +108,8 @@ export function ProductDetail({
 
   return (
     <div className="w-full bg-white">
-      <div className="w-full px-3 py-4 sm:px-4 md:px-5 md:py-5 lg:px-6 xl:px-8">
-        <nav className="mb-3 truncate text-[12px] text-ink-soft">
+      <div className="w-full px-3 py-3 sm:px-4 md:px-5 lg:px-6 xl:px-8">
+        <nav className="mb-2 truncate text-[12px] text-ink-soft">
           <Link href="/" className="transition hover:text-forest">
             Home
           </Link>
@@ -121,10 +121,11 @@ export function ProductDetail({
           <span className="text-ink">{product.title}</span>
         </nav>
 
-        <div className="grid w-full items-start gap-5 md:gap-6 lg:grid-cols-2 lg:gap-8 xl:gap-10">
-          {/* Gallery: main image + thumbnails on its right (between image and details) */}
-          <div className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
-            <div className="flex min-h-0 min-w-0 flex-1 aspect-[4/5] max-h-[min(68vh,560px)] items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] sm:aspect-square lg:max-h-[min(72vh,580px)]">
+        {/* Two columns: gallery left, buy box + description right — each scrolls in viewport */}
+        <div className="grid w-full items-start gap-4 lg:grid-cols-2 lg:gap-6 xl:gap-8">
+          {/* Gallery */}
+          <div className="flex w-full min-w-0 items-start gap-2 sm:gap-2.5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-[#f6f3ee] ring-1 ring-black/[0.04] aspect-square max-h-[min(58vh,480px)] lg:max-h-[min(70vh,520px)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resolveImageUrl(activeImage)}
@@ -134,7 +135,7 @@ export function ProductDetail({
             </div>
 
             {images.length > 1 ? (
-              <div className="flex max-h-[min(68vh,560px)] w-[4.25rem] shrink-0 flex-col gap-2 overflow-y-auto sm:w-[4.75rem] sm:gap-2.5 lg:max-h-[min(72vh,580px)]">
+              <div className="flex max-h-[min(58vh,480px)] w-[3.75rem] shrink-0 flex-col gap-1.5 overflow-y-auto overscroll-contain sm:w-[4.25rem] sm:gap-2 lg:max-h-[min(70vh,520px)]">
                 {images.slice(0, 8).map((img) => (
                   <button
                     key={img.url}
@@ -159,8 +160,8 @@ export function ProductDetail({
             ) : null}
           </div>
 
-          {/* Buy box — right column */}
-          <div className="flex min-w-0 w-full flex-col lg:pt-1">
+          {/* Details + description (right) */}
+          <div className="flex min-w-0 w-full flex-col lg:sticky lg:top-20 lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
             <div className="flex flex-wrap gap-1.5">
               {product.isBestSeller ? (
                 <span className="rounded-full bg-forest px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
@@ -179,7 +180,7 @@ export function ProductDetail({
               ) : null}
             </div>
 
-            <h1 className="mt-2 font-display text-[1.45rem] leading-[1.2] tracking-tight text-ink md:text-[1.75rem] xl:text-[1.9rem]">
+            <h1 className="mt-1.5 font-display text-[1.4rem] leading-[1.2] tracking-tight text-ink md:text-[1.65rem] xl:text-[1.8rem]">
               {product.title}
             </h1>
             {product.sku ? (
@@ -203,18 +204,18 @@ export function ProductDetail({
             ) : null}
 
             {product.shortDescription ? (
-              <p className="mt-2 line-clamp-2 max-w-xl text-[13px] leading-snug text-ink-soft">
+              <p className="mt-2 max-w-xl text-[13px] leading-snug text-ink-soft">
                 {product.shortDescription}
               </p>
             ) : null}
 
-            <div className="mt-3 border-y border-[var(--border)] py-2.5">
+            <div className="mt-2.5 border-y border-[var(--border)] py-2">
               <PriceBlock mrp={mrp} salePrice={sale} discount={discount} size="md" />
               <p className="mt-1 text-[11px] text-ink-soft">Inclusive of all taxes · Secure checkout</p>
             </div>
 
             {activeVariants.length ? (
-              <div className="mt-3">
+              <div className="mt-2.5">
                 <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
                   Select option
                 </p>
@@ -240,7 +241,7 @@ export function ProductDetail({
 
             <p
               className={cn(
-                "mt-3 inline-flex items-center gap-2 rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                "mt-2.5 inline-flex items-center gap-2 rounded-full px-2.5 py-0.5 text-xs font-semibold",
                 outOfStock ? "bg-sale/10 text-sale" : "bg-forest/10 text-forest",
               )}
             >
@@ -248,7 +249,7 @@ export function ProductDetail({
               {outOfStock ? "Out of stock" : stock <= 5 ? `Only ${stock} left` : "In stock · Ready to ship"}
             </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
               {inCart ? (
                 <div
                   className="btn btn-primary flex h-10 min-w-[148px] items-center justify-between gap-1 px-2"
@@ -298,7 +299,7 @@ export function ProductDetail({
             </div>
             {msg ? <p className="mt-2 text-xs font-medium text-forest">{msg}</p> : null}
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-2">
               {TRUST.map((t) => (
                 <div
                   key={t.label}
@@ -328,31 +329,44 @@ export function ProductDetail({
                 </div>
               </div>
             ) : null}
+
+            {product.description ? (
+              <section className="mt-4 border-t border-[var(--border)] pt-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-forest">
+                  The story
+                </p>
+                <h2 className="mt-0.5 font-display text-xl text-ink md:text-2xl">About this piece</h2>
+                <div className="mt-2 space-y-2 text-[13px] leading-relaxed text-ink-soft whitespace-pre-wrap md:text-[14px]">
+                  {product.description}
+                </div>
+              </section>
+            ) : null}
           </div>
         </div>
-
-        {product.description ? (
-          <section className="mt-8 border-t border-[var(--border)] pt-6 md:mt-10 md:pt-8">
-            <div className="grid gap-5 lg:grid-cols-2 lg:gap-10 lg:items-start">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-forest">The story</p>
-                <h2 className="mt-1 font-display text-2xl text-ink md:text-3xl">About this piece</h2>
-              </div>
-              <div className="space-y-3 text-[14px] leading-relaxed text-ink-soft whitespace-pre-wrap md:text-[15px]">
-                {product.description}
-              </div>
-            </div>
-          </section>
-        ) : null}
       </div>
 
-      {productFaqs.length ? <FaqAccordion faqs={productFaqs} /> : null}
-
-      <ProductReviews
-        slug={product.slug}
-        ratingAvg={product.ratingAvg}
-        ratingCount={product.ratingCount}
-      />
+      <section className="w-full border-y border-[var(--border)] bg-[#f7f4ef]">
+        <div className="mx-auto grid w-full max-w-6xl items-start gap-5 px-3 py-5 sm:px-4 md:grid-cols-2 md:gap-6 md:px-5 md:py-6 lg:px-6">
+          <div className="min-w-0">
+            {productFaqs.length ? (
+              <FaqAccordion faqs={productFaqs} compact embedded />
+            ) : (
+              <div className="min-w-0">
+                <h2 className="font-display text-xl text-ink md:text-2xl">FAQs</h2>
+                <p className="mt-0.5 text-[12px] text-ink-soft">No product FAQs yet.</p>
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 border-t border-[var(--border)] pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+            <ProductReviews
+              slug={product.slug}
+              ratingAvg={product.ratingAvg}
+              ratingCount={product.ratingCount}
+              embedded
+            />
+          </div>
+        </div>
+      </section>
 
       <div className="border-t border-[var(--border)] bg-[#faf8f5]">
         <ProductCarousel title="You may also like" products={related} limit={4} variant="related" />

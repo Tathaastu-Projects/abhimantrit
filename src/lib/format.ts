@@ -104,10 +104,20 @@ export function resolveImageUrl(url?: string | null): string {
   if (url.startsWith("data:")) return url;
   const uploadPath = toStorefrontUploadPath(url);
   if (uploadPath) return uploadPath;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  const base = getApiBaseUrlOrEmpty();
-  if (!base) return url.startsWith("/") ? url : `/${url}`;
-  return `${base}${url.startsWith("/") ? url : `/${url}`}`;
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    // Absolute API placeholder URLs break hydration (SSR has API host, browser uses "")
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname === "/placeholder-product.svg") return "/placeholder-product.svg";
+    } catch {
+      /* ignore */
+    }
+    return url;
+  }
+  // Same-origin app/public paths — never prefix with NEXT_PUBLIC_API_URL
+  // (server base ≠ browser "" → hydration mismatch on IntentionNav etc.)
+  if (url.startsWith("/")) return url;
+  return `/${url}`;
 }
 
 export function primaryImage(

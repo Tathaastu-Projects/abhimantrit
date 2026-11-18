@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { StoreProduct } from "@/types/product";
-import { discountPercent, formatINR, hoverLines, primaryImage, productHref, resolveImageUrl } from "@/lib/format";
+import { discountPercent, formatINR, hoverLines, primaryImage, productHref } from "@/lib/format";
 import { useCartStore } from "@/lib/cart-store";
 import { CardScroller } from "@/components/home/CardScroller";
 import { BagButton, HoverDetails } from "@/components/home/RashiBracelets";
@@ -90,7 +90,7 @@ function IntentionCard({
         {/* Intention icon uses product photo from backend catalog — no frontend static assets */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={resolveImageUrl(img.url)}
+          src={img.url}
           alt=""
           className="h-9 w-9 rounded-full object-cover"
         />
@@ -104,7 +104,7 @@ function IntentionCard({
         <Link href={productHref(product)} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={resolveImageUrl(img.url)}
+            src={img.url}
             alt={product.title}
             className="block aspect-square w-full object-cover object-center"
           />
