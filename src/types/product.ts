@@ -353,6 +353,8 @@ export type ScreenToSpaceItem = {
   /** Canonical path e.g. `/shop/rudraksha` */
   categoryHref?: string;
   isActive?: boolean;
+  /** Latest products in this reel’s category (home API attaches up to 5) */
+  products?: StoreProduct[];
 };
 
 export type ScreenToSpaceSection = {
