@@ -19,7 +19,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
       withProducts: true,
       includeFacets: true,
     }),
-    getBanners(),
+    getBanners("category-banner"),
   ]);
 
   if (!result.collection) notFound();

@@ -16,7 +16,10 @@ type Props = {
 export default async function ShopPage({ searchParams }: Props) {
   const sp = await searchParams;
   const params = searchParamsToCatalog(sp);
-  const [catalog, banners] = await Promise.all([getCatalog(params), getBanners()]);
+  const [catalog, banners] = await Promise.all([
+    getCatalog(params),
+    getBanners("category-banner"),
+  ]);
 
   return (
     <>

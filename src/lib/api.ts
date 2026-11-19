@@ -137,42 +137,63 @@ const EMPTY_HOME: HomeContent = {
   faqs: [],
 };
 
-export async function getHomeContent(opts?: { fresh?: boolean }): Promise<HomeContent> {
+function normalizeHome(data: Partial<HomeContent> | null | undefined): HomeContent {
+  if (!data || typeof data !== "object") return EMPTY_HOME;
+  return {
+    ...EMPTY_HOME,
+    ...data,
+    banners: data.banners || [],
+    homeSliderManaged: Boolean(data.homeSliderManaged),
+    homeHeroVideo: data.homeHeroVideo,
+    categoryTiles: data.categoryTiles || [],
+    aboutSection: data.aboutSection,
+    featuredFinds: data.featuredFinds,
+    howAbhimantrit: data.howAbhimantrit,
+    screenToSpace: data.screenToSpace,
+    latestBlogs: data.latestBlogs || [],
+    intentionProducts: data.intentionProducts || {},
+    rashiProducts: data.rashiProducts || [],
+    rashiLogos: data.rashiLogos || [],
+    heroTicker: data.heroTicker || [],
+    latestProducts: data.latestProducts || data.carousels?.newArrivals || [],
+    carousels: {
+      featured: data.carousels?.featured || [],
+      bestsellers: data.carousels?.bestsellers || [],
+      newArrivals: data.carousels?.newArrivals || [],
+    },
+    faqs: data.faqs || [],
+  };
+}
+
+export async function getHomeContent(
+  opts?: { fresh?: boolean; scope?: "above" | "below" | "full" },
+): Promise<HomeContent> {
   try {
+    const scope = opts?.scope || "full";
+    const path =
+      scope === "full"
+        ? "/api/store/content/home"
+        : `/api/store/content/home?scope=${encodeURIComponent(scope)}`;
     const res = await apiFetch<ApiResult<HomeContent> & Partial<HomeContent>>(
-      "/api/store/content/home",
+      path,
       undefined,
       opts?.fresh ? { fresh: true } : undefined,
     );
     const data = res.data || (res as unknown as HomeContent);
-    if (!data || typeof data !== "object") return EMPTY_HOME;
-    return {
-      ...EMPTY_HOME,
-      ...data,
-      banners: data.banners || [],
-      homeSliderManaged: Boolean(data.homeSliderManaged),
-      homeHeroVideo: data.homeHeroVideo,
-      categoryTiles: data.categoryTiles || [],
-      aboutSection: data.aboutSection,
-      featuredFinds: data.featuredFinds,
-      howAbhimantrit: data.howAbhimantrit,
-      screenToSpace: data.screenToSpace,
-      latestBlogs: data.latestBlogs || [],
-      intentionProducts: data.intentionProducts || {},
-      rashiProducts: data.rashiProducts || [],
-      rashiLogos: data.rashiLogos || [],
-      heroTicker: data.heroTicker || [],
-      latestProducts: data.latestProducts || data.carousels?.newArrivals || [],
-      carousels: {
-        featured: data.carousels?.featured || [],
-        bestsellers: data.carousels?.bestsellers || [],
-        newArrivals: data.carousels?.newArrivals || [],
-      },
-      faqs: data.faqs || [],
-    };
+    return normalizeHome(data);
   } catch {
     return EMPTY_HOME;
   }
+}
+
+/** First-paint home slice: hero, banners, about, bestsellers, how-it-works */
+export function getHomeAbove(opts?: { fresh?: boolean }) {
+  return getHomeContent({ ...opts, scope: "above" });
+}
+
+/** Deferred home slice: intention, rashi, featured, blog, faq, etc. */
+export function getHomeBelow(opts?: { fresh?: boolean }) {
+  return getHomeContent({ ...opts, scope: "below" });
 }
 
 export async function getBlogs(page = 1, limit = 12) {

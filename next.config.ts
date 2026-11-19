@@ -42,6 +42,13 @@ const nextConfig: NextConfig = {
     "www.abhimantritstore.com",
     "admin.abhimantritstore.com",
   ],
+  // Keep visited routes (esp. home) warm so product → home does not refetch RSC every time
+  experimental: {
+    staleTimes: {
+      dynamic: 180,
+      static: 300,
+    },
+  },
   turbopack: {
     root: process.cwd(),
   },

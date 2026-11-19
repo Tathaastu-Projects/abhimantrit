@@ -31,7 +31,8 @@ export default async function ShopCategoryPage({ params, searchParams }: Props) 
         sort: sortFromUrl || "best_selling",
       }),
     ),
-    getBanners(),
+    // Only category banners — avoid pulling the full home slider set
+    getBanners("category-banner"),
   ]);
   const title = titleCase(category);
 

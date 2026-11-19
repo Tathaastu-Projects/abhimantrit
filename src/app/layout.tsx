@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { CartSync } from "@/components/cart/CartSync";
 import { ApplyVideoSpeed } from "@/components/layout/ApplyVideoSpeed";
+import { HomeKeepAlive } from "@/components/home/HomeKeepAlive";
 import { getStoreMenu, getStoreMeta } from "@/lib/api";
 import { resolveBannerUrl } from "@/lib/format";
 import { buildPageMetadata } from "@/lib/seo";
@@ -43,7 +44,10 @@ export default async function RootLayout({
         />
         <CartSync />
         <ApplyVideoSpeed rate={Number(meta?.videoSpeed?.rate) || 1} />
-        <main>{children}</main>
+        <main>
+          <HomeKeepAlive />
+          {children}
+        </main>
         <SiteFooter support={meta?.support} />
       </body>
     </html>

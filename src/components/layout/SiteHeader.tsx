@@ -237,7 +237,7 @@ function SiteHeaderShell({
             >
               <MenuIcon />
             </button>
-            <Link href="/" className="shrink-0" aria-label="Abhimantrit home">
+            <Link href="/" prefetch className="shrink-0" aria-label="Abhimantrit home">
               {logoSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

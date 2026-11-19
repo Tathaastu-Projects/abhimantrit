@@ -127,7 +127,9 @@ export function primaryImage(
     return { url: "/placeholder-product.svg", alt: "Product" };
   }
   const primary = images.find((img) => img.isPrimary) || images[0];
-  const preferred = primary.thumbUrl || primary.url;
+  // Always prefer the real image URL. Invented *-thumb.webp paths 404 and blank home cards
+  // (Product detail still works because it uses the original gallery urls).
+  const preferred = primary.url || primary.thumbUrl;
   return { url: resolveImageUrl(preferred), alt: primary.alt || "Product" };
 }
 

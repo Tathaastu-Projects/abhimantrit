@@ -22,7 +22,7 @@ type Props = {
 
 /**
  * Full-viewport looping background video.
- * No black flash: warm placeholder + poster (or auto-captured first frame) under the video.
+ * Instant paint from poster image; video fades in when enough data is ready.
  */
 export function HomeVideoHero({
   hero,
@@ -30,10 +30,10 @@ export function HomeVideoHero({
   brandName = "Abhimantrit",
 }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [framePoster, setFramePoster] = useState("");
+  const [videoReady, setVideoReady] = useState(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const videoUrl = resolveBannerUrl(hero?.videoUrl || "");
-  const adminPoster = resolveBannerUrl(hero?.posterUrl || "");
-  const posterUrl = adminPoster || framePoster;
+  const posterUrl = resolveBannerUrl(hero?.posterUrl || "");
   const enabled = hero?.enabled !== false;
   const headline =
     hero?.headline?.trim() || "Blessed crystals & sacred essentials";
@@ -53,67 +53,80 @@ export function HomeVideoHero({
     };
   }, [enabled, videoUrl]);
 
+  // Paint poster first, then kick off video on the next frame / idle — feels instant
+  useEffect(() => {
+    if (!enabled || !videoUrl) return;
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const start = () => setShouldLoadVideo(true);
+
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (typeof w.requestIdleCallback === "function") {
+      idleId = w.requestIdleCallback(start, { timeout: 280 });
+    } else {
+      timeoutId = setTimeout(start, 80);
+    }
+    return () => {
+      if (idleId != null && typeof w.cancelIdleCallback === "function") {
+        w.cancelIdleCallback(idleId);
+      }
+      if (timeoutId != null) clearTimeout(timeoutId);
+    };
+  }, [enabled, videoUrl]);
+
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !videoUrl) return;
-    let captured = Boolean(adminPoster);
+    if (!el || !videoUrl || !shouldLoadVideo) return;
+
     el.muted = true;
     el.defaultMuted = true;
     el.volume = 0;
     el.setAttribute("muted", "");
 
+    const markReady = () => setVideoReady(true);
     const play = () => {
       el.muted = true;
-      el.play().catch(() => {
-        /* autoplay may be blocked until interaction */
-      });
+      el.play()
+        .then(markReady)
+        .catch(() => {
+          /* autoplay may be blocked until interaction */
+        });
     };
 
-    /** If admin did not set a poster, grab the first decoded frame so we never sit on black. */
-    const captureFrame = () => {
-      if (captured || adminPoster) return;
-      try {
-        if (!el.videoWidth || !el.videoHeight) return;
-        const canvas = document.createElement("canvas");
-        const maxW = 1280;
-        const scale = Math.min(1, maxW / el.videoWidth);
-        canvas.width = Math.max(1, Math.round(el.videoWidth * scale));
-        canvas.height = Math.max(1, Math.round(el.videoHeight * scale));
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        ctx.drawImage(el, 0, 0, canvas.width, canvas.height);
-        const data = canvas.toDataURL("image/jpeg", 0.72);
-        if (data && data.length > 800) {
-          captured = true;
-          setFramePoster(data);
-        }
-      } catch {
-        /* cross-origin / decode — ignore */
-      }
-    };
-
-    const onLoaded = () => {
-      captureFrame();
+    const onCanPlay = () => {
+      markReady();
       play();
     };
 
+    // Source is set via src attribute; ensure load starts immediately
+    try {
+      el.load();
+    } catch {
+      /* ignore */
+    }
     play();
-    el.addEventListener("loadeddata", onLoaded);
-    el.addEventListener("canplay", play);
-    el.addEventListener("playing", captureFrame);
+
+    el.addEventListener("loadeddata", markReady);
+    el.addEventListener("canplay", onCanPlay);
+    el.addEventListener("playing", markReady);
 
     const onVisibility = () => {
       if (document.hidden) el.pause();
       else play();
     };
     document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
-      el.removeEventListener("loadeddata", onLoaded);
-      el.removeEventListener("canplay", play);
-      el.removeEventListener("playing", captureFrame);
+      el.removeEventListener("loadeddata", markReady);
+      el.removeEventListener("canplay", onCanPlay);
+      el.removeEventListener("playing", markReady);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [videoUrl, adminPoster]);
+  }, [videoUrl, shouldLoadVideo]);
 
   if (!enabled || !videoUrl) return null;
 
@@ -136,17 +149,21 @@ export function HomeVideoHero({
       }}
       aria-label="Welcome"
     >
-      {/* Always under video — kills black flash while MP4 buffers */}
+      {/* High-priority poster — LCP / first paint (do not wait for MP4) */}
       {posterUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={posterUrl}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-          fetchPriority="high"
-          decoding="async"
-          aria-hidden
-        />
+        <>
+          <link rel="preload" as="image" href={posterUrl} fetchPriority="high" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={posterUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            fetchPriority="high"
+            decoding="sync"
+            loading="eager"
+            aria-hidden
+          />
+        </>
       ) : (
         <div
           className="absolute inset-0"
@@ -158,21 +175,25 @@ export function HomeVideoHero({
         />
       )}
 
-      <video
-        ref={videoRef}
-        className="home-bg-video absolute inset-0 h-full w-full object-cover"
-        src={videoUrl}
-        poster={posterUrl || undefined}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        controls={false}
-        disablePictureInPicture
-        disableRemotePlayback
-        aria-hidden
-      />
+      {shouldLoadVideo ? (
+        <video
+          ref={videoRef}
+          className={`home-bg-video absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+          src={videoUrl}
+          poster={posterUrl || undefined}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          aria-hidden
+        />
+      ) : null}
 
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(12,10,8,0.42)_0%,rgba(12,10,8,0.28)_40%,rgba(12,10,8,0.55)_100%)]"
@@ -186,6 +207,8 @@ export function HomeVideoHero({
             src={logoSrc}
             alt=""
             className="mb-5 h-14 w-auto max-w-[220px] object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.35)] sm:h-16"
+            fetchPriority="low"
+            decoding="async"
           />
         ) : null}
 
