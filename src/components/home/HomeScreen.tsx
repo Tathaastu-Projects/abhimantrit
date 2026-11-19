@@ -16,7 +16,6 @@ import { HeroTicker } from "@/components/home/HeroTicker";
 import { HomeTrustBar } from "@/components/home/HomeTrustBar";
 import { IntentionNav } from "@/components/home/IntentionNav";
 import { Remedies3DExplorer } from "@/components/home/Remedies3DExplorer";
-import { HowAbhimantrit } from "@/components/home/HowAbhimantrit";
 import { HomeProductSection } from "@/components/home/HomeProductSection";
 import { RashiBracelets } from "@/components/home/RashiBracelets";
 import { FaqAccordion } from "@/components/home/FaqAccordion";
@@ -77,8 +76,6 @@ export function HomeScreen({ initialAbove, initialBelow, initialMeta }: Props) {
         <HomeProductSection title="Best Sellers" products={bestsellers} />
       </div>
       <div className="home-below-sections">
-        <Remedies3DExplorer />
-        <HowAbhimantrit section={below.howAbhimantrit} />
         <IntentionNav products={intentionProducts} />
         <RashiBracelets products={rashiProducts} logos={rashiLogos} />
         <ShopByCategory tiles={below.categoryTiles} />
@@ -86,6 +83,7 @@ export function HomeScreen({ initialAbove, initialBelow, initialMeta }: Props) {
         <ScreenToSpace section={below.screenToSpace} />
         <Testimonials items={below.testimonials} />
         <ReadFromBlog posts={below.latestBlogs} />
+        <Remedies3DExplorer />
         <FaqAccordion faqs={below.faqs} allowDefaults />
       </div>
     </>
